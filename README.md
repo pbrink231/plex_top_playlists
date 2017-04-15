@@ -68,6 +68,9 @@ cd /usr/scripts
 nano plex_playlist_update.py
 ```
 
+Copy conetents from the plex_playlist_update.py file into your new file
+Save
+
 Make the Script executable.  
 
 ```bash
