@@ -20,7 +20,9 @@ The TV Shows playlists give the last episode in your library for the show.  You 
 
 # Getting Started
 
-### Get initial information
+## Get initial information
+
+### Get Trakt API key
 
 To connect to Trakt you need to get an api key.  You can easily create one.  Here are the steps for that
 1) go to Trakt.tv
@@ -32,6 +34,14 @@ To connect to Trakt you need to get an api key.  You can easily create one.  Her
 * redirect url - put any websit
 * dont need anything else filled out
 5) grab the Client ID to use as your Trakt API Key
+
+### Get plex token
+
+This page will show you where your token is
+https://support.plex.tv/hc/en-us/articles/204059436-Finding-an-authentication-token-X-Plex-Token
+
+This page will show you how to view your xml to see that link you grab your token from
+https://support.plex.tv/hc/en-us/articles/201998867
 
 ## Setup
 
