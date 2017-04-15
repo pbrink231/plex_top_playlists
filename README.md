@@ -102,7 +102,7 @@ Run the script
 crontab -e
 ```
 
-Add this line to the bottom of the file
+Add this line to the bottom of the file (will run at 4:05 am every day)
 
 ```bash
 5 4 * * * /usr/scripts/plex_playlist_update.py
