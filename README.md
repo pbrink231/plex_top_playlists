@@ -38,9 +38,11 @@ To connect to Trakt you need to get an api key.  You can easily create one.  Her
 ### Get plex token
 
 This page will show you where your token is
+
 https://support.plex.tv/hc/en-us/articles/204059436-Finding-an-authentication-token-X-Plex-Token
 
 This page will show you how to view your xml to see that link you grab your token from
+
 https://support.plex.tv/hc/en-us/articles/201998867
 
 ## Setup
