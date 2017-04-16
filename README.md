@@ -10,7 +10,10 @@ This script is assuming you are using "Plex Movie" as your library check.  If yo
 
 The TV Shows playlists give the last episode in your library for the show.  You can easily click the show name to go to it.
 
-Every user will see this playlist because it creates it for every user on your server.
+The playlists can be created for any of the following
+* All shared users
+* Specific users by username
+* Only the script running user
 
 ### What lists this script currently retreives
 
