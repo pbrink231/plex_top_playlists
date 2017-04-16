@@ -60,8 +60,10 @@ There are 2 more modules i dont have the install code for.  If you encounter an 
 
 Create the script file.  Go to the folder location you want to put it
 
+REPLACE user with your user
 ```bash
-mkdir /usr/scripts
+sudo mkdir /usr/scripts
+sudo chown user:user /usr/scripts
 cd /usr/scripts
 ```
 
@@ -71,7 +73,9 @@ nano plex_playlist_update.py
 
 Copy conetents from the plex_playlist_update.py file into your new file
 
-Change options at the top of the file with your own information
+Required - Fill in Plex Token
+Not Needed - Trakt API key, keep blank for lists
+Options - Change folder names and who to sync with
 
 Save and close (hit Ctrl+x, y, enter)
 
