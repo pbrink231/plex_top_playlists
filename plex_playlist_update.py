@@ -26,10 +26,12 @@ from urllib2 import Request, urlopen
 
 ### Plex server details ###
 PLEX_URL = 'http://localhost:32400'
-PLEX_TOKEN = 'xxxxxxxxxx'
+PLEX_TOKEN = '' # This is required.  Check github instructions how to find it
+SYNC_WITH_SHARED_USERS = true # (if true, syncs all or list, if false, only script runner)
+ALLOW_SYNCED_USERS = [] # (keep blank for all users, comma list for specific users.) EX ['username','anotheruser']
 
 ### Trakt API Info ###
-TRAKT_API_KEY = 'xxxxxxxxxxxxxxxxxxxxxxxxx'
+TRAKT_API_KEY = '' # Add this if you want to get any Trakt information
 
 ### Movie library info ###
 MOVIE_LIBRARY_NAME = 'Movies'
@@ -48,6 +50,9 @@ TRAKT_POPULAR_SHOW_PLAYLIST_NAME = 'Show Popular'
 ### New IMDB Top 250 library details ###
 IMDB_CHART_URL = 'http://www.imdb.com/chart/top'
 IMDB_PLAYLIST_NAME = 'Movies All Time'
+
+
+####### CODE HERE (Nothing to change) ############
 
 def get_user_tokens(server_id):
     headers = {'Accept': 'application/json', 'X-Plex-Token': PLEX_TOKEN}
@@ -77,12 +82,14 @@ def loop_plex_users(plex, list, playlist_name):
     create_playlists(plex, list, playlist_name)
 
     #update list for shared users
-    plex_users = get_user_tokens(plex.machineIdentifier)
-    for user in plex_users:
-        print("{}: updating playlist for user {}".format(playlist_name, user))
-        user_token = plex_users[user]
-        user_plex = PlexServer(PLEX_URL, user_token)
-        create_playlists(user_plex, list, playlist_name)
+    if SYNC_WITH_SHARED_USERS:
+        plex_users = get_user_tokens(plex.machineIdentifier)
+        for user in plex_users:
+            if not ALLOW_SYNCED_USERS or user in ALLOW_SYNCED_USERS:
+                print("{}: updating playlist for user {}".format(playlist_name, user))
+                user_token = plex_users[user]
+                user_plex = PlexServer(PLEX_URL, user_token)
+                create_playlists(user_plex, list, playlist_name)
 
 
 def setup_show_playlist(plex, tvdb_ids, plex_shows, playlist_name):

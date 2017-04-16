@@ -84,6 +84,8 @@ nano plex_playlist_update.py
 
 Copy conetents from the plex_playlist_update.py file into your new file
 
+Change options at the top of the file with your own information
+
 Save and close (hit Ctrl+x, y, enter)
 
 Make the Script executable.  
