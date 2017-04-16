@@ -1,5 +1,5 @@
 # plex_top_playlists
-A python script to get top weekly or top popular lists and put them in plex as playlists.
+A python script to get top weekly or top popular lists and put them in plex as playlists.  It will make a playlist for each user on your server.
 This is my first time ever creating a python script.  Also the first time really adding something useful to GitHub
 
 Use at your own risk.  I have it running nightly
@@ -9,6 +9,8 @@ Use at your own risk.  I have it running nightly
 This script is assuming you are using "Plex Movie" as your library check.  If you are using TMDB, I can add the code here but I personally didnt need it.
 
 The TV Shows playlists give the last episode in your library for the show.  You can easily click the show name to go to it.
+
+Every user will see this playlist because it creates it for every user on your server.
 
 ### What lists this script currently retreives
 
