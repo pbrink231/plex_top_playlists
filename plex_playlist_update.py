@@ -28,6 +28,9 @@ from urllib2 import Request, urlopen
 PLEX_URL = 'http://localhost:32400'
 PLEX_TOKEN = '' # This is required.  Check github instructions how to find it
 
+### Trakt API Info ###
+TRAKT_API_KEY = '' # This is not required.  Keep blank and you will still retreive the lists.  Only needed for personal lists which are need added yet
+
 # Share playlist with other user?
 SYNC_WITH_SHARED_USERS = False # Choices True, False -- Caps matter, (if True, syncs all or list, if false, only token user)
 ALLOW_SYNCED_USERS = [] # (keep blank for all users, comma list for specific users.) EX ['username','anotheruser'], SYNC_WITH_SHARED_USERS must be True.
@@ -161,6 +164,7 @@ def trakt_watched_imdb_id_list():
     headers = {
     'Content-Type': 'application/json',
     'trakt-api-version': '2',
+    'trakt-api-key': TRAKT_API_KEY
     }
 
     request = Request('https://api.trakt.tv/movies/watched/weekly?page=1&limit={}'.format(TRAKT_NUM_MOVIES), headers=headers)
@@ -181,6 +185,7 @@ def trakt_popular_imdb_id_list():
     headers = {
     'Content-Type': 'application/json',
     'trakt-api-version': '2',
+    'trakt-api-key': TRAKT_API_KEY
     }
 
     request = Request('https://api.trakt.tv/movies/popular?page=1&limit={}'.format(TRAKT_NUM_MOVIES), headers=headers)
@@ -201,6 +206,7 @@ def trakt_watched_show_imdb_id_list():
     headers = {
     'Content-Type': 'application/json',
     'trakt-api-version': '2',
+    'trakt-api-key': TRAKT_API_KEY
     }
 
     request = Request('https://api.trakt.tv/shows/watched/weekly?page=1&limit={}'.format(TRAKT_NUM_SHOWS), headers=headers)
@@ -221,6 +227,7 @@ def trakt_popular_show_imdb_id_list():
     headers = {
     'Content-Type': 'application/json',
     'trakt-api-version': '2',
+    'trakt-api-key': TRAKT_API_KEY
     }
 
     request = Request('https://api.trakt.tv/shows/popular?page=1&limit={}'.format(TRAKT_NUM_SHOWS), headers=headers)
