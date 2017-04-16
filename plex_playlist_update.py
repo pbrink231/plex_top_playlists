@@ -27,11 +27,10 @@ from urllib2 import Request, urlopen
 ### Plex server details ###
 PLEX_URL = 'http://localhost:32400'
 PLEX_TOKEN = '' # This is required.  Check github instructions how to find it
-SYNC_WITH_SHARED_USERS = true # (if true, syncs all or list, if false, only script runner)
-ALLOW_SYNCED_USERS = [] # (keep blank for all users, comma list for specific users.) EX ['username','anotheruser']
 
-### Trakt API Info ###
-TRAKT_API_KEY = '' # Add this if you want to get any Trakt information
+# Share playlist with other user?
+SYNC_WITH_SHARED_USERS = False # Choices True, False -- Caps matter, (if True, syncs all or list, if false, only token user)
+ALLOW_SYNCED_USERS = [] # (keep blank for all users, comma list for specific users.) EX ['username','anotheruser'], SYNC_WITH_SHARED_USERS must be True.
 
 ### Movie library info ###
 MOVIE_LIBRARY_NAME = 'Movies'
@@ -93,58 +92,66 @@ def loop_plex_users(plex, list, playlist_name):
 
 
 def setup_show_playlist(plex, tvdb_ids, plex_shows, playlist_name):
-    # Create a list of matching shows using last episode
-    matching_episodes = []
-    sorted_shows = []
-    for show in plex_shows:
-        last_episode = show.episodes()[-1]
-        if last_episode.guid != NA and 'thetvdb://' in last_episode.guid:
-            tvdb_id = last_episode.guid.split('thetvdb://')[1].split('?')[0].split('/')[0]
-        else:
-            tvdb_id = None
+    if tvdb_ids:
+        # Create a list of matching shows using last episode
+        print("{}: finding matching movies for playlist with count {}".format(playlist_name, len(tvdb_ids)))
+        matching_episodes = []
+        sorted_shows = []
+        for show in plex_shows:
+            last_episode = show.episodes()[-1]
+            if last_episode.guid != NA and 'thetvdb://' in last_episode.guid:
+                tvdb_id = last_episode.guid.split('thetvdb://')[1].split('?')[0].split('/')[0]
+            else:
+                tvdb_id = None
 
-        if tvdb_id and tvdb_id in tvdb_ids:
-            matching_episodes.append(last_episode)
+            if tvdb_id and tvdb_id in tvdb_ids:
+                matching_episodes.append(last_episode)
 
-    print("{}: Sorting list in correct order".format(playlist_name))
+        print("{}: Sorting list in correct order".format(playlist_name))
 
-    for tvdb_id in tvdb_ids:
-        for episode in matching_episodes:
-            show_tvdb_id = episode.guid.split('thetvdb://')[1].split('?')[0].split('/')[0]
-            if show_tvdb_id == tvdb_id:
-                sorted_shows.append(episode)
-                break;
+        for tvdb_id in tvdb_ids:
+            for episode in matching_episodes:
+                show_tvdb_id = episode.guid.split('thetvdb://')[1].split('?')[0].split('/')[0]
+                if show_tvdb_id == tvdb_id:
+                    sorted_shows.append(episode)
+                    break;
 
-    print("{}: Created shows list".format(playlist_name))
+        print("{}: Created shows list".format(playlist_name))
 
-    loop_plex_users(plex, sorted_shows, playlist_name)
+        loop_plex_users(plex, sorted_shows, playlist_name)
+    else:
+        print('{}: WARNING - Playlist is empty'.format(playlist_name))
 
 def setup_movie_playlist(plex, imdb_ids, plex_movies, playlist_name):
-    # Create a list of matching movies
-    print("{}: finding matching movies for playlist".format(playlist_name))
-    matching_movies = []
-    sorted_movies = []
-    for movie in plex_movies:
-        if movie.guid != NA and 'imdb://' in movie.guid:
-            imdb_id = movie.guid.split('imdb://')[1].split('?')[0]
-        else:
-            imdb_id = None
-            
-        if imdb_id and imdb_id in imdb_ids:
-            matching_movies.append(movie)
+    # check that the list is not empty
+    if imdb_ids:
+        # Create a list of matching movies
+        print("{}: finding matching movies for playlist with count {}".format(playlist_name, len(imdb_ids)))
+        matching_movies = []
+        sorted_movies = []
+        for movie in plex_movies:
+            if movie.guid != NA and 'imdb://' in movie.guid:
+                imdb_id = movie.guid.split('imdb://')[1].split('?')[0]
+            else:
+                imdb_id = None
+                
+            if imdb_id and imdb_id in imdb_ids:
+                matching_movies.append(movie)
 
-    print("{}: Sorting list in correct order".format(playlist_name))
+        print("{}: Sorting list in correct order".format(playlist_name))
 
-    for imdb_id in imdb_ids:
-        for movie in matching_movies:
-            movie_imdb_id = movie.guid.split('imdb://')[1].split('?')[0]
-            if movie_imdb_id == imdb_id:
-                sorted_movies.append(movie)
-                break;
+        for imdb_id in imdb_ids:
+            for movie in matching_movies:
+                movie_imdb_id = movie.guid.split('imdb://')[1].split('?')[0]
+                if movie_imdb_id == imdb_id:
+                    sorted_movies.append(movie)
+                    break;
 
-    print("{}: Created movie list".format(playlist_name))
+        print("{}: Created movie list".format(playlist_name))
 
-    loop_plex_users(plex, sorted_movies, playlist_name)
+        loop_plex_users(plex, sorted_movies, playlist_name)
+    else:
+        print('{}: WARNING - Playlist is empty'.format(playlist_name))
 
 def trakt_watched_imdb_id_list():
     # Get the weekly watched list
@@ -154,7 +161,6 @@ def trakt_watched_imdb_id_list():
     headers = {
     'Content-Type': 'application/json',
     'trakt-api-version': '2',
-    'trakt-api-key': TRAKT_API_KEY
     }
 
     request = Request('https://api.trakt.tv/movies/watched/weekly?page=1&limit={}'.format(TRAKT_NUM_MOVIES), headers=headers)
@@ -175,7 +181,6 @@ def trakt_popular_imdb_id_list():
     headers = {
     'Content-Type': 'application/json',
     'trakt-api-version': '2',
-    'trakt-api-key': TRAKT_API_KEY
     }
 
     request = Request('https://api.trakt.tv/movies/popular?page=1&limit={}'.format(TRAKT_NUM_MOVIES), headers=headers)
@@ -196,7 +201,6 @@ def trakt_watched_show_imdb_id_list():
     headers = {
     'Content-Type': 'application/json',
     'trakt-api-version': '2',
-    'trakt-api-key': TRAKT_API_KEY
     }
 
     request = Request('https://api.trakt.tv/shows/watched/weekly?page=1&limit={}'.format(TRAKT_NUM_SHOWS), headers=headers)
@@ -217,7 +221,6 @@ def trakt_popular_show_imdb_id_list():
     headers = {
     'Content-Type': 'application/json',
     'trakt-api-version': '2',
-    'trakt-api-key': TRAKT_API_KEY
     }
 
     request = Request('https://api.trakt.tv/shows/popular?page=1&limit={}'.format(TRAKT_NUM_SHOWS), headers=headers)
@@ -282,7 +285,7 @@ def list_updater():
     try:
         plex = PlexServer(PLEX_URL, PLEX_TOKEN)
     except:
-        print("No Plex server found at: {base_url}".format(base_url=PLEX_URL))
+        print("No Plex server found at: {base_url} or bad plex token code".format(base_url=PLEX_URL))
         print("Exiting script.")
         raw_input("press enter to exit")
         return [], 0
