@@ -37,6 +37,19 @@ This page will show you how to view your xml to see that link you grab your toke
 
 https://support.plex.tv/hc/en-us/articles/201998867
 
+### Get Trakt API key
+
+To connect to Trakt you need to get an api key.  You can easily create one.  Here are the steps for that
+1) go to Trakt.tv
+2) create a user if you dont have one
+3) Sign in
+4) go here https://trakt.tv/oauth/applications/new
+* Name - call it what you want
+* Description - needed, put whatever you want
+* redirect url - put any websit
+* dont need anything else filled out
+5) grab the Client ID to use as your Trakt API Key
+
 ## Setup
 
 These instructions are for Ubuntu.  Should also work with Debian or any debian based os.

@@ -29,13 +29,13 @@ PLEX_URL = 'http://localhost:32400'
 PLEX_TOKEN = '' # This is required.  Check github instructions how to find it
 
 ### Trakt API Info ###
-TRAKT_API_KEY = '' # This is not required.  Keep blank and you will still retreive the lists.  Only needed for personal lists which are need added yet
+TRAKT_API_KEY = '' # This is required.  Please check readme from github [https://github.com/pbrink231/plex_top_playlists]
 
 # Share playlist with other user?
 SYNC_WITH_SHARED_USERS = False # Choices True, False -- Caps matter, (if True, syncs all or list, if false, only token user)
 ALLOW_SYNCED_USERS = [] # (keep blank for all users, comma list for specific users.) EX ['username','anotheruser'], SYNC_WITH_SHARED_USERS must be True.
 
-### Movie library info ###
+### Current library info ###
 MOVIE_LIBRARY_NAME = 'Movies'
 SHOW_LIBRARY_NAME = 'Shows'
 
