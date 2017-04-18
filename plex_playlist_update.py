@@ -29,6 +29,7 @@ PLEX_URL = 'http://localhost:32400'
 PLEX_TOKEN = '' # This is required.  Check github instructions how to find it
 
 # Share playlist with other user?
+REMOVE_ONLY = False # Set to true to remove playlists only,  This will not grab lists.  It will remove all playlists from variables below.  Easy way to undo
 SYNC_WITH_SHARED_USERS = False # Choices True, False -- Caps matter, (if True, syncs all or list, if false, only token user)
 ALLOW_SYNCED_USERS = [] # (keep blank for all users, comma list for specific users.) EX ['username','anotheruser'], SYNC_WITH_SHARED_USERS must be True.
 
@@ -61,9 +62,7 @@ def get_user_tokens(server_id):
 
     return users
 
-def create_playlists(plex, list, playlist_name):
-    # Remove old playlists
-    #print('{}: Checking if playlist exist to delete if needed'.format(playlist_name))
+def remove_playlist(plex, playlist_name):
     for playlist in plex.playlists():
         if playlist.title == playlist_name:
             try:
@@ -72,6 +71,11 @@ def create_playlists(plex, list, playlist_name):
             except:
                 print("ERROR - cannot delete playlist: {}".format(playlist_name))
                 return None
+
+def create_playlists(plex, list, playlist_name):
+    # Remove old playlists
+    #print('{}: Checking if playlist exist to delete if needed'.format(playlist_name))
+    remove_playlist(plex, playlist_name)
 
     plex.createPlaylist(playlist_name, list)
     #print("{}: playlist created".format(playlist_name))
@@ -281,6 +285,20 @@ def run_show_lists(plex):
     setup_show_playlist(plex, trakt_weekly_show_imdb_ids, all_shows, TRAKT_WEEKLY_SHOW_PLAYLIST_NAME)
     setup_show_playlist(plex, trakt_popular_show_imdb_ids, all_shows, TRAKT_POPULAR_SHOW_PLAYLIST_NAME)
 
+def list_remover(plex, playlist_name):
+    #update my list
+    remove_playlist(plex, playlist_name)
+
+    #update list for shared users
+    if SYNC_WITH_SHARED_USERS:
+        plex_users = get_user_tokens(plex.machineIdentifier)
+        for user in plex_users:
+            if not ALLOW_SYNCED_USERS or user in ALLOW_SYNCED_USERS:
+                print("{}: removing playlist for user {}".format(playlist_name, user))
+                user_token = plex_users[user]
+                user_plex = PlexServer(PLEX_URL, user_token)
+                remove_playlist(user_plex, playlist_name)
+
 def list_updater():
     try:
         plex = PlexServer(PLEX_URL, PLEX_TOKEN)
@@ -290,8 +308,15 @@ def list_updater():
         raw_input("press enter to exit")
         return [], 0
 
-    run_movies_lists(plex)
-    run_show_lists(plex)
+    if REMOVE_ONLY:
+        list_remover(plex, TRAKT_WEEKLY_PLAYLIST_NAME)
+        list_remover(plex, TRAKT_POPULAR_PLAYLIST_NAME)
+        list_remover(plex, TRAKT_WEEKLY_SHOW_PLAYLIST_NAME)
+        list_remover(plex, TRAKT_POPULAR_SHOW_PLAYLIST_NAME)
+        list_remover(plex, IMDB_PLAYLIST_NAME)
+    else:
+        run_movies_lists(plex)
+        run_show_lists(plex)
 
 
 if __name__ == "__main__":
