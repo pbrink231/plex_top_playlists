@@ -26,7 +26,7 @@ from urllib2 import Request, urlopen
 
 ### Plex server details ###
 PLEX_URL = 'http://localhost:32400'
-PLEX_TOKEN = '' # This is required.  Check github instructions how to find it
+PLEX_TOKEN = 't4vWresnGgsZkwsC3WpL' # This is required.  Check github instructions how to find it
 
 # Share playlist with other user?
 REMOVE_ONLY = False # Set to True to remove playlists only,  This will not grab lists.  It will remove all playlists from variables below.  Easy way to undo
@@ -170,12 +170,16 @@ def trakt_watched_imdb_id_list():
     }
 
     request = Request('https://api.trakt.tv/movies/watched/weekly?page=1&limit={}'.format(TRAKT_NUM_MOVIES), headers=headers)
-    response = urlopen(request)
-    trakt_movies = json.load(response)
+    try:
+        response = urlopen(request)
+        trakt_movies = json.load(response)
 
-    # loop through movies and add movies to list if match
-    for movie in trakt_movies:
-        imdb_ids.append(movie['movie']['ids']['imdb'])
+        # loop through movies and add movies to list if match
+        for movie in trakt_movies:
+            imdb_ids.append(movie['movie']['ids']['imdb'])
+    except:
+        print "Bad Trakt Code"
+        return []
 
     return imdb_ids
 
@@ -189,13 +193,17 @@ def trakt_popular_imdb_id_list():
     'trakt-api-version': '2',
     }
 
-    request = Request('https://api.trakt.tv/movies/popular?page=1&limit={}'.format(TRAKT_NUM_MOVIES), headers=headers)
-    response = urlopen(request)
-    trakt_movies = json.load(response)
+    try:
+        request = Request('https://api.trakt.tv/movies/popular?page=1&limit={}'.format(TRAKT_NUM_MOVIES), headers=headers)
+        response = urlopen(request)
+        trakt_movies = json.load(response)
 
-    # loop through movies and add movies to list if match
-    for movie in trakt_movies:
-        imdb_ids.append(movie['ids']['imdb'])
+        # loop through movies and add movies to list if match
+        for movie in trakt_movies:
+            imdb_ids.append(movie['ids']['imdb'])
+    except:
+        print "Bad Trakt Code"
+        return []
 
     return imdb_ids
 
@@ -208,14 +216,17 @@ def trakt_watched_show_imdb_id_list():
     'Content-Type': 'application/json',
     'trakt-api-version': '2',
     }
+    try:
+        request = Request('https://api.trakt.tv/shows/watched/weekly?page=1&limit={}'.format(TRAKT_NUM_SHOWS), headers=headers)
+        response = urlopen(request)
+        trakt_show = json.load(response)
 
-    request = Request('https://api.trakt.tv/shows/watched/weekly?page=1&limit={}'.format(TRAKT_NUM_SHOWS), headers=headers)
-    response = urlopen(request)
-    trakt_show = json.load(response)
-
-    # loop through movies and add movies to list if match
-    for show in trakt_show:
-        tvdb_ids.append(str(show['show']['ids']['tvdb']))
+        # loop through movies and add movies to list if match
+        for show in trakt_show:
+            tvdb_ids.append(str(show['show']['ids']['tvdb']))
+    except:
+        print "Bad Trakt Code"
+        return []
 
     return tvdb_ids
 
@@ -229,13 +240,16 @@ def trakt_popular_show_imdb_id_list():
     'trakt-api-version': '2',
     }
 
-    request = Request('https://api.trakt.tv/shows/popular?page=1&limit={}'.format(TRAKT_NUM_SHOWS), headers=headers)
-    response = urlopen(request)
-    trakt_show = json.load(response)
+        request = Request('https://api.trakt.tv/shows/popular?page=1&limit={}'.format(TRAKT_NUM_SHOWS), headers=headers)
+        response = urlopen(request)
+        trakt_show = json.load(response)
 
-    # loop through movies and add movies to list if match
-    for show in trakt_show:
-        tvdb_ids.append(str(show['ids']['tvdb']))
+        # loop through movies and add movies to list if match
+        for show in trakt_show:
+            tvdb_ids.append(str(show['ids']['tvdb']))
+    except:
+        print "Bad Trakt Code"
+        return []
 
     return tvdb_ids
 
@@ -259,6 +273,7 @@ def run_movies_lists(plex):
         return [], 0
 
     print("Retrieving new lists")
+    if 
     trakt_weekly_imdb_ids = trakt_watched_imdb_id_list()
     trakt_popular_imdb_ids = trakt_popular_imdb_id_list()
     imdb_top_movies_ids = imdb_top_imdb_id_list(IMDB_CHART_URL)
