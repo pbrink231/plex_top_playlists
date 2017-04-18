@@ -26,10 +26,10 @@ from urllib2 import Request, urlopen
 
 ### Plex server details ###
 PLEX_URL = 'http://localhost:32400'
-PLEX_TOKEN = 't4vWresnGgsZkwsC3WpL' # This is required.  Check github instructions how to find it
+PLEX_TOKEN = '' # This is required.  Check github instructions how to find it
 
 ### Trakt API Info ###
-TRAKT_API_KEY = '' # This is not required.  Keep blank and you will still retreive the lists.  Only needed for personal lists which are need added yet
+TRAKT_API_KEY = '' # This is required.  Without it you will not get any Trakt playlists
 
 # Share playlist with other user?
 REMOVE_ONLY = False # Set to True to remove playlists only,  This will not grab lists.  It will remove all playlists from variables below.  Easy way to undo
@@ -143,7 +143,7 @@ def setup_movie_playlist(plex, imdb_ids, plex_movies, playlist_name):
                 imdb_id = movie.guid.split('imdb://')[1].split('?')[0]
             else:
                 imdb_id = None
-                
+
             if imdb_id and imdb_id in imdb_ids:
                 matching_movies.append(movie)
 
@@ -247,6 +247,7 @@ def trakt_popular_show_imdb_id_list():
     'trakt-api-key': TRAKT_API_KEY
     }
 
+    try:
         request = Request('https://api.trakt.tv/shows/popular?page=1&limit={}'.format(TRAKT_NUM_SHOWS), headers=headers)
         response = urlopen(request)
         trakt_show = json.load(response)
@@ -280,14 +281,15 @@ def run_movies_lists(plex):
         return [], 0
 
     print("Retrieving new lists")
-    if 
-    trakt_weekly_imdb_ids = trakt_watched_imdb_id_list()
-    trakt_popular_imdb_ids = trakt_popular_imdb_id_list()
-    imdb_top_movies_ids = imdb_top_imdb_id_list(IMDB_CHART_URL)
+    if TRAKT_API_KEY:
+        trakt_weekly_imdb_ids = trakt_watched_imdb_id_list()
+        trakt_popular_imdb_ids = trakt_popular_imdb_id_list()
+        setup_movie_playlist(plex, trakt_weekly_imdb_ids, all_movies, TRAKT_WEEKLY_PLAYLIST_NAME)
+        setup_movie_playlist(plex, trakt_popular_imdb_ids, all_movies, TRAKT_POPULAR_PLAYLIST_NAME)
+    else:
+        print("No Trakt API key, skipping lists")
 
-    print("setting up lists")
-    setup_movie_playlist(plex, trakt_weekly_imdb_ids, all_movies, TRAKT_WEEKLY_PLAYLIST_NAME)
-    setup_movie_playlist(plex, trakt_popular_imdb_ids, all_movies, TRAKT_POPULAR_PLAYLIST_NAME)
+    imdb_top_movies_ids = imdb_top_imdb_id_list(IMDB_CHART_URL)
     setup_movie_playlist(plex, imdb_top_movies_ids, all_movies, IMDB_PLAYLIST_NAME)
 
 def run_show_lists(plex):
@@ -302,12 +304,13 @@ def run_show_lists(plex):
         return [], 0
 
     print("Retrieving new lists")
-    trakt_weekly_show_imdb_ids = trakt_watched_show_imdb_id_list()
-    trakt_popular_show_imdb_ids = trakt_popular_show_imdb_id_list()
-
-    print("setting up lists")
-    setup_show_playlist(plex, trakt_weekly_show_imdb_ids, all_shows, TRAKT_WEEKLY_SHOW_PLAYLIST_NAME)
-    setup_show_playlist(plex, trakt_popular_show_imdb_ids, all_shows, TRAKT_POPULAR_SHOW_PLAYLIST_NAME)
+    if TRAKT_API_KEY:
+        trakt_weekly_show_imdb_ids = trakt_watched_show_imdb_id_list()
+        trakt_popular_show_imdb_ids = trakt_popular_show_imdb_id_list()
+        setup_show_playlist(plex, trakt_weekly_show_imdb_ids, all_shows, TRAKT_WEEKLY_SHOW_PLAYLIST_NAME)
+        setup_show_playlist(plex, trakt_popular_show_imdb_ids, all_shows, TRAKT_POPULAR_SHOW_PLAYLIST_NAME)
+    else:
+        print("No Trakt API key, skipping lists")
 
 def list_remover(plex, playlist_name):
     #update my list
