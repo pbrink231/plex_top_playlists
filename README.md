@@ -24,19 +24,6 @@ Every user will see this playlist because it creates it for every user on your s
 
 ## Get initial information
 
-### Get Trakt API key
-
-To connect to Trakt you need to get an api key.  You can easily create one.  Here are the steps for that
-1) go to Trakt.tv
-2) create a user if you dont have one
-3) Sign in
-4) go here https://trakt.tv/oauth/applications/new
-* Name - call it what you want
-* Description - needed, put whatever you want
-* redirect url - put any websit
-* dont need anything else filled out
-5) grab the Client ID to use as your Trakt API Key
-
 ### Get plex token
 
 This page will show you where your token is
@@ -73,8 +60,10 @@ There are 2 more modules i dont have the install code for.  If you encounter an 
 
 Create the script file.  Go to the folder location you want to put it
 
+REPLACE user with your user
 ```bash
-mkdir /usr/scripts
+sudo mkdir /usr/scripts
+sudo chown user:user /usr/scripts
 cd /usr/scripts
 ```
 
@@ -84,7 +73,9 @@ nano plex_playlist_update.py
 
 Copy conetents from the plex_playlist_update.py file into your new file
 
-Change options at the top of the file with your own information
+Required - Fill in Plex Token
+Not Needed - Trakt API key, keep blank for lists
+Options - Change folder names and who to sync with
 
 Save and close (hit Ctrl+x, y, enter)
 
