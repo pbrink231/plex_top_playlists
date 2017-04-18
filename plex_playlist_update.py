@@ -33,7 +33,7 @@ TRAKT_API_KEY = '' # This is required.  Without it you will not get any Trakt pl
 
 # Share playlist with other user?
 REMOVE_ONLY = False # Set to True to remove playlists only,  This will not grab lists.  It will remove all playlists from variables below.  Easy way to undo
-SYNC_WITH_SHARED_USERS = True # Choices True, False -- Caps matter, (if True, syncs all or list, if false, only token user)
+SYNC_WITH_SHARED_USERS = False # Choices True, False -- Caps matter, (if True, syncs all or list, if false, only token user)
 ALLOW_SYNCED_USERS = [] # (keep blank for all users, comma list for specific users.) EX ['username','anotheruser'], SYNC_WITH_SHARED_USERS must be True.
 
 ### Current library info ###
