@@ -29,7 +29,7 @@ PLEX_URL = 'http://localhost:32400'
 PLEX_TOKEN = '' # This is required.  Check github instructions how to find it
 
 # Share playlist with other user?
-REMOVE_ONLY = False # Set to true to remove playlists only,  This will not grab lists.  It will remove all playlists from variables below.  Easy way to undo
+REMOVE_ONLY = False # Set to True to remove playlists only,  This will not grab lists.  It will remove all playlists from variables below.  Easy way to undo
 SYNC_WITH_SHARED_USERS = False # Choices True, False -- Caps matter, (if True, syncs all or list, if false, only token user)
 ALLOW_SYNCED_USERS = [] # (keep blank for all users, comma list for specific users.) EX ['username','anotheruser'], SYNC_WITH_SHARED_USERS must be True.
 
@@ -93,6 +93,8 @@ def loop_plex_users(plex, list, playlist_name):
                 user_token = plex_users[user]
                 user_plex = PlexServer(PLEX_URL, user_token)
                 create_playlists(user_plex, list, playlist_name)
+    else:
+        print("Skipping adding to shared users")
 
 
 def setup_show_playlist(plex, tvdb_ids, plex_shows, playlist_name):
@@ -287,6 +289,7 @@ def run_show_lists(plex):
 
 def list_remover(plex, playlist_name):
     #update my list
+    print("{}: removing playlist for script user".format(playlist_name))
     remove_playlist(plex, playlist_name)
 
     #update list for shared users
@@ -298,6 +301,8 @@ def list_remover(plex, playlist_name):
                 user_token = plex_users[user]
                 user_plex = PlexServer(PLEX_URL, user_token)
                 remove_playlist(user_plex, playlist_name)
+    else:
+        print("Skipping removal from shared users")
 
 def list_updater():
     try:
