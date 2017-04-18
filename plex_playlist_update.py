@@ -29,9 +29,10 @@ PLEX_URL = 'http://localhost:32400'
 PLEX_TOKEN = '' # This is required.  Check github instructions how to find it
 
 ### Trakt API Info ###
-TRAKT_API_KEY = '' # This is required.  Please check readme from github [https://github.com/pbrink231/plex_top_playlists]
+TRAKT_API_KEY = '' # This is required.  Without it you will not get any Trakt playlists
 
 # Share playlist with other user?
+REMOVE_ONLY = False # Set to True to remove playlists only,  This will not grab lists.  It will remove all playlists from variables below.  Easy way to undo
 SYNC_WITH_SHARED_USERS = False # Choices True, False -- Caps matter, (if True, syncs all or list, if false, only token user)
 ALLOW_SYNCED_USERS = [] # (keep blank for all users, comma list for specific users.) EX ['username','anotheruser'], SYNC_WITH_SHARED_USERS must be True.
 
@@ -64,9 +65,7 @@ def get_user_tokens(server_id):
 
     return users
 
-def create_playlists(plex, list, playlist_name):
-    # Remove old playlists
-    #print('{}: Checking if playlist exist to delete if needed'.format(playlist_name))
+def remove_playlist(plex, playlist_name):
     for playlist in plex.playlists():
         if playlist.title == playlist_name:
             try:
@@ -75,6 +74,11 @@ def create_playlists(plex, list, playlist_name):
             except:
                 print("ERROR - cannot delete playlist: {}".format(playlist_name))
                 return None
+
+def create_playlists(plex, list, playlist_name):
+    # Remove old playlists
+    #print('{}: Checking if playlist exist to delete if needed'.format(playlist_name))
+    remove_playlist(plex, playlist_name)
 
     plex.createPlaylist(playlist_name, list)
     #print("{}: playlist created".format(playlist_name))
@@ -92,6 +96,8 @@ def loop_plex_users(plex, list, playlist_name):
                 user_token = plex_users[user]
                 user_plex = PlexServer(PLEX_URL, user_token)
                 create_playlists(user_plex, list, playlist_name)
+    else:
+        print("Skipping adding to shared users")
 
 
 def setup_show_playlist(plex, tvdb_ids, plex_shows, playlist_name):
@@ -137,7 +143,7 @@ def setup_movie_playlist(plex, imdb_ids, plex_movies, playlist_name):
                 imdb_id = movie.guid.split('imdb://')[1].split('?')[0]
             else:
                 imdb_id = None
-                
+
             if imdb_id and imdb_id in imdb_ids:
                 matching_movies.append(movie)
 
@@ -168,12 +174,16 @@ def trakt_watched_imdb_id_list():
     }
 
     request = Request('https://api.trakt.tv/movies/watched/weekly?page=1&limit={}'.format(TRAKT_NUM_MOVIES), headers=headers)
-    response = urlopen(request)
-    trakt_movies = json.load(response)
+    try:
+        response = urlopen(request)
+        trakt_movies = json.load(response)
 
-    # loop through movies and add movies to list if match
-    for movie in trakt_movies:
-        imdb_ids.append(movie['movie']['ids']['imdb'])
+        # loop through movies and add movies to list if match
+        for movie in trakt_movies:
+            imdb_ids.append(movie['movie']['ids']['imdb'])
+    except:
+        print "Bad Trakt Code"
+        return []
 
     return imdb_ids
 
@@ -188,13 +198,17 @@ def trakt_popular_imdb_id_list():
     'trakt-api-key': TRAKT_API_KEY
     }
 
-    request = Request('https://api.trakt.tv/movies/popular?page=1&limit={}'.format(TRAKT_NUM_MOVIES), headers=headers)
-    response = urlopen(request)
-    trakt_movies = json.load(response)
+    try:
+        request = Request('https://api.trakt.tv/movies/popular?page=1&limit={}'.format(TRAKT_NUM_MOVIES), headers=headers)
+        response = urlopen(request)
+        trakt_movies = json.load(response)
 
-    # loop through movies and add movies to list if match
-    for movie in trakt_movies:
-        imdb_ids.append(movie['ids']['imdb'])
+        # loop through movies and add movies to list if match
+        for movie in trakt_movies:
+            imdb_ids.append(movie['ids']['imdb'])
+    except:
+        print "Bad Trakt Code"
+        return []
 
     return imdb_ids
 
@@ -208,14 +222,17 @@ def trakt_watched_show_imdb_id_list():
     'trakt-api-version': '2',
     'trakt-api-key': TRAKT_API_KEY
     }
+    try:
+        request = Request('https://api.trakt.tv/shows/watched/weekly?page=1&limit={}'.format(TRAKT_NUM_SHOWS), headers=headers)
+        response = urlopen(request)
+        trakt_show = json.load(response)
 
-    request = Request('https://api.trakt.tv/shows/watched/weekly?page=1&limit={}'.format(TRAKT_NUM_SHOWS), headers=headers)
-    response = urlopen(request)
-    trakt_show = json.load(response)
-
-    # loop through movies and add movies to list if match
-    for show in trakt_show:
-        tvdb_ids.append(str(show['show']['ids']['tvdb']))
+        # loop through movies and add movies to list if match
+        for show in trakt_show:
+            tvdb_ids.append(str(show['show']['ids']['tvdb']))
+    except:
+        print "Bad Trakt Code"
+        return []
 
     return tvdb_ids
 
@@ -230,13 +247,17 @@ def trakt_popular_show_imdb_id_list():
     'trakt-api-key': TRAKT_API_KEY
     }
 
-    request = Request('https://api.trakt.tv/shows/popular?page=1&limit={}'.format(TRAKT_NUM_SHOWS), headers=headers)
-    response = urlopen(request)
-    trakt_show = json.load(response)
+    try:
+        request = Request('https://api.trakt.tv/shows/popular?page=1&limit={}'.format(TRAKT_NUM_SHOWS), headers=headers)
+        response = urlopen(request)
+        trakt_show = json.load(response)
 
-    # loop through movies and add movies to list if match
-    for show in trakt_show:
-        tvdb_ids.append(str(show['ids']['tvdb']))
+        # loop through movies and add movies to list if match
+        for show in trakt_show:
+            tvdb_ids.append(str(show['ids']['tvdb']))
+    except:
+        print "Bad Trakt Code"
+        return []
 
     return tvdb_ids
 
@@ -260,13 +281,15 @@ def run_movies_lists(plex):
         return [], 0
 
     print("Retrieving new lists")
-    trakt_weekly_imdb_ids = trakt_watched_imdb_id_list()
-    trakt_popular_imdb_ids = trakt_popular_imdb_id_list()
-    imdb_top_movies_ids = imdb_top_imdb_id_list(IMDB_CHART_URL)
+    if TRAKT_API_KEY:
+        trakt_weekly_imdb_ids = trakt_watched_imdb_id_list()
+        trakt_popular_imdb_ids = trakt_popular_imdb_id_list()
+        setup_movie_playlist(plex, trakt_weekly_imdb_ids, all_movies, TRAKT_WEEKLY_PLAYLIST_NAME)
+        setup_movie_playlist(plex, trakt_popular_imdb_ids, all_movies, TRAKT_POPULAR_PLAYLIST_NAME)
+    else:
+        print("No Trakt API key, skipping lists")
 
-    print("setting up lists")
-    setup_movie_playlist(plex, trakt_weekly_imdb_ids, all_movies, TRAKT_WEEKLY_PLAYLIST_NAME)
-    setup_movie_playlist(plex, trakt_popular_imdb_ids, all_movies, TRAKT_POPULAR_PLAYLIST_NAME)
+    imdb_top_movies_ids = imdb_top_imdb_id_list(IMDB_CHART_URL)
     setup_movie_playlist(plex, imdb_top_movies_ids, all_movies, IMDB_PLAYLIST_NAME)
 
 def run_show_lists(plex):
@@ -281,12 +304,30 @@ def run_show_lists(plex):
         return [], 0
 
     print("Retrieving new lists")
-    trakt_weekly_show_imdb_ids = trakt_watched_show_imdb_id_list()
-    trakt_popular_show_imdb_ids = trakt_popular_show_imdb_id_list()
+    if TRAKT_API_KEY:
+        trakt_weekly_show_imdb_ids = trakt_watched_show_imdb_id_list()
+        trakt_popular_show_imdb_ids = trakt_popular_show_imdb_id_list()
+        setup_show_playlist(plex, trakt_weekly_show_imdb_ids, all_shows, TRAKT_WEEKLY_SHOW_PLAYLIST_NAME)
+        setup_show_playlist(plex, trakt_popular_show_imdb_ids, all_shows, TRAKT_POPULAR_SHOW_PLAYLIST_NAME)
+    else:
+        print("No Trakt API key, skipping lists")
 
-    print("setting up lists")
-    setup_show_playlist(plex, trakt_weekly_show_imdb_ids, all_shows, TRAKT_WEEKLY_SHOW_PLAYLIST_NAME)
-    setup_show_playlist(plex, trakt_popular_show_imdb_ids, all_shows, TRAKT_POPULAR_SHOW_PLAYLIST_NAME)
+def list_remover(plex, playlist_name):
+    #update my list
+    print("{}: removing playlist for script user".format(playlist_name))
+    remove_playlist(plex, playlist_name)
+
+    #update list for shared users
+    if SYNC_WITH_SHARED_USERS:
+        plex_users = get_user_tokens(plex.machineIdentifier)
+        for user in plex_users:
+            if not ALLOW_SYNCED_USERS or user in ALLOW_SYNCED_USERS:
+                print("{}: removing playlist for user {}".format(playlist_name, user))
+                user_token = plex_users[user]
+                user_plex = PlexServer(PLEX_URL, user_token)
+                remove_playlist(user_plex, playlist_name)
+    else:
+        print("Skipping removal from shared users")
 
 def list_updater():
     try:
@@ -297,8 +338,15 @@ def list_updater():
         raw_input("press enter to exit")
         return [], 0
 
-    run_movies_lists(plex)
-    run_show_lists(plex)
+    if REMOVE_ONLY:
+        list_remover(plex, TRAKT_WEEKLY_PLAYLIST_NAME)
+        list_remover(plex, TRAKT_POPULAR_PLAYLIST_NAME)
+        list_remover(plex, TRAKT_WEEKLY_SHOW_PLAYLIST_NAME)
+        list_remover(plex, TRAKT_POPULAR_SHOW_PLAYLIST_NAME)
+        list_remover(plex, IMDB_PLAYLIST_NAME)
+    else:
+        run_movies_lists(plex)
+        run_show_lists(plex)
 
 
 if __name__ == "__main__":
