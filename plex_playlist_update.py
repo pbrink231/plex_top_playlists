@@ -18,42 +18,35 @@ import requests
 import subprocess
 import time
 import xmltodict
+import ConfigParser
 from lxml.html import parse
 from plexapi.server import PlexServer
 from plexapi.utils import NA
 
 from urllib2 import Request, urlopen
 
-### Plex server details ###
-PLEX_URL = 'http://localhost:32400'
-PLEX_TOKEN = '' # This is required.  Check github instructions how to find it
+config_file_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'settings.ini')
+config = ConfigParser.SafeConfigParser()
+config.read(config_file_path)
 
-### Trakt API Info ###
-TRAKT_API_KEY = '' # This is required.  Without it you will not get any Trakt playlists
-
-# Share playlist with other user?
-REMOVE_ONLY = False # Set to True to remove playlists only,  This will not grab lists.  It will remove all playlists from variables below.  Easy way to undo
-SYNC_WITH_SHARED_USERS = False # Choices True, False -- Caps matter, (if True, syncs all or list, if false, only token user)
-ALLOW_SYNCED_USERS = [] # (keep blank for all users, comma list for specific users.) EX ['username','anotheruser'], SYNC_WITH_SHARED_USERS must be True.
-
-### Current library info ###
-MOVIE_LIBRARY_NAME = 'Movies'
-SHOW_LIBRARY_NAME = 'Shows'
-
-### Trakt Movie Playlist info ###
-TRAKT_NUM_MOVIES = 80 # max is 100
-TRAKT_WEEKLY_PLAYLIST_NAME = 'Movies Top Weekly'
-TRAKT_POPULAR_PLAYLIST_NAME = 'Movies Popular'
-
-### Trakt Show Playlist info ###
-TRAKT_NUM_SHOWS = 30 # max is ?
-TRAKT_WEEKLY_SHOW_PLAYLIST_NAME = 'Show Top Weekly'
-TRAKT_POPULAR_SHOW_PLAYLIST_NAME = 'Show Popular'
-
-### New IMDB Top 250 library details ###
-IMDB_CHART_URL = 'http://www.imdb.com/chart/top'
-IMDB_PLAYLIST_NAME = 'Movies All Time'
-
+PLEX_URL = config.get('Plex', 'plex-host')
+PLEX_TOKEN = config.get('Plex', 'plex-token')
+MOVIE_LIBRARY_NAME = config.get('Plex', 'movie-library')
+SHOW_LIBRARY_NAME = config.get('Plex', 'tv-library')
+REMOVE_ONLY = config.getboolean('Plex', 'remove')
+SYNC_WITH_SHARED_USERS = config.getboolean('Plex', 'shared')
+ALLOW_SYNCED_USERS = config.get('Plex', 'users')
+TRAKT_API_KEY = config.get('Trakt', 'api-key')
+TRAKT_NUM_MOVIES = config.get('Trakt', 'movie-total')
+TRAKT_WEEKLY_PLAYLIST_NAME = config.get('Trakt', 'weekly-movie-name')
+TRAKT_POPULAR_PLAYLIST_NAME = config.get('Trakt', 'popular-movie-name')
+TRAKT_NUM_SHOWS = config.get('Trakt', 'tv-total')
+TRAKT_WEEKLY_SHOW_PLAYLIST_NAME = config.get('Trakt', 'weekly-tv-name')
+TRAKT_POPULAR_SHOW_PLAYLIST_NAME = config.get('Trakt', 'popular-tv-name')
+IMDB_CHART_URL = config.get('IMDb', 'chart-url')
+IMDB_SEARCH_URL = ''.join([config.get('IMDb', 'search-url'),'&count=',config.get('IMDb', 'search-total')])
+IMDB_PLAYLIST_NAME = config.get('IMDb', 'playlist-name')
+IMDB_SEARCH_NAME = config.get('IMDb', 'search-list-name')
 
 ####### CODE HERE (Nothing to change) ############
 
@@ -269,6 +262,14 @@ def imdb_top_imdb_id_list(list_url):
 
     return top_250_ids
 
+def imdb_search_list(search_url):
+     # Get the IMDB Search list
+     print("Retrieving the IMDB Search list...")
+     tree = parse(search_url)
+     search_ids = tree.xpath("//img[@class='loadlate']/@data-tconst")
+
+     return search_ids
+
 def run_movies_lists(plex):
     # Get list of movies from the Plex server
     print("Retrieving a list of movies from the '{library}' library in Plex...".format(library=MOVIE_LIBRARY_NAME))
@@ -290,7 +291,9 @@ def run_movies_lists(plex):
         print("No Trakt API key, skipping lists")
 
     imdb_top_movies_ids = imdb_top_imdb_id_list(IMDB_CHART_URL)
+    imdb_search_movies_ids = imdb_search_list(IMDB_SEARCH_URL)
     setup_movie_playlist(plex, imdb_top_movies_ids, all_movies, IMDB_PLAYLIST_NAME)
+    setup_movie_playlist(plex, imdb_search_movies_ids, all_movies, IMDB_SEARCH_NAME)
 
 def run_show_lists(plex):
     # Get list of shows from the Plex server
@@ -344,6 +347,7 @@ def list_updater():
         list_remover(plex, TRAKT_WEEKLY_SHOW_PLAYLIST_NAME)
         list_remover(plex, TRAKT_POPULAR_SHOW_PLAYLIST_NAME)
         list_remover(plex, IMDB_PLAYLIST_NAME)
+	list_remover(plex, IMDB_SEARCH_NAME)
     else:
         run_movies_lists(plex)
         run_show_lists(plex)
