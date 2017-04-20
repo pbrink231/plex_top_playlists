@@ -12,7 +12,7 @@ remove: False
 # Choices True, False -- Caps matter, (if True, syncs all or list, if false, only token user)
 shared: False
 # (keep blank for all users, comma list for specific users.) EX ['username','anotheruser'], SYNC_WITH_SHARED_USERS must be True.
-users: []
+users: 
 
 [Trakt]
 ### Trakt API Info ###

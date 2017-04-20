@@ -45,8 +45,6 @@ TRAKT_WEEKLY_SHOW_PLAYLIST_NAME = config.get('Trakt', 'weekly-tv-name')
 TRAKT_POPULAR_SHOW_PLAYLIST_NAME = config.get('Trakt', 'popular-tv-name')
 IMDB_CHART_URL = config.get('IMDb', 'chart-url')
 IMDB_PLAYLIST_NAME = config.get('IMDb', 'playlist-name')
-print("PLEX_URL: {}".format(PLEX_URL))
-print("PLEX_TOKEN: {}".format(PLEX_TOKEN))
 
 ####### CODE HERE (Nothing to change) ############
 
