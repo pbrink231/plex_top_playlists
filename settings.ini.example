@@ -35,4 +35,8 @@ popular-tv-name: Show Popular
 ### New IMDB Top 250 library details ###
 chart-url: http://www.imdb.com/chart/top
 playlist-name: Movies All Time
+search-url: http://www.imdb.com/search/title?groups=oscar_best_picture_winners&sort=year,desc&view=simple
+# max is 250
+search-total: 100
+search-list-name: Best Picture Winners
 

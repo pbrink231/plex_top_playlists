@@ -44,9 +44,9 @@ TRAKT_NUM_SHOWS = config.get('Trakt', 'tv-total')
 TRAKT_WEEKLY_SHOW_PLAYLIST_NAME = config.get('Trakt', 'weekly-tv-name')
 TRAKT_POPULAR_SHOW_PLAYLIST_NAME = config.get('Trakt', 'popular-tv-name')
 IMDB_CHART_URL = config.get('IMDb', 'chart-url')
+IMDB_SEARCH_URL = ''.join([config.get('IMDb', 'search-url'),'&count=',config.get('IMDb', 'search-total')])
 IMDB_PLAYLIST_NAME = config.get('IMDb', 'playlist-name')
-print("PLEX_URL: {}".format(PLEX_URL))
-print("PLEX_TOKEN: {}".format(PLEX_TOKEN))
+IMDB_SEARCH_NAME = config.get('IMDb', 'search-list-name')
 
 ####### CODE HERE (Nothing to change) ############
 
@@ -82,6 +82,7 @@ def loop_plex_users(plex, list, playlist_name):
 
     #update list for shared users
     if SYNC_WITH_SHARED_USERS:
+	print("DEBUG Shared: {}".format(SYNC_WITH_SHARED_USERS))
         plex_users = get_user_tokens(plex.machineIdentifier)
         for user in plex_users:
             if not ALLOW_SYNCED_USERS or user in ALLOW_SYNCED_USERS:
@@ -262,6 +263,14 @@ def imdb_top_imdb_id_list(list_url):
 
     return top_250_ids
 
+def imdb_search_list(search_url):
+     # Get the IMDB Search list
+     print("Retrieving the IMDB Search list...")
+     tree = parse(search_url)
+     search_ids = tree.xpath("//img[@class='loadlate']/@data-tconst")
+
+     return search_ids
+
 def run_movies_lists(plex):
     # Get list of movies from the Plex server
     print("Retrieving a list of movies from the '{library}' library in Plex...".format(library=MOVIE_LIBRARY_NAME))
@@ -283,7 +292,9 @@ def run_movies_lists(plex):
         print("No Trakt API key, skipping lists")
 
     imdb_top_movies_ids = imdb_top_imdb_id_list(IMDB_CHART_URL)
+    imdb_search_movies_ids = imdb_search_list(IMDB_SEARCH_URL)
     setup_movie_playlist(plex, imdb_top_movies_ids, all_movies, IMDB_PLAYLIST_NAME)
+    setup_movie_playlist(plex, imdb_search_movies_ids, all_movies, IMDB_SEARCH_NAME)
 
 def run_show_lists(plex):
     # Get list of shows from the Plex server
@@ -332,6 +343,7 @@ def list_updater():
         return [], 0
 
     if REMOVE_ONLY:
+	print("DEBUG Remote: {}".format(REMOVE_ONLY))
         list_remover(plex, TRAKT_WEEKLY_PLAYLIST_NAME)
         list_remover(plex, TRAKT_POPULAR_PLAYLIST_NAME)
         list_remover(plex, TRAKT_WEEKLY_SHOW_PLAYLIST_NAME)
