@@ -82,7 +82,6 @@ def loop_plex_users(plex, list, playlist_name):
 
     #update list for shared users
     if SYNC_WITH_SHARED_USERS:
-	print("DEBUG Shared: {}".format(SYNC_WITH_SHARED_USERS))
         plex_users = get_user_tokens(plex.machineIdentifier)
         for user in plex_users:
             if not ALLOW_SYNCED_USERS or user in ALLOW_SYNCED_USERS:
@@ -343,7 +342,6 @@ def list_updater():
         return [], 0
 
     if REMOVE_ONLY:
-	print("DEBUG Remote: {}".format(REMOVE_ONLY))
         list_remover(plex, TRAKT_WEEKLY_PLAYLIST_NAME)
         list_remover(plex, TRAKT_POPULAR_PLAYLIST_NAME)
         list_remover(plex, TRAKT_WEEKLY_SHOW_PLAYLIST_NAME)
