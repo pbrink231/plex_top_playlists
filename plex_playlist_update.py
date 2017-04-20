@@ -18,11 +18,16 @@ import requests
 import subprocess
 import time
 import xmltodict
+
 from lxml.html import parse
 from plexapi.server import PlexServer
 from plexapi.utils import NA
 
 from urllib2 import Request, urlopen
+
+with open("config.json", 'r') as f:
+    settings = json.load(f)
+
 
 ### Plex server details ###
 PLEX_URL = 'http://localhost:32400'
