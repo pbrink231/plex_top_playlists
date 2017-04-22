@@ -84,7 +84,8 @@ cd /usr/scripts
 ```
 
 ```bash
-nano plex_playlist_update.py
+cp settings.ini.example settings.ini
+nano settings.ini
 ```
 
 Copy conetents from the plex_playlist_update.py file into your new file

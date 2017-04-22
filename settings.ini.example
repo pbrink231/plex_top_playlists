@@ -1,0 +1,44 @@
+[Plex]
+### Plex server details ###
+plex-host: http://localhost:32400
+# This is required.  Check github instructions how to find it
+plex-token: 
+### Current library info ###
+movie-library: Movies
+tv-library: Shows
+# Set to True to remove playlists only,  This will not grab lists.  It will remove all playlists from variables below.  Easy way to undo
+remove: False
+# Share playlist with other user?
+# Choices True, False -- Caps matter, (if True, syncs all or list, if false, only token user)
+shared: False
+# (keep blank for all users, comma list for specific users.) EX ['username','anotheruser'], SYNC_WITH_SHARED_USERS must be True.
+users: []
+
+[Trakt]
+### Trakt API Info ###
+# This is required.  Without it you will not get any Trakt playlists
+api-key: 
+
+### Trakt Movie Playlist info ###
+# max is 100
+movie-total: 80 
+weekly-movie-name: Movies Top Weekly
+popular-movie-name: Movies Popular
+
+### Trakt Show Playlist info ###
+# max is ?
+tv-total: 20 
+weekly-tv-name: Show Top Weekly
+popular-tv-name: Show Popular
+
+[IMDb]
+### New IMDB Top 250 library details ###
+chart-url: http://www.imdb.com/chart/top
+playlist-name: Movies All Time
+search-url: http://www.imdb.com/search/title?groups=oscar_best_picture_winners&sort=year,desc&view=simple
+# max is 250
+search-total: 100
+search-list-name: Best Picture Winners
+list-url: http://www.imdb.com/list/ls069751712/
+list-name: Star Wars Machete Order
+
