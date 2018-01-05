@@ -115,8 +115,8 @@ def setup_show_playlist(plex, tvdb_ids, plex_shows, playlist_name):
                 matching_episode_ids.append(tvdb_id)
 
         missing_episode_ids = list(set(tvdb_ids) - set(matching_episode_ids))
-        print("I found {match_len} of your episode IDs that matched the TVDB IDs top {tvdb_len} list".format(match_len=len(matching_episode_ids), imdb_len=len(tvdb_ids)))
-        print("That means you are missing {missing_len} of the TVDB IDs top {tvdb_len} list".format(missing_len=len(missing_episode_ids), imdb_len=len(tvdb_ids)))
+        print("I found {match_len} of your episode IDs that matched the TVDB IDs top {tvdb_len} list".format(match_len=len(matching_episode_ids), tvdb_len=len(tvdb_ids)))
+        print("That means you are missing {missing_len} of the TVDB IDs top {tvdb_len} list".format(missing_len=len(missing_episode_ids), tvdb_len=len(tvdb_ids)))
         if len(missing_episode_ids) > 0:
             print("The TVDB IDs are listed below .. You can copy/paste this info and put into sonarr ..")
             for tvdb_id in missing_episode_ids:
