@@ -383,6 +383,11 @@ def list_remover(plex, playlist_name):
                 user_token = plex_users[user]
                 user_plex = PlexServer(PLEX_URL, user_token)
                 remove_playlist(user_plex, playlist_name)
+            else:
+                print "{}: NOT removing playlist for user {}".format(
+                    playlist_name,
+                    user
+                )
     else:
         print("Skipping removal from shared users")
 
