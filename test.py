@@ -1,9 +1,15 @@
 #!/usr/bin/python
 
-USERS = []
-NOT_USERS = [
-    "frank"
-]
+import json
+import os
+import ConfigParser
+
+config_file_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'test.ini')
+config = ConfigParser.SafeConfigParser()
+config.read(config_file_path)
+
+USERS = json.loads(config.get('Plex', 'users'))
+NOT_USERS = json.loads(config.get('Plex', 'not_users'))
 
 def not_user(user):
     if (not USERS or user in USERS) and user not in NOT_USERS:
