@@ -287,10 +287,12 @@ def run_movies_lists(plex):
 
     # loop movie lib array
     for lib in movie_libs:
+        lib = lib.strip()
         print("Retrieving a list of movies from the '{library}' library in Plex...".format(library=lib))
         try:
             movie_library = plex.library.section(lib)
             all_movies = movie_library.all()
+            print("all movies obj type: {type}").format(type=type(all_movies))
         except:
             print("The '{library}' library does not exist in Plex.".format(library=lib))
             print("Exiting script.")
