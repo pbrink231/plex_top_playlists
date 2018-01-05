@@ -401,12 +401,11 @@ def list_updater():
         list_remover(plex, TRAKT_WEEKLY_SHOW_PLAYLIST_NAME)
         list_remover(plex, TRAKT_POPULAR_SHOW_PLAYLIST_NAME)
         list_remover(plex, IMDB_PLAYLIST_NAME)
-	list_remover(plex, IMDB_SEARCH_NAME)
-	list_remover(plex, IMDB_CUSTOM_LIST)
+        list_remover(plex, IMDB_SEARCH_NAME)
+        list_remover(plex, IMDB_CUSTOM_LIST)
     else:
         run_movies_lists(plex)
         run_show_lists(plex)
-
 
 if __name__ == "__main__":
     print("===================================================================")
