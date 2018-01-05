@@ -148,6 +148,11 @@ def setup_movie_playlist(plex, imdb_ids, plex_movies, playlist_name):
         missing_imdb_ids = list(set(imdb_ids) - set(matching_movie_ids))
         print("I found {match_len} of your movie IDs that matched the IMDB IDs top {imdb_len} list".format(match_len=len(matching_movie_ids), imdb_len=len(imdb_ids)))
         print("That means you are missing {missing_len} of the IMDB IDs top {imdb_len} list".format(missing_len=len(missing_imdb_ids), imdb_len=len(imdb_ids)))
+        if len(missing_imdb_ids) > 0:
+            print("They are:")
+            for imdb_id in missing_imdb_ids:
+                print("IMDB ID: {}".format(imdb_id))
+
         print("{}: Sorting list in correct order".format(playlist_name))
 
         for imdb_id in imdb_ids:
