@@ -6,8 +6,8 @@ plex-token:
 ### [REQUIRED] Current library info - Change defaults to match your current librarys ###
 # supports multiple libs, if separate by comma, no spaces
 # e.g.: movie-library: Adult Movies,Kid Movies
+# e.g.: tv-library: Adult TV,Kid TV
 movie-library: Movies
-
 tv-library: Shows
 
 ### [OPTIONS] Change to have it work how you want ###
