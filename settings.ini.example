@@ -18,9 +18,14 @@ remove: False
 # Choices True, False -- Caps matter, (if True, syncs all or list, if false, only token user)
 shared: False
 
-# (keep blank for all users, comma list for specific users.) EX ['username','anotheruser'], $shared must be True.
+# (keep empty list for all users, comma list for specific users.)
+# EX: ["username","anotheruser"] << notice the use of double-quotes
+# $shared must be True.
 users: []
-# (keep blank to allow all users, comma list for specific users to block.) EX ['greg','luiz'], $shared must be True.
+
+# (keep empty list to allow all users, comma list for specific users to block.)
+# EX ["greg","luiz"] << notice the use of double-quotes
+# $shared must be True.
 not_users: []
 
 [Trakt]
