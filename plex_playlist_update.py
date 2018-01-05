@@ -382,6 +382,10 @@ def list_remover(plex, playlist_name):
                 len(ALLOW_SYNCED_USERS)
             )
 
+            print "ALLOW_SYNCED_USERS vals: {}".format(
+                ALLOW_SYNCED_USERS.join(",")
+            )
+
             if (not ALLOW_SYNCED_USERS):
                 print "this should work if len: 0"
 
