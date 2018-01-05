@@ -282,30 +282,35 @@ def imdb_custom_list(custom_url):
 
 def run_movies_lists(plex):
     # Get list of movies from the Plex server
-    print("Retrieving a list of movies from the '{library}' library in Plex...".format(library=MOVIE_LIBRARY_NAME))
-    try:
-        movie_library = plex.library.section(MOVIE_LIBRARY_NAME)
-        all_movies = movie_library.all()
-    except:
-        print("The '{library}' library does not exist in Plex.".format(library=MOVIE_LIBRARY_NAME))
-        print("Exiting script.")
-        return [], 0
+    # split into array
+    movie_libs = MOVIE_LIBRARY_NAME.split(",")
 
-    print("Retrieving new lists")
-    if TRAKT_API_KEY:
-        trakt_weekly_imdb_ids = trakt_watched_imdb_id_list()
-        trakt_popular_imdb_ids = trakt_popular_imdb_id_list()
-        setup_movie_playlist(plex, trakt_weekly_imdb_ids, all_movies, TRAKT_WEEKLY_PLAYLIST_NAME)
-        setup_movie_playlist(plex, trakt_popular_imdb_ids, all_movies, TRAKT_POPULAR_PLAYLIST_NAME)
-    else:
-        print("No Trakt API key, skipping lists")
+    # loop movie lib array
+    for lib in movie_libs:
+        print("Retrieving a list of movies from the '{library}' library in Plex...".format(library=lib))
+        try:
+            movie_library = plex.library.section(lib)
+            all_movies = movie_library.all()
+        except:
+            print("The '{library}' library does not exist in Plex.".format(library=lib))
+            print("Exiting script.")
+            return [], 0
 
-    imdb_top_movies_ids = imdb_top_imdb_id_list(IMDB_CHART_URL)
-    imdb_search_movies_ids = imdb_search_list(IMDB_SEARCH_URL)
-    imdb_custom_movies_ids = imdb_custom_list(IMDB_CUSTOM_URL)
-    setup_movie_playlist(plex, imdb_top_movies_ids, all_movies, IMDB_PLAYLIST_NAME)
-    setup_movie_playlist(plex, imdb_search_movies_ids, all_movies, IMDB_SEARCH_NAME)
-    setup_movie_playlist(plex, imdb_custom_movies_ids, all_movies, IMDB_CUSTOM_LIST)
+        print("Retrieving new lists")
+        if TRAKT_API_KEY:
+            trakt_weekly_imdb_ids = trakt_watched_imdb_id_list()
+            trakt_popular_imdb_ids = trakt_popular_imdb_id_list()
+            setup_movie_playlist(plex, trakt_weekly_imdb_ids, all_movies, TRAKT_WEEKLY_PLAYLIST_NAME)
+            setup_movie_playlist(plex, trakt_popular_imdb_ids, all_movies, TRAKT_POPULAR_PLAYLIST_NAME)
+        else:
+            print("No Trakt API key, skipping lists")
+
+        imdb_top_movies_ids = imdb_top_imdb_id_list(IMDB_CHART_URL)
+        imdb_search_movies_ids = imdb_search_list(IMDB_SEARCH_URL)
+        imdb_custom_movies_ids = imdb_custom_list(IMDB_CUSTOM_URL)
+        setup_movie_playlist(plex, imdb_top_movies_ids, all_movies, IMDB_PLAYLIST_NAME)
+        setup_movie_playlist(plex, imdb_search_movies_ids, all_movies, IMDB_SEARCH_NAME)
+        setup_movie_playlist(plex, imdb_custom_movies_ids, all_movies, IMDB_CUSTOM_LIST)
 
 def run_show_lists(plex):
     # Get list of shows from the Plex server
