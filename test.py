@@ -15,6 +15,11 @@ def not_user(user):
             user
         )
 
+def empty_user():
+    if (not USERS):
+        print "empty user array"
+
 if __name__ == "__main__":
     not_user("greg")
     not_user("frank")
+    empty_user()
