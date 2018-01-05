@@ -133,6 +133,7 @@ def setup_movie_playlist(plex, imdb_ids, plex_movies, playlist_name):
         # Create a list of matching movies
         print("{}: finding matching movies for playlist with count {}".format(playlist_name, len(imdb_ids)))
         matching_movies = []
+        matching_movie_ids = []
         sorted_movies = []
         for movie in plex_movies:
             if movie.guid != NA and 'imdb://' in movie.guid:
@@ -142,7 +143,9 @@ def setup_movie_playlist(plex, imdb_ids, plex_movies, playlist_name):
 
             if imdb_id and imdb_id in imdb_ids:
                 matching_movies.append(movie)
+                matching_movie_ids.append(imdb_id)
 
+        print("I found {length} of your movie IDs that matched the IMDB IDs list".format(length=len(matching_movie_ids)))
         print("{}: Sorting list in correct order".format(playlist_name))
 
         for imdb_id in imdb_ids:
