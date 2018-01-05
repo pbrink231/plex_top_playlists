@@ -293,12 +293,15 @@ def run_movies_lists(plex):
         print("Retrieving a list of movies from the '{library}' library in Plex...".format(library=lib))
         try:
             movie_library = plex.library.section(lib)
-            all_movies = all_movies + movie_library.all()
+            new_movies = movie_library.all()
+            all_movies = all_movies + new_movies
+            print("Added {length} movies to your 'all movies' list from the '{library}' library in Plex...".format(library=lib, length=len(new_movies)))
         except:
             print("The '{library}' library does not exist in Plex.".format(library=lib))
             print("Exiting script.")
             return [], 0
 
+    print("Found {length} movies total in 'all movies' list from Plex...".format(length=len(all_movies)))
     print("Retrieving new lists")
     if TRAKT_API_KEY:
         trakt_weekly_imdb_ids = trakt_watched_imdb_id_list()
