@@ -1,10 +1,13 @@
 [Plex]
 ### [REQUIRED] Plex server details - Github for instructions on token ###
 plex-host: http://localhost:32400
-plex-token: 
+plex-token:
 
 ### [REQUIRED] Current library info - Change defaults to match your current librarys ###
+# supports multiple libs, if separate by comma, no spaces
+# e.g.: movie-library: Adult Movies,Kid Movies
 movie-library: Movies
+
 tv-library: Shows
 
 ### [OPTIONS] Change to have it work how you want ###
@@ -22,17 +25,17 @@ users: []
 [Trakt]
 ### [OPTIONAL] Trakt API Info ###
 # This is REQUIRED for Trakt.  Without it you will not get any Trakt playlists
-api-key: 
+api-key:
 
 ### Trakt Movie Playlist info ###
 # max is 100 - required trakt-api-key above
-movie-total: 80 
+movie-total: 80
 weekly-movie-name: Movies Top Weekly
 popular-movie-name: Movies Popular
 
 ### Trakt Show Playlist info ###
 # max is ? - required trakt-api-key above
-tv-total: 20 
+tv-total: 20
 weekly-tv-name: Show Top Weekly
 popular-tv-name: Show Popular
 
@@ -46,4 +49,3 @@ search-total: 100
 search-list-name: Best Picture Winners
 list-url: http://www.imdb.com/list/ls069751712/
 list-name: Star Wars Machete Order
-
