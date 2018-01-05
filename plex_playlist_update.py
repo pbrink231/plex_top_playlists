@@ -149,9 +149,9 @@ def setup_movie_playlist(plex, imdb_ids, plex_movies, playlist_name):
         print("I found {match_len} of your movie IDs that matched the IMDB IDs top {imdb_len} list".format(match_len=len(matching_movie_ids), imdb_len=len(imdb_ids)))
         print("That means you are missing {missing_len} of the IMDB IDs top {imdb_len} list".format(missing_len=len(missing_imdb_ids), imdb_len=len(imdb_ids)))
         if len(missing_imdb_ids) > 0:
-            print("They are:")
+            print("The IMDB IDs are listed below .. You can copy/paste this info and put into radarr ..")
             for imdb_id in missing_imdb_ids:
-                print("IMDB ID: {}".format(imdb_id))
+                print("imdb: {}".format(imdb_id))
 
         print("{}: Sorting list in correct order".format(playlist_name))
 
