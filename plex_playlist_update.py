@@ -378,6 +378,13 @@ def list_remover(plex, playlist_name):
     if SYNC_WITH_SHARED_USERS:
         plex_users = get_user_tokens(plex.machineIdentifier)
         for user in plex_users:
+            print "length of ALLOW_SYNCED_USERS: {}".format(
+                len(ALLOW_SYNCED_USERS)
+            )
+
+            if (not ALLOW_SYNCED_USERS):
+                print "this should work if len: 0"
+
             if (not ALLOW_SYNCED_USERS or user in ALLOW_SYNCED_USERS):
                 print "{0}: removing playlist for user {1}".format(
                     playlist_name,
