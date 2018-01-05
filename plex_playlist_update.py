@@ -36,8 +36,8 @@ MOVIE_LIBRARY_NAME = config.get('Plex', 'movie-library')
 SHOW_LIBRARY_NAME = config.get('Plex', 'tv-library')
 REMOVE_ONLY = config.getboolean('Plex', 'remove')
 SYNC_WITH_SHARED_USERS = config.getboolean('Plex', 'shared')
-ALLOW_SYNCED_USERS = config.get('Plex', 'users')
-NOT_ALLOW_SYNCED_USERS = config.get('Plex', 'not_users')
+ALLOW_SYNCED_USERS = json.loads(config.get('Plex', 'users'))
+NOT_ALLOW_SYNCED_USERS = json.loads(config.get('Plex', 'not_users'))
 TRAKT_API_KEY = config.get('Trakt', 'api-key')
 TRAKT_NUM_MOVIES = config.get('Trakt', 'movie-total')
 TRAKT_WEEKLY_PLAYLIST_NAME = config.get('Trakt', 'weekly-movie-name')
@@ -385,9 +385,6 @@ def list_remover(plex, playlist_name):
             print "ALLOW_SYNCED_USERS vals: {}".format(
                 ALLOW_SYNCED_USERS.join(",")
             )
-
-            if (not ALLOW_SYNCED_USERS):
-                print "this should work if len: 0"
 
             if (not ALLOW_SYNCED_USERS or user in ALLOW_SYNCED_USERS):
                 print "{0}: removing playlist for user {1}".format(
