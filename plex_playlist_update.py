@@ -207,10 +207,9 @@ def get_matching_movies(imdb_ids, movie_id_dict):
             print "Found matching movie id: {0}".format(
                 imdb_id
             )
-    return {
-        movies: movies,
-        movie_ids: movie_ids
-    }
+    returnme[0] = movies
+    returnme[1] = movie_ids
+    return returnme
 
 def print_missing_imdb_ids(missing_ids):
     if len(missing_ids) > 0:
@@ -226,8 +225,8 @@ def setup_movie_playlist2(plex, imdb_ids, movie_id_dict, playlist_name):
         )
 
         matches = get_matching_movies(imdb_ids, movie_id_dict)
-        matching_movies = matches.movies
-        matching_movie_ids = matches.movie_ids
+        matching_movies = matches[0]
+        matching_movie_ids = matches[1]
 
         missing_imdb_ids = list(set(imdb_ids) - set(matching_movie_ids))
 
