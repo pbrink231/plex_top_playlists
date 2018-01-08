@@ -373,6 +373,7 @@ def run_movies_lists(plex):
     cnt = 0
     for movie in all_movies:
         cnt += 1
+        mid = movie.guid
     print "speed test looping of list"
     log_timer()
 
