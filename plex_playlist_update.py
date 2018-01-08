@@ -12,6 +12,7 @@
 #
 #------------------------------------------------------------------------------
 
+import time
 import json
 import os
 import requests
@@ -148,9 +149,9 @@ def append_movie_id_dict(movie=None, movie_id_dict=None):
     imdb_id = get_imdb_id(movie=movie)
     if imdb_id != None:
         movie_id_dict[imdb_id] = movie
-        print "Appending movie id {0}".format(
-            imdb_id
-        )
+        # print "Appending movie id {0}".format(
+        #     imdb_id
+        # )
     return movie_id_dict
 
 def setup_movie_playlist(plex, imdb_ids, plex_movies, playlist_name):
@@ -164,7 +165,7 @@ def setup_movie_playlist(plex, imdb_ids, plex_movies, playlist_name):
         movie_id_dict = {}
         for movie in plex_movies:
             imdb_id = get_imdb_id(movie=movie)
-            movie_id_dict = append_movie_id_dict(movie=movie, movie_id_dict=movie_id_dict)
+            # movie_id_dict = append_movie_id_dict(movie=movie, movie_id_dict=movie_id_dict)
 
             if imdb_id and imdb_id in imdb_ids:
                 matching_movies.append(movie)
@@ -430,6 +431,8 @@ def list_updater():
         run_show_lists(plex)
 
 if __name__ == "__main__":
+    start_time = time.time()
+
     print("===================================================================")
     print("   Automated Playlist to Plex script   ")
     print("===================================================================\n")
@@ -438,4 +441,5 @@ if __name__ == "__main__":
 
     print("\n===================================================================")
     print("                               Done!                               ")
+    print("--- %s seconds ---" % (time.time() - start_time))
     print("===================================================================\n")
