@@ -396,17 +396,22 @@ def run_movies_lists(plex):
     if TRAKT_API_KEY:
         trakt_weekly_imdb_ids = trakt_watched_imdb_id_list()
         trakt_popular_imdb_ids = trakt_popular_imdb_id_list()
-        setup_movie_playlist(plex, trakt_weekly_imdb_ids, all_movies, TRAKT_WEEKLY_PLAYLIST_NAME)
-        setup_movie_playlist(plex, trakt_popular_imdb_ids, all_movies, TRAKT_POPULAR_PLAYLIST_NAME)
+        # setup_movie_playlist(plex, trakt_weekly_imdb_ids, all_movies, TRAKT_WEEKLY_PLAYLIST_NAME)
+        # setup_movie_playlist(plex, trakt_popular_imdb_ids, all_movies, TRAKT_POPULAR_PLAYLIST_NAME)
+        setup_movie_playlist2(plex, trakt_weekly_imdb_ids, movie_id_dict, TRAKT_WEEKLY_PLAYLIST_NAME)
+        setup_movie_playlist2(plex, trakt_popular_imdb_ids, movie_id_dict, TRAKT_POPULAR_PLAYLIST_NAME)
     else:
         print("No Trakt API key, skipping lists")
 
     imdb_top_movies_ids = imdb_top_imdb_id_list(IMDB_CHART_URL)
     imdb_search_movies_ids = imdb_search_list(IMDB_SEARCH_URL)
     imdb_custom_movies_ids = imdb_custom_list(IMDB_CUSTOM_URL)
-    setup_movie_playlist(plex, imdb_top_movies_ids, all_movies, IMDB_PLAYLIST_NAME)
-    setup_movie_playlist(plex, imdb_search_movies_ids, all_movies, IMDB_SEARCH_NAME)
-    setup_movie_playlist(plex, imdb_custom_movies_ids, all_movies, IMDB_CUSTOM_LIST)
+    # setup_movie_playlist(plex, imdb_top_movies_ids, all_movies, IMDB_PLAYLIST_NAME)
+    # setup_movie_playlist(plex, imdb_search_movies_ids, all_movies, IMDB_SEARCH_NAME)
+    # setup_movie_playlist(plex, imdb_custom_movies_ids, all_movies, IMDB_CUSTOM_LIST)
+    setup_movie_playlist2(plex, imdb_top_movies_ids, movie_id_dict, IMDB_PLAYLIST_NAME)
+    setup_movie_playlist2(plex, imdb_search_movies_ids, movie_id_dict, IMDB_SEARCH_NAME)
+    setup_movie_playlist2(plex, imdb_custom_movies_ids, movie_id_dict, IMDB_CUSTOM_LIST)
 
 def run_show_lists(plex):
     # Get list of shows from the Plex server
