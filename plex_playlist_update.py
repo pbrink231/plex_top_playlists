@@ -110,64 +110,6 @@ def get_tvdb_id(show):
         tvdb_id = last_episode.guid.split('thetvdb://')[1].split('?')[0].split('/')[0]
     return tvdb_id
 
-def append_show_id_dict(show, show_id_dict):
-    tvdb_id = get_tvdb_id(show)
-    if tvdb_id != None:
-        show_id_dict[tvdb_id] = show
-    return show_id_dict
-
-def create_show_id_dict(shows):
-    show_id_dict = {}
-    for show in shows:
-        show_id_dict = append_show_id_dict(show, show_id_dict)
-    return show_id_dict
-
-def get_matching_episodes(tvdb_ids, show_id_dict):
-    episodes = []
-    episode_ids = []
-    for tvdb_id in tvdb_ids:
-        if tvdb_id in show_id_dict:
-            shows.append(show_id_dict[tvdb_id])
-            show_ids.append(tvdb_id)
-    returnme = []
-    returnme.append(shows)
-    returnme.append(show_ids)
-    return returnme
-
-def print_tvdb_info(matching_show_ids, tvdb_ids):
-    missing_tvdb_ids = list(set(tvdb_ids) - set(matching_show_ids))
-    print "I found {0} of your show IDs that matched the TVDB IDs top {1} list".format(
-        len(matching_show_ids),
-        len(tvdb_ids)
-    )
-    print "That means you are missing {0} of the TVDB IDs top {1} list".format(
-        len(missing_tvdb_ids),
-        len(tvdb_ids)
-    )
-    if len(missing_tvdb_ids) > 0:
-        print "The TVDB IDs are listed below .. You can copy/paste this info and put into sonarr .."
-        for tvdb_id in missing_tvdb_ids:
-            print "tvdb: {0}".format(tvdb_id)
-
-def setup_show_playlist2(plex, tvdb_ids, show_id_dict, playlist_name):
-    if tvdb_ids:
-        print "{0}: finding matching shows for playlist with count {1}".format(
-            playlist_name,
-            len(tvdb_ids)
-        )
-
-        matches = get_matching_episodes(tvdb_ids, show_id_dict)
-        matching_shows = matches[0]
-        matching_show_ids = matches[1]
-
-        print_tvdb_info(matching_show_ids, tvdb_ids)
-
-        print("{}: Created show list".format(playlist_name))
-        log_timer()
-        loop_plex_users(plex, matching_shows, playlist_name)
-    else:
-        print "{0}: WARNING - Playlist is empty".format(playlist_name)
-
 def setup_show_playlist(plex, tvdb_ids, plex_shows, playlist_name):
     if tvdb_ids:
         # Create a list of matching shows using last episode
@@ -176,11 +118,7 @@ def setup_show_playlist(plex, tvdb_ids, plex_shows, playlist_name):
         matching_episode_ids = []
         sorted_shows = []
         for show in plex_shows:
-            last_episode = show.episodes()[-1]
-            if last_episode.guid != NA and 'thetvdb://' in last_episode.guid:
-                tvdb_id = last_episode.guid.split('thetvdb://')[1].split('?')[0].split('/')[0]
-            else:
-                tvdb_id = None
+            tvdb_id = get_tvdb_id(show)
 
             if tvdb_id and tvdb_id in tvdb_ids:
                 matching_episodes.append(last_episode)
