@@ -204,6 +204,9 @@ def get_matching_movies(imdb_ids, movie_id_dict):
         if movie_id_dict[imdb_id]:
             movies.append(movie_id_dict[imdb_id])
             movie_ids.append(imdb_id)
+            print "Found matching movie id: {0}".format(
+                imdb_id
+            )
     return {
         movies: movies,
         movie_ids: movie_ids
@@ -216,8 +219,6 @@ def print_missing_imdb_ids(missing_ids):
             print "imdb: {0}".format(imdb_id)
 
 def setup_movie_playlist2(plex, imdb_ids, movie_id_dict, playlist_name):
-    sorted_movies = []
-
     if imdb_ids:
         print "{0}: finding matching movies for playlist with count {1}".format(
             playlist_name,
