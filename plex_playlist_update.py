@@ -367,6 +367,7 @@ def run_movies_lists(plex):
     )
 
     log_timer()
+    print "speed test getting movie IDs only"
     movie_ids = get_movie_ids(all_movies)
     log_timer()
 
