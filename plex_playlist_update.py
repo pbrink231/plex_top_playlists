@@ -403,9 +403,6 @@ def run_show_lists(plex):
     print "Found {0} show total in 'all shows' list from Plex...".format(
         len(all_shows)
     )
-    print "Creating SHOW dictionary based on ID"
-    show_id_dict = create_show_id_dict(all_shows)
-    log_timer()
 
     print("Retrieving new lists")
     if TRAKT_API_KEY:
