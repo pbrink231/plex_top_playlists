@@ -121,7 +121,7 @@ def setup_show_playlist(plex, tvdb_ids, plex_shows, playlist_name):
             tvdb_id = get_tvdb_id(show)
 
             if tvdb_id and tvdb_id in tvdb_ids:
-                matching_episodes.append(last_episode)
+                matching_episodes.append(show.episodes()[-1])
                 matching_episode_ids.append(tvdb_id)
 
         missing_episode_ids = list(set(tvdb_ids) - set(matching_episode_ids))
