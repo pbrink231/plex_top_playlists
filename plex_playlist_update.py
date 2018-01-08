@@ -154,7 +154,10 @@ def append_movie_id_dict(movie=None, movie_id_dict=None):
         # )
     return movie_id_dict
 
-def get_matching_movies(movies=None, movie_ids=None, imdb_ids=None, movie_id_dict=None):
+def get_matching_movies(imdb_ids=None, movie_id_dict=None):
+    movies = []
+    movie_ids = []
+
     for imdb_id in imdb_ids:
         if movie_id_dict[imdb_id]:
             movies.append(movie_id_dict[imdb_id])
@@ -169,16 +172,12 @@ def setup_movie_playlist(plex, imdb_ids, plex_movies, playlist_name):
     if imdb_ids:
         # Create a list of matching movies
         print("{}: finding matching movies for playlist with count {}".format(playlist_name, len(imdb_ids)))
-        matching_movies = []
-        matching_movie_ids = []
         sorted_movies = []
         movie_id_dict = {}
         for movie in plex_movies:
             movie_id_dict = append_movie_id_dict(movie=movie, movie_id_dict=movie_id_dict)
 
         matches = get_matching_movies(
-            movies=matching_movies,
-            movie_ids=matching_movie_ids,
             imdb_ids=imdb_ids,
             movie_id_dict=movie_id_dict)
 
