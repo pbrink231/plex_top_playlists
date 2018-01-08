@@ -207,6 +207,7 @@ def get_matching_movies(imdb_ids, movie_id_dict):
             print "Found matching movie id: {0}".format(
                 imdb_id
             )
+    returnme = []
     returnme[0] = movies
     returnme[1] = movie_ids
     return returnme
