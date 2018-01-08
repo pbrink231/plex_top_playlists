@@ -201,7 +201,7 @@ def get_matching_movies(imdb_ids, movie_id_dict):
     movie_ids = []
 
     for imdb_id in imdb_ids:
-        if movie_id_dict[imdb_id]:
+        if imdb_id in movie_id_dict:
             movies.append(movie_id_dict[imdb_id])
             movie_ids.append(imdb_id)
             print "Found matching movie id: {0}".format(
