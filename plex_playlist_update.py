@@ -124,7 +124,7 @@ def create_show_id_dict(shows):
 
 def get_matching_shows(tvdb_ids, show_id_dict):
     shows = []
-    shows_ids = []
+    show_ids = []
     for tvdb_id in tvdb_ids:
         if tvdb_id in show_id_dict:
             shows.append(show_id_dict[tvdb_id])
