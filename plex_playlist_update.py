@@ -52,8 +52,14 @@ IMDB_PLAYLIST_NAME = config.get('IMDb', 'playlist-name')
 IMDB_SEARCH_NAME = config.get('IMDb', 'search-list-name')
 IMDB_CUSTOM_URL = config.get('IMDb', 'list-url')
 IMDB_CUSTOM_LIST = config.get('IMDb', 'list-name')
+START_TIME = time.time()
 
 ####### CODE HERE (Nothing to change) ############
+
+def log_timer():
+    print ">>> {0} seconds".format(
+        time.time() - START_TIME
+    )
 
 def get_user_tokens(server_id):
     headers = {'Accept': 'application/json', 'X-Plex-Token': PLEX_TOKEN}
@@ -376,6 +382,8 @@ def run_movies_lists(plex):
     movie_libs = MOVIE_LIBRARY_NAME.split(",")
     all_movies = []
 
+    log_timer()
+
     # loop movie lib array
     for lib in movie_libs:
         lib = lib.strip()
@@ -385,6 +393,7 @@ def run_movies_lists(plex):
             new_movies = movie_library.all()
             all_movies = all_movies + new_movies
             print("Added {length} movies to your 'all movies' list from the '{library}' library in Plex...".format(library=lib, length=len(new_movies)))
+            log_timer()
         except:
             print("The '{library}' library does not exist in Plex.".format(library=lib))
             print("Exiting script.")
@@ -392,6 +401,7 @@ def run_movies_lists(plex):
 
     movie_id_dict = create_movie_id_dict(all_movies)
 
+    log_timer()
     print("Found {length} movies total in 'all movies' list from Plex...".format(length=len(all_movies)))
     print("Retrieving new lists")
     if TRAKT_API_KEY:
@@ -400,7 +410,9 @@ def run_movies_lists(plex):
         # setup_movie_playlist(plex, trakt_weekly_imdb_ids, all_movies, TRAKT_WEEKLY_PLAYLIST_NAME)
         # setup_movie_playlist(plex, trakt_popular_imdb_ids, all_movies, TRAKT_POPULAR_PLAYLIST_NAME)
         setup_movie_playlist2(plex, trakt_weekly_imdb_ids, movie_id_dict, TRAKT_WEEKLY_PLAYLIST_NAME)
+        log_timer()
         setup_movie_playlist2(plex, trakt_popular_imdb_ids, movie_id_dict, TRAKT_POPULAR_PLAYLIST_NAME)
+        log_timer()
     else:
         print("No Trakt API key, skipping lists")
 
@@ -411,14 +423,19 @@ def run_movies_lists(plex):
     # setup_movie_playlist(plex, imdb_search_movies_ids, all_movies, IMDB_SEARCH_NAME)
     # setup_movie_playlist(plex, imdb_custom_movies_ids, all_movies, IMDB_CUSTOM_LIST)
     setup_movie_playlist2(plex, imdb_top_movies_ids, movie_id_dict, IMDB_PLAYLIST_NAME)
+    log_timer()
     setup_movie_playlist2(plex, imdb_search_movies_ids, movie_id_dict, IMDB_SEARCH_NAME)
+    log_timer()
     setup_movie_playlist2(plex, imdb_custom_movies_ids, movie_id_dict, IMDB_CUSTOM_LIST)
+    log_timer()
 
 def run_show_lists(plex):
     # Get list of shows from the Plex server
     # split into array
     show_libs = SHOW_LIBRARY_NAME.split(",")
     all_shows = []
+
+    log_timer()
 
     # loop movie lib array
     for lib in show_libs:
@@ -429,6 +446,7 @@ def run_show_lists(plex):
             new_shows = show_library.all()
             all_shows = all_shows + new_shows
             print("Added {length} shows to your 'all shows' list from the '{library}' library in Plex...".format(library=lib, length=len(new_shows)))
+            log_timer()
         except:
             print("The '{library}' library does not exist in Plex.".format(library=lib))
             print("Exiting script.")
@@ -440,7 +458,9 @@ def run_show_lists(plex):
         trakt_weekly_show_imdb_ids = trakt_watched_show_imdb_id_list()
         trakt_popular_show_imdb_ids = trakt_popular_show_imdb_id_list()
         setup_show_playlist(plex, trakt_weekly_show_imdb_ids, all_shows, TRAKT_WEEKLY_SHOW_PLAYLIST_NAME)
+        log_timer()
         setup_show_playlist(plex, trakt_popular_show_imdb_ids, all_shows, TRAKT_POPULAR_SHOW_PLAYLIST_NAME)
+        log_timer()
     else:
         print("No Trakt API key, skipping lists")
 
@@ -491,8 +511,6 @@ def list_updater():
         run_show_lists(plex)
 
 if __name__ == "__main__":
-    start_time = time.time()
-
     print("===================================================================")
     print("   Automated Playlist to Plex script   ")
     print("===================================================================\n")
@@ -501,5 +519,4 @@ if __name__ == "__main__":
 
     print("\n===================================================================")
     print("                               Done!                               ")
-    print("--- %s seconds ---" % (time.time() - start_time))
     print("===================================================================\n")
