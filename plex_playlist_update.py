@@ -122,71 +122,55 @@ def create_show_id_dict(shows):
         show_id_dict = append_show_id_dict(show, show_id_dict)
     return show_id_dict
 
-def setup_show_playlist(plex, tvdb_ids, plex_shows, playlist_name):
-    if tvdb_ids:
-        # Create a list of matching shows using last episode
-        print("{}: finding matching episodes for playlist with count {}".format(playlist_name, len(tvdb_ids)))
-        matching_episodes = []
-        matching_episode_ids = []
-        sorted_shows = []
-        for show in plex_shows:
-            last_episode = show.episodes()[-1]
-            if last_episode.guid != NA and 'thetvdb://' in last_episode.guid:
-                tvdb_id = last_episode.guid.split('thetvdb://')[1].split('?')[0].split('/')[0]
-            else:
-                tvdb_id = None
-
-            if tvdb_id and tvdb_id in tvdb_ids:
-                matching_episodes.append(last_episode)
-                matching_episode_ids.append(tvdb_id)
-
-        missing_episode_ids = list(set(tvdb_ids) - set(matching_episode_ids))
-        print("I found {match_len} of your episode IDs that matched the TVDB IDs top {tvdb_len} list".format(match_len=len(matching_episode_ids), tvdb_len=len(tvdb_ids)))
-        print("That means you are missing {missing_len} of the TVDB IDs top {tvdb_len} list".format(missing_len=len(missing_episode_ids), tvdb_len=len(tvdb_ids)))
-        if len(missing_episode_ids) > 0:
-            print("The TVDB IDs are listed below .. You can copy/paste this info and put into sonarr ..")
-            for tvdb_id in missing_episode_ids:
-                print("tvdb: {}".format(tvdb_id))
-
-        print("{}: Sorting list in correct order".format(playlist_name))
-
-        for tvdb_id in tvdb_ids:
-            for episode in matching_episodes:
-                show_tvdb_id = episode.guid.split('thetvdb://')[1].split('?')[0].split('/')[0]
-                if show_tvdb_id == tvdb_id:
-                    sorted_shows.append(episode)
-                    break;
-
-        print("{}: Created shows list".format(playlist_name))
-
-        loop_plex_users(plex, sorted_shows, playlist_name)
-    else:
-        print('{}: WARNING - Playlist is empty'.format(playlist_name))
-
 def get_matching_shows(tvdb_ids, show_id_dict):
     shows = []
     shows_ids = []
-
     for tvdb_id in tvdb_ids:
         if tvdb_id in show_id_dict:
-            shows.append(show_id_dict[imdb_id])
+            shows.append(show_id_dict[tvdb_id])
             show_ids.append(tvdb_id)
-            print "Found matching show id: {0}".format(
-                tvdb_id
-            )
     returnme = []
     returnme.append(shows)
     returnme.append(show_ids)
     return returnme
 
-def print_missing_tvdb_ids(missing_ids):
-    if len(missing_ids) > 0:
+def print_tvdb_info(matching_show_ids, tvdb_ids):
+    missing_tvdb_ids = list(set(tvdb_ids) - set(matching_show_ids))
+    print "I found {0} of your show IDs that matched the TVDB IDs top {1} list".format(
+        len(matching_show_ids),
+        len(tvdb_ids)
+    )
+    print "That means you are missing {0} of the TVDB IDs top {1} list".format(
+        len(missing_tvdb_ids),
+        len(tvdb_ids)
+    )
+    if len(missing_tvdb_ids) > 0:
         print "The TVDB IDs are listed below .. You can copy/paste this info and put into sonarr .."
-        for tvb_id in missing_ids:
-            print "tvdb: {0}".format(imdb_id)
+        for tvdb_id in missing_tvdb_ids:
+            print "tvdb: {0}".format(tvdb_id)
 
 def setup_show_playlist2(plex, tvdb_ids, show_id_dict, playlist_name):
     if tvdb_ids:
+        print "{0}: finding matching shows for playlist with count {1}".format(
+            playlist_name,
+            len(tvdb_ids)
+        )
+
+        matches = get_matching_shows(tvdb_ids, show_id_dict)
+        matching_shows = matches[0]
+        matching_show_ids = matches[1]
+
+        print_tvdb_info(matching_show_ids, tvdb_ids)
+
+        print("{}: Created show list".format(playlist_name))
+        log_timer()
+        loop_plex_users(plex, matching_shows, playlist_name)
+    else:
+        print "{0}: WARNING - Playlist is empty".format(playlist_name)
+
+def setup_show_playlist(plex, tvdb_ids, plex_shows, playlist_name):
+    if tvdb_ids:
+        # Create a list of matching shows using last episode
         print("{}: finding matching episodes for playlist with count {}".format(playlist_name, len(tvdb_ids)))
         matching_episodes = []
         matching_episode_ids = []
@@ -246,14 +230,10 @@ def create_movie_id_dict(movies):
 def get_matching_movies(imdb_ids, movie_id_dict):
     movies = []
     movie_ids = []
-
     for imdb_id in imdb_ids:
         if imdb_id in movie_id_dict:
             movies.append(movie_id_dict[imdb_id])
             movie_ids.append(imdb_id)
-            # print "Found matching movie id: {0}".format(
-            #     imdb_id
-            # )
     returnme = []
     returnme.append(movies)
     returnme.append(movie_ids)
@@ -291,7 +271,7 @@ def setup_movie_playlist2(plex, imdb_ids, movie_id_dict, playlist_name):
         log_timer()
         loop_plex_users(plex, matching_movies, playlist_name)
     else:
-        print('{}: WARNING - Playlist is empty'.format(playlist_name))
+        print "{0}: WARNING - Playlist is empty".format(playlist_name)
 
 def trakt_watched_imdb_id_list():
     # Get the weekly watched list
@@ -466,9 +446,7 @@ def run_show_lists(plex):
     # split into array
     show_libs = SHOW_LIBRARY_NAME.split(",")
     all_shows = []
-
     log_timer()
-
     # loop movie lib array
     for lib in show_libs:
         lib = lib.strip()
@@ -484,19 +462,23 @@ def run_show_lists(plex):
             print("Exiting script.")
             return [], 0
 
+    print "Found {0} show total in 'all shows' list from Plex...".format(
+        len(all_shows)
+    )
+    print "Creating SHOW dictionary based on ID"
+    show_id_dict = create_show_id_dict(all_shows)
     log_timer()
-    print("Found {length} shows total in 'all shows' list from Plex...".format(length=len(all_shows)))
 
     print("Retrieving new lists")
     if TRAKT_API_KEY:
         trakt_weekly_show_imdb_ids = trakt_watched_show_imdb_id_list()
         trakt_popular_show_imdb_ids = trakt_popular_show_imdb_id_list()
-        setup_show_playlist(plex, trakt_weekly_show_imdb_ids, all_shows, TRAKT_WEEKLY_SHOW_PLAYLIST_NAME)
-        log_timer()
-        setup_show_playlist(plex, trakt_popular_show_imdb_ids, all_shows, TRAKT_POPULAR_SHOW_PLAYLIST_NAME)
-        log_timer()
+        # setup_show_playlist(plex, trakt_weekly_show_imdb_ids, all_shows, TRAKT_WEEKLY_SHOW_PLAYLIST_NAME)
+        # setup_show_playlist(plex, trakt_popular_show_imdb_ids, all_shows, TRAKT_POPULAR_SHOW_PLAYLIST_NAME)
+        setup_show_playlist2(plex, trakt_weekly_show_imdb_ids, show_id_dict, TRAKT_WEEKLY_SHOW_PLAYLIST_NAME)
+        setup_show_playlist2(plex, trakt_popular_show_imdb_ids, show_id_dict, TRAKT_POPULAR_SHOW_PLAYLIST_NAME)
     else:
-        print("No Trakt API key, skipping lists")
+        print "No Trakt API key, skipping lists"
 
 def list_remover(plex, playlist_name):
     #update my list
