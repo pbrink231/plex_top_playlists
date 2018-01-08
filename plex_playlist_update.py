@@ -349,6 +349,8 @@ def run_movies_lists(plex):
     all_movies = []
     log_timer()
 
+    tmp_movie_id_dict = {}
+
     # loop movie lib array
     for lib in movie_libs:
         lib = lib.strip()
@@ -356,6 +358,10 @@ def run_movies_lists(plex):
         try:
             movie_library = plex.library.section(lib)
             new_movies = movie_library.all()
+            for movie in new_movies:
+                imdb_id = get_imdb_id(movie)
+                if imdb_id != None:
+                    tmp_movie_id_dict[imdb_id] = movie
             all_movies = all_movies + new_movies
             print("Added {length} movies to your 'all movies' list from the '{library}' library in Plex...".format(library=lib, length=len(new_movies)))
             log_timer()
