@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 # a python test script
 # -*- coding: utf-8 -*-
