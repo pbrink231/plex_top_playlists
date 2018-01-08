@@ -288,6 +288,7 @@ def setup_movie_playlist2(plex, imdb_ids, movie_id_dict, playlist_name):
         print_imdb_info(matching_movie_ids, imdb_ids)
 
         print("{}: Created movie list".format(playlist_name))
+        log_timer()
         loop_plex_users(plex, matching_movies, playlist_name)
     else:
         print('{}: WARNING - Playlist is empty'.format(playlist_name))
@@ -420,7 +421,6 @@ def run_movies_lists(plex):
     # split into array
     movie_libs = MOVIE_LIBRARY_NAME.split(",")
     all_movies = []
-
     log_timer()
 
     # loop movie lib array
@@ -438,9 +438,9 @@ def run_movies_lists(plex):
             print("Exiting script.")
             return [], 0
 
-    log_timer()
-    print("Found {length} movies total in 'all movies' list from Plex...".format(length=len(all_movies)))
-
+    print "Found {0} movies total in 'all movies' list from Plex...".format(
+        len(all_movies)
+    )
     print "Creating MOVIE dictionary based on ID"
     movie_id_dict = create_movie_id_dict(all_movies)
     log_timer()
@@ -449,27 +449,17 @@ def run_movies_lists(plex):
     if TRAKT_API_KEY:
         trakt_weekly_imdb_ids = trakt_watched_imdb_id_list()
         trakt_popular_imdb_ids = trakt_popular_imdb_id_list()
-        # setup_movie_playlist(plex, trakt_weekly_imdb_ids, all_movies, TRAKT_WEEKLY_PLAYLIST_NAME)
-        # setup_movie_playlist(plex, trakt_popular_imdb_ids, all_movies, TRAKT_POPULAR_PLAYLIST_NAME)
         setup_movie_playlist2(plex, trakt_weekly_imdb_ids, movie_id_dict, TRAKT_WEEKLY_PLAYLIST_NAME)
-        log_timer()
         setup_movie_playlist2(plex, trakt_popular_imdb_ids, movie_id_dict, TRAKT_POPULAR_PLAYLIST_NAME)
-        log_timer()
     else:
         print("No Trakt API key, skipping lists")
 
     imdb_top_movies_ids = imdb_top_imdb_id_list(IMDB_CHART_URL)
     imdb_search_movies_ids = imdb_search_list(IMDB_SEARCH_URL)
     imdb_custom_movies_ids = imdb_custom_list(IMDB_CUSTOM_URL)
-    # setup_movie_playlist(plex, imdb_top_movies_ids, all_movies, IMDB_PLAYLIST_NAME)
-    # setup_movie_playlist(plex, imdb_search_movies_ids, all_movies, IMDB_SEARCH_NAME)
-    # setup_movie_playlist(plex, imdb_custom_movies_ids, all_movies, IMDB_CUSTOM_LIST)
     setup_movie_playlist2(plex, imdb_top_movies_ids, movie_id_dict, IMDB_PLAYLIST_NAME)
-    log_timer()
     setup_movie_playlist2(plex, imdb_search_movies_ids, movie_id_dict, IMDB_SEARCH_NAME)
-    log_timer()
     setup_movie_playlist2(plex, imdb_custom_movies_ids, movie_id_dict, IMDB_CUSTOM_LIST)
-    log_timer()
 
 def run_show_lists(plex):
     # Get list of shows from the Plex server
