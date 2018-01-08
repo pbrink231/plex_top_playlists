@@ -372,6 +372,7 @@ def run_movies_lists(plex):
     for movie in all_movies:
         cnt += 1
     print "speed test looping of list"
+    log_timer()
 
     print "Creating MOVIE dictionary based on ID"
     movie_id_dict = create_movie_id_dict(all_movies)
