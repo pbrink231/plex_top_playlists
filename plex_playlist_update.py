@@ -399,10 +399,13 @@ def run_movies_lists(plex):
             print("Exiting script.")
             return [], 0
 
-    movie_id_dict = create_movie_id_dict(all_movies)
-
     log_timer()
     print("Found {length} movies total in 'all movies' list from Plex...".format(length=len(all_movies)))
+
+    print "Creating MOVIE dictionary based on ID"
+    movie_id_dict = create_movie_id_dict(all_movies)
+    log_timer()
+
     print("Retrieving new lists")
     if TRAKT_API_KEY:
         trakt_weekly_imdb_ids = trakt_watched_imdb_id_list()
@@ -452,7 +455,9 @@ def run_show_lists(plex):
             print("Exiting script.")
             return [], 0
 
+    log_timer()
     print("Found {length} shows total in 'all shows' list from Plex...".format(length=len(all_shows)))
+
     print("Retrieving new lists")
     if TRAKT_API_KEY:
         trakt_weekly_show_imdb_ids = trakt_watched_show_imdb_id_list()
