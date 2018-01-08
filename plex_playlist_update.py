@@ -334,6 +334,12 @@ def imdb_custom_list(custom_url):
 
      return custom_ids
 
+def get_movie_ids(movies):
+    movie_ids = []
+    for movie in movies:
+        movie_ids.append(get_imdb_id(movie))
+    return movie_ids
+
 def run_movies_lists(plex):
     # Get list of movies from the Plex server
     # split into array
@@ -359,6 +365,11 @@ def run_movies_lists(plex):
     print "Found {0} movies total in 'all movies' list from Plex...".format(
         len(all_movies)
     )
+
+    log_timer()
+    movie_ids = get_movie_ids(all_movies)
+    log_timer()
+
     print "Creating MOVIE dictionary based on ID"
     movie_id_dict = create_movie_id_dict(all_movies)
     log_timer()
