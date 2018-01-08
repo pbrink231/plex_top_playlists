@@ -154,6 +154,16 @@ def append_movie_id_dict(movie=None, movie_id_dict=None):
         # )
     return movie_id_dict
 
+def get_matching_movies(movies=None, movie_ids=None, imdb_ids=None, movie_id_dict=None):
+    for imdb_id in imdb_ids:
+        if movie_id_dict[imdb_id]:
+            movies.append(movie_id_dict[imdb_id])
+            movie_ids.append(imdb_id)
+    return {
+        movies: movies,
+        movie_ids: movie_ids
+    }
+
 def setup_movie_playlist(plex, imdb_ids, plex_movies, playlist_name):
     # check that the list is not empty
     if imdb_ids:
@@ -164,12 +174,16 @@ def setup_movie_playlist(plex, imdb_ids, plex_movies, playlist_name):
         sorted_movies = []
         movie_id_dict = {}
         for movie in plex_movies:
-            imdb_id = get_imdb_id(movie=movie)
-            # movie_id_dict = append_movie_id_dict(movie=movie, movie_id_dict=movie_id_dict)
+            movie_id_dict = append_movie_id_dict(movie=movie, movie_id_dict=movie_id_dict)
 
-            if imdb_id and imdb_id in imdb_ids:
-                matching_movies.append(movie)
-                matching_movie_ids.append(imdb_id)
+        matches = get_matching_movies(
+            movies=matching_movies,
+            movie_ids=matching_movie_ids,
+            imdb_ids=imdb_ids,
+            movie_id_dict=movie_id_dict)
+
+        matching_movies = matches.movies
+        matching_movie_ids = matches.movie_ids
 
         missing_imdb_ids = list(set(imdb_ids) - set(matching_movie_ids))
         print("I found {match_len} of your movie IDs that matched the IMDB IDs top {imdb_len} list".format(match_len=len(matching_movie_ids), imdb_len=len(imdb_ids)))
