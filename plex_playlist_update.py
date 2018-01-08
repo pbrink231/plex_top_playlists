@@ -139,19 +139,22 @@ def setup_show_playlist(plex, tvdb_ids, plex_shows, playlist_name):
     else:
         print('{}: WARNING - Playlist is empty'.format(playlist_name))
 
-def get_imdb_id(movie=None):
+def get_imdb_id(movie):
     imdb_id = None
     if movie.guid != NA and 'imdb://' in movie.guid:
         imdb_id = movie.guid.split('imdb://')[1].split('?')[0]
     return imdb_id
 
-def append_movie_id_dict(movie=None, movie_id_dict=None):
-    imdb_id = get_imdb_id(movie=movie)
+def append_movie_id_dict(movie, movie_id_dict):
+    imdb_id = get_imdb_id(movie)
     if imdb_id != None:
         movie_id_dict[imdb_id] = movie
-        # print "Appending movie id {0}".format(
-        #     imdb_id
-        # )
+    return movie_id_dict
+
+def create_movie_id_dict(movies):
+    movie_id_dict = {}
+    for movie in movies:
+        movie_id_dict = append_movie_id_dict(movie, movie_id_dict)
     return movie_id_dict
 
 def setup_movie_playlist(plex, imdb_ids, plex_movies, playlist_name):
@@ -164,8 +167,7 @@ def setup_movie_playlist(plex, imdb_ids, plex_movies, playlist_name):
         sorted_movies = []
         movie_id_dict = {}
         for movie in plex_movies:
-            imdb_id = get_imdb_id(movie=movie)
-            # movie_id_dict = append_movie_id_dict(movie=movie, movie_id_dict=movie_id_dict)
+            imdb_id = get_imdb_id(movie)
 
             if imdb_id and imdb_id in imdb_ids:
                 matching_movies.append(movie)
@@ -336,6 +338,8 @@ def run_movies_lists(plex):
             print("The '{library}' library does not exist in Plex.".format(library=lib))
             print("Exiting script.")
             return [], 0
+
+    movie_id_dict = create_movie_id_dict(all_movies)
 
     print("Found {length} movies total in 'all movies' list from Plex...".format(length=len(all_movies)))
     print("Retrieving new lists")
