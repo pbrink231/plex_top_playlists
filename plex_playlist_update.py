@@ -122,9 +122,9 @@ def create_show_id_dict(shows):
         show_id_dict = append_show_id_dict(show, show_id_dict)
     return show_id_dict
 
-def get_matching_shows(tvdb_ids, show_id_dict):
-    shows = []
-    show_ids = []
+def get_matching_episodes(tvdb_ids, show_id_dict):
+    episodes = []
+    episode_ids = []
     for tvdb_id in tvdb_ids:
         if tvdb_id in show_id_dict:
             shows.append(show_id_dict[tvdb_id])
@@ -156,7 +156,7 @@ def setup_show_playlist2(plex, tvdb_ids, show_id_dict, playlist_name):
             len(tvdb_ids)
         )
 
-        matches = get_matching_shows(tvdb_ids, show_id_dict)
+        matches = get_matching_episodes(tvdb_ids, show_id_dict)
         matching_shows = matches[0]
         matching_show_ids = matches[1]
 
@@ -473,10 +473,10 @@ def run_show_lists(plex):
     if TRAKT_API_KEY:
         trakt_weekly_show_imdb_ids = trakt_watched_show_imdb_id_list()
         trakt_popular_show_imdb_ids = trakt_popular_show_imdb_id_list()
-        # setup_show_playlist(plex, trakt_weekly_show_imdb_ids, all_shows, TRAKT_WEEKLY_SHOW_PLAYLIST_NAME)
-        # setup_show_playlist(plex, trakt_popular_show_imdb_ids, all_shows, TRAKT_POPULAR_SHOW_PLAYLIST_NAME)
-        setup_show_playlist2(plex, trakt_weekly_show_imdb_ids, show_id_dict, TRAKT_WEEKLY_SHOW_PLAYLIST_NAME)
-        setup_show_playlist2(plex, trakt_popular_show_imdb_ids, show_id_dict, TRAKT_POPULAR_SHOW_PLAYLIST_NAME)
+        setup_show_playlist(plex, trakt_weekly_show_imdb_ids, all_shows, TRAKT_WEEKLY_SHOW_PLAYLIST_NAME)
+        setup_show_playlist(plex, trakt_popular_show_imdb_ids, all_shows, TRAKT_POPULAR_SHOW_PLAYLIST_NAME)
+        # setup_show_playlist2(plex, trakt_weekly_show_imdb_ids, show_id_dict, TRAKT_WEEKLY_SHOW_PLAYLIST_NAME)
+        # setup_show_playlist2(plex, trakt_popular_show_imdb_ids, show_id_dict, TRAKT_POPULAR_SHOW_PLAYLIST_NAME)
     else:
         print "No Trakt API key, skipping lists"
 
