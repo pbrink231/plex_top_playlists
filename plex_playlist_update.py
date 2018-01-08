@@ -138,6 +138,21 @@ def setup_show_playlist(plex, tvdb_ids, plex_shows, playlist_name):
     else:
         print('{}: WARNING - Playlist is empty'.format(playlist_name))
 
+def get_imdb_id(movie=None):
+    imdb_id = None
+    if movie.guid != NA and 'imdb://' in movie.guid:
+        imdb_id = movie.guid.split('imdb://')[1].split('?')[0]
+    return imdb_id
+
+def append_movie_id_dict(movie=None, movie_id_dict=None):
+    imdb_id = get_imdb_id(movie=movie)
+    if imdb_id != None:
+        movie_id_dict[imdb_id] = movie
+        print "Appending movie id {0}".format(
+            imdb_id
+        )
+    return movie_id_dict
+
 def setup_movie_playlist(plex, imdb_ids, plex_movies, playlist_name):
     # check that the list is not empty
     if imdb_ids:
@@ -146,11 +161,10 @@ def setup_movie_playlist(plex, imdb_ids, plex_movies, playlist_name):
         matching_movies = []
         matching_movie_ids = []
         sorted_movies = []
+        movie_id_dict = {}
         for movie in plex_movies:
-            if movie.guid != NA and 'imdb://' in movie.guid:
-                imdb_id = movie.guid.split('imdb://')[1].split('?')[0]
-            else:
-                imdb_id = None
+            imdb_id = get_imdb_id(movie=movie)
+            movie_id_dict = append_movie_id_dict(movie=movie, movie_id_dict=movie_id_dict)
 
             if imdb_id and imdb_id in imdb_ids:
                 matching_movies.append(movie)
