@@ -13,6 +13,7 @@
 #------------------------------------------------------------------------------
 
 import time
+import re
 import json
 import os
 import requests
@@ -149,7 +150,7 @@ def setup_show_playlist(plex, tvdb_ids, plex_shows, playlist_name):
 
 def get_imdb_id(movie):
     try:
-        imdb_id = movie.guid.split('imdb://')[1].split('?')[0]
+        imdb_id = "tt" + re.search(r'tt(\d+)\?', movie.guid).group(1)
     except:
         imdb_id = None
     return imdb_id
