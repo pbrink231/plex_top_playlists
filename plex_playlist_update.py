@@ -208,8 +208,8 @@ def get_matching_movies(imdb_ids, movie_id_dict):
                 imdb_id
             )
     returnme = []
-    returnme[0] = movies
-    returnme[1] = movie_ids
+    returnme.append(movies)
+    returnme.append(movie_ids)
     return returnme
 
 def print_missing_imdb_ids(missing_ids):
