@@ -148,9 +148,10 @@ def setup_show_playlist(plex, tvdb_ids, plex_shows, playlist_name):
         print('{}: WARNING - Playlist is empty'.format(playlist_name))
 
 def get_imdb_id(movie):
-    imdb_id = None
-    if movie.guid != NA and 'imdb://' in movie.guid:
+    try:
         imdb_id = movie.guid.split('imdb://')[1].split('?')[0]
+    except:
+        imdb_id = None
     return imdb_id
 
 def append_movie_id_dict(movie, movie_id_dict):
