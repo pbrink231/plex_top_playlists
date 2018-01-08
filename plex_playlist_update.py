@@ -103,10 +103,90 @@ def loop_plex_users(plex, list, playlist_name):
     else:
         print("Skipping adding to shared users")
 
+def get_tvdb_id(show):
+    tvdb_id = None
+    last_episode = show.episodes()[-1]
+    if last_episode.guid != NA and 'thetvdb://' in last_episode.guid:
+        tvdb_id = last_episode.guid.split('thetvdb://')[1].split('?')[0].split('/')[0]
+    return tvdb_id
+
+def append_show_id_dict(show, show_id_dict):
+    tvdb_id = get_tvdb_id(show)
+    if tvdb_id != None:
+        show_id_dict[tvdb_id] = show
+    return show_id_dict
+
+def create_show_id_dict(shows):
+    show_id_dict = {}
+    for show in shows:
+        show_id_dict = append_show_id_dict(show, show_id_dict)
+    return show_id_dict
 
 def setup_show_playlist(plex, tvdb_ids, plex_shows, playlist_name):
     if tvdb_ids:
         # Create a list of matching shows using last episode
+        print("{}: finding matching episodes for playlist with count {}".format(playlist_name, len(tvdb_ids)))
+        matching_episodes = []
+        matching_episode_ids = []
+        sorted_shows = []
+        for show in plex_shows:
+            last_episode = show.episodes()[-1]
+            if last_episode.guid != NA and 'thetvdb://' in last_episode.guid:
+                tvdb_id = last_episode.guid.split('thetvdb://')[1].split('?')[0].split('/')[0]
+            else:
+                tvdb_id = None
+
+            if tvdb_id and tvdb_id in tvdb_ids:
+                matching_episodes.append(last_episode)
+                matching_episode_ids.append(tvdb_id)
+
+        missing_episode_ids = list(set(tvdb_ids) - set(matching_episode_ids))
+        print("I found {match_len} of your episode IDs that matched the TVDB IDs top {tvdb_len} list".format(match_len=len(matching_episode_ids), tvdb_len=len(tvdb_ids)))
+        print("That means you are missing {missing_len} of the TVDB IDs top {tvdb_len} list".format(missing_len=len(missing_episode_ids), tvdb_len=len(tvdb_ids)))
+        if len(missing_episode_ids) > 0:
+            print("The TVDB IDs are listed below .. You can copy/paste this info and put into sonarr ..")
+            for tvdb_id in missing_episode_ids:
+                print("tvdb: {}".format(tvdb_id))
+
+        print("{}: Sorting list in correct order".format(playlist_name))
+
+        for tvdb_id in tvdb_ids:
+            for episode in matching_episodes:
+                show_tvdb_id = episode.guid.split('thetvdb://')[1].split('?')[0].split('/')[0]
+                if show_tvdb_id == tvdb_id:
+                    sorted_shows.append(episode)
+                    break;
+
+        print("{}: Created shows list".format(playlist_name))
+
+        loop_plex_users(plex, sorted_shows, playlist_name)
+    else:
+        print('{}: WARNING - Playlist is empty'.format(playlist_name))
+
+def get_matching_shows(tvdb_ids, show_id_dict):
+    shows = []
+    shows_ids = []
+
+    for tvdb_id in tvdb_ids:
+        if tvdb_id in show_id_dict:
+            shows.append(show_id_dict[imdb_id])
+            show_ids.append(tvdb_id)
+            print "Found matching show id: {0}".format(
+                tvdb_id
+            )
+    returnme = []
+    returnme.append(shows)
+    returnme.append(show_ids)
+    return returnme
+
+def print_missing_tvdb_ids(missing_ids):
+    if len(missing_ids) > 0:
+        print "The TVDB IDs are listed below .. You can copy/paste this info and put into sonarr .."
+        for tvb_id in missing_ids:
+            print "tvdb: {0}".format(imdb_id)
+
+def setup_show_playlist2(plex, tvdb_ids, show_id_dict, playlist_name):
+    if tvdb_ids:
         print("{}: finding matching episodes for playlist with count {}".format(playlist_name, len(tvdb_ids)))
         matching_episodes = []
         matching_episode_ids = []
@@ -163,45 +243,6 @@ def create_movie_id_dict(movies):
         movie_id_dict = append_movie_id_dict(movie, movie_id_dict)
     return movie_id_dict
 
-def setup_movie_playlist(plex, imdb_ids, plex_movies, playlist_name):
-    # check that the list is not empty
-    if imdb_ids:
-        # Create a list of matching movies
-        print("{}: finding matching movies for playlist with count {}".format(playlist_name, len(imdb_ids)))
-        matching_movies = []
-        matching_movie_ids = []
-        sorted_movies = []
-        movie_id_dict = {}
-        for movie in plex_movies:
-            imdb_id = get_imdb_id(movie)
-
-            if imdb_id and imdb_id in imdb_ids:
-                matching_movies.append(movie)
-                matching_movie_ids.append(imdb_id)
-
-        missing_imdb_ids = list(set(imdb_ids) - set(matching_movie_ids))
-        print("I found {match_len} of your movie IDs that matched the IMDB IDs top {imdb_len} list".format(match_len=len(matching_movie_ids), imdb_len=len(imdb_ids)))
-        print("That means you are missing {missing_len} of the IMDB IDs top {imdb_len} list".format(missing_len=len(missing_imdb_ids), imdb_len=len(imdb_ids)))
-        if len(missing_imdb_ids) > 0:
-            print("The IMDB IDs are listed below .. You can copy/paste this info and put into radarr ..")
-            for imdb_id in missing_imdb_ids:
-                print("imdb: {}".format(imdb_id))
-
-        print("{}: Sorting list in correct order".format(playlist_name))
-
-        for imdb_id in imdb_ids:
-            for movie in matching_movies:
-                movie_imdb_id = movie.guid.split('imdb://')[1].split('?')[0]
-                if movie_imdb_id == imdb_id:
-                    sorted_movies.append(movie)
-                    break;
-
-        print("{}: Created movie list".format(playlist_name))
-
-        loop_plex_users(plex, sorted_movies, playlist_name)
-    else:
-        print('{}: WARNING - Playlist is empty'.format(playlist_name))
-
 def get_matching_movies(imdb_ids, movie_id_dict):
     movies = []
     movie_ids = []
@@ -218,10 +259,19 @@ def get_matching_movies(imdb_ids, movie_id_dict):
     returnme.append(movie_ids)
     return returnme
 
-def print_missing_imdb_ids(missing_ids):
-    if len(missing_ids) > 0:
+def print_imdb_info(matching_movie_ids, imdb_ids):
+    missing_imdb_ids = list(set(imdb_ids) - set(matching_movie_ids))
+    print "I found {0} of your movie IDs that matched the IMDB IDs top {1} list".format(
+        len(matching_movie_ids),
+        len(imdb_ids)
+    )
+    print "That means you are missing {0} of the IMDB IDs top {1} list".format(
+        len(missing_imdb_ids),
+        len(imdb_ids)
+    )
+    if len(missing_imdb_ids) > 0:
         print "The IMDB IDs are listed below .. You can copy/paste this info and put into radarr .."
-        for imdb_id in missing_ids:
+        for imdb_id in missing_imdb_ids:
             print "imdb: {0}".format(imdb_id)
 
 def setup_movie_playlist2(plex, imdb_ids, movie_id_dict, playlist_name):
@@ -235,18 +285,7 @@ def setup_movie_playlist2(plex, imdb_ids, movie_id_dict, playlist_name):
         matching_movies = matches[0]
         matching_movie_ids = matches[1]
 
-        missing_imdb_ids = list(set(imdb_ids) - set(matching_movie_ids))
-
-        print("I found {match_len} of your movie IDs that matched the IMDB IDs top {imdb_len} list".format(
-            match_len=len(matching_movie_ids),
-            imdb_len=len(imdb_ids))
-        )
-        print("That means you are missing {missing_len} of the IMDB IDs top {imdb_len} list".format(
-            missing_len=len(missing_imdb_ids),
-            imdb_len=len(imdb_ids))
-        )
-
-        print_missing_imdb_ids(missing_imdb_ids)
+        print_imdb_info(matching_movie_ids, imdb_ids)
 
         print("{}: Created movie list".format(playlist_name))
         loop_plex_users(plex, matching_movies, playlist_name)
