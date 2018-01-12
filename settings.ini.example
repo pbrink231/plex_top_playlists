@@ -28,6 +28,10 @@ users: []
 # $shared must be True.
 not_users: []
 
+### [OPTIONAL] Plex server timeout setting .. default 300secs
+# Uncomment and increase if you are experiencing timeout issues
+# timeout: 300
+
 [Trakt]
 ### [OPTIONAL] Trakt API Info ###
 # This is REQUIRED for Trakt.  Without it you will not get any Trakt playlists
