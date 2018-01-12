@@ -100,7 +100,7 @@ def loop_plex_users(plex, list, playlist_name):
             if (not ALLOW_SYNCED_USERS or user in ALLOW_SYNCED_USERS) and user not in NOT_ALLOW_SYNCED_USERS:
                 print("{}: updating playlist for user {}".format(playlist_name, user))
                 user_token = plex_users[user]
-                user_plex = PlexServer(baseurl=PLEX_URL, token=user_token, timeout=PS_TIMEOUT)
+                user_plex = PlexServer(baseurl=PLEX_URL, token=user_token, timeout=PLEX_TIMEOUT)
                 create_playlists(user_plex, list, playlist_name)
     else:
         print("Skipping adding to shared users")
@@ -446,7 +446,7 @@ def list_remover(plex, playlist_name):
                     user
                 )
                 user_token = plex_users[user]
-                user_plex = PlexServer(baseurl=PLEX_URL, token=user_token, timeout=PS_TIMEOUT)
+                user_plex = PlexServer(baseurl=PLEX_URL, token=user_token, timeout=PLEX_TIMEOUT)
                 remove_playlist(user_plex, playlist_name)
             else:
                 print "{0}: NOT removing playlist for user {1}".format(
@@ -458,7 +458,7 @@ def list_remover(plex, playlist_name):
 
 def list_updater():
     try:
-        plex = PlexServer(baseurl=PLEX_URL, token=PLEX_TOKEN, timeout=PS_TIMEOUT)
+        plex = PlexServer(baseurl=PLEX_URL, token=PLEX_TOKEN, timeout=PLEX_TIMEOUT)
     except:
         print("No Plex server found at: {base_url} or bad plex token code".format(base_url=PLEX_URL))
         print("Exiting script.")
