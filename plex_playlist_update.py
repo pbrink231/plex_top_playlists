@@ -40,7 +40,10 @@ REMOVE_ONLY = config.getboolean('Plex', 'remove')
 SYNC_WITH_SHARED_USERS = config.getboolean('Plex', 'shared')
 ALLOW_SYNCED_USERS = json.loads(config.get('Plex', 'users'))
 NOT_ALLOW_SYNCED_USERS = json.loads(config.get('Plex', 'not_users'))
-PLEX_TIMEOUT = config.get('Plex', 'timeout') if config.get('Plex', 'timeout') else 300
+try:
+    PLEX_TIMEOUT = config.get('Plex', 'timeout')
+except:
+    PLEX_TIMEOUT = 300
 TRAKT_API_KEY = config.get('Trakt', 'api-key')
 TRAKT_NUM_MOVIES = config.get('Trakt', 'movie-total')
 TRAKT_WEEKLY_PLAYLIST_NAME = config.get('Trakt', 'weekly-movie-name')
