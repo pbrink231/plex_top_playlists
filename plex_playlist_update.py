@@ -185,18 +185,27 @@ def get_matching_movies(imdb_ids, movie_id_dict):
 
 def print_imdb_info(matching_movie_ids, imdb_ids):
     missing_imdb_ids = list(set(imdb_ids) - set(matching_movie_ids))
-    print "I found {0} of your movie IDs that matched the IMDB IDs top {1} list".format(
-        len(matching_movie_ids),
-        len(imdb_ids)
+    print """
+    I found {match_ids_len} of your movie IDs that matched
+    the IMDB IDs top {imdb_ids_len} list ..
+    That means you are missing {miss_ids_len} of
+    the IMDB IDs top {imdb_ids_len} list
+    """.format(
+        match_ids_len=len(matching_movie_ids),
+        imdb_ids_len=len(imdb_ids),
+        miss_ids_len=len(missing_imdb_ids)
     )
-    print "That means you are missing {0} of the IMDB IDs top {1} list".format(
-        len(missing_imdb_ids),
-        len(imdb_ids)
-    )
+    print_missing_imdb_info(missing_imdb_ids)
+
+def print_missing_imdb_info(missing_imdb_ids):
     if len(missing_imdb_ids) > 0:
-        print "The IMDB IDs are listed below .. You can copy/paste this info and put into radarr .."
+        print """
+        The IMDB IDs are listed below .. You can
+        copy/paste this info and put into radarr ..
+        """
         for imdb_id in missing_imdb_ids:
             print "imdb: {0}".format(imdb_id)
+        print "\n\n"
 
 def setup_movie_playlist2(plex, imdb_ids, movie_id_dict, playlist_name):
     if imdb_ids:
@@ -211,8 +220,9 @@ def setup_movie_playlist2(plex, imdb_ids, movie_id_dict, playlist_name):
 
         print_imdb_info(matching_movie_ids, imdb_ids)
 
-        print("{}: Created movie list".format(playlist_name))
+        print "{}: Created movie list".format(playlist_name)
         log_timer()
+
         loop_plex_users(plex, matching_movies, playlist_name)
     else:
         print "{0}: WARNING - Playlist is empty".format(playlist_name)
@@ -340,12 +350,6 @@ def imdb_custom_list(custom_url):
 
      return custom_ids
 
-def get_movie_ids(movies):
-    movie_ids = []
-    for movie in movies:
-        movie_ids.append(get_imdb_id(movie))
-    return movie_ids
-
 def run_movies_lists(plex):
     # Get list of movies from the Plex server
     # split into array
@@ -362,10 +366,6 @@ def run_movies_lists(plex):
         try:
             movie_library = plex.library.section(lib)
             new_movies = movie_library.all()
-            # for movie in new_movies:
-            #     imdb_id = get_imdb_id(movie)
-            #     if imdb_id != None:
-            #         tmp_movie_id_dict[imdb_id] = movie
             all_movies = all_movies + new_movies
             print("Added {length} movies to your 'all movies' list from the '{library}' library in Plex...".format(library=lib, length=len(new_movies)))
             log_timer()
@@ -378,7 +378,7 @@ def run_movies_lists(plex):
         len(all_movies)
     )
 
-    print "Creating MOVIE dictionary based on ID"
+    print "Creating movie dictionary based on ID"
     movie_id_dict = create_movie_id_dict(all_movies)
     log_timer()
 
