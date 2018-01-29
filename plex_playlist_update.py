@@ -83,13 +83,18 @@ def remove_playlist(plex, playlist_name):
                 print("ERROR - cannot delete playlist: {}".format(playlist_name))
                 return None
 
-def create_playlists(plex, list, playlist_name):
-    # Remove old playlists
-    #print('{}: Checking if playlist exist to delete if needed'.format(playlist_name))
-    remove_playlist(plex, playlist_name)
-
-    plex.createPlaylist(playlist_name, list)
-    #print("{}: playlist created".format(playlist_name))
+def create_playlists(plex, runlist, playlist_name):
+    try:
+        remove_playlist(plex, playlist_name)
+        plex.createPlaylist(playlist_name, runlist)
+    except:
+        print """
+        ERROR trying to create playlist '{0}' ..
+        The number of movies/shows in the list provided was {1}
+        """.formart(
+            playlist_name,
+            len(runlist)
+        )
 
 def loop_plex_users(plex, list, playlist_name):
     #update my list
