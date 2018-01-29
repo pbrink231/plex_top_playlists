@@ -348,8 +348,7 @@ def imdb_custom_list(custom_url):
      # Get the IMDB Custom list
      print("Retrieving the IMDB Custom list...")
      tree = parse(custom_url)
-     custom_ids = tree.xpath("//div[contains(@class, 'hover-over-image')]/@data-const")
-
+     custom_ids = tree.xpath("//div[contains(@class, 'lister-item-image ribbonize')]/@data-tconst")
      return custom_ids
 
 def imdb_custom_lists(plex, movie_id_dict):

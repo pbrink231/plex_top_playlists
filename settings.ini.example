@@ -63,5 +63,6 @@ search-list-name: Best Picture Winners
 # put new list items on a new line
 # e.g.: "http://www.imdb.com/list/1234567890/,Yoyo Ma"
 custom-lists: [
-    "http://www.imdb.com/list/ls069751712/,Star Wars Machete Order"
+    "http://www.imdb.com/list/ls069751712/,Star Wars Machete Order",
+    "http://www.imdb.com/list/ls021389231/,2018 Oscar Nominees"
   ]
