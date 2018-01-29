@@ -333,7 +333,6 @@ def imdb_search_list(search_url):
 
      return search_ids
 
-#def imdb_top_imdb_id_list(list_url):
 def imdb_chart_list(url):
     tree = parse(url)
     ids = tree.xpath("//table[contains(@class, 'chart')]//td[@class='ratingColumn']/div//@data-titleid")
@@ -478,6 +477,21 @@ def list_remover(plex, playlist_name):
     else:
         print("Skipping removal from shared users")
 
+def remove_lists(plex):
+    for list in IMDB_CUSTOM_LISTS:
+        name = list.split(",")[1]
+        print "Removing IMDB custom playlist '{0}'".format(
+            name
+        )
+        list_remover(plex, name)
+
+    for list in IMDB_CHART_LISTS:
+        name = list.split(",")[1]
+        print "Removing IMDB chart playlist '{0}'".format(
+            name
+        )
+        list_remover(plex, name)
+
 def list_updater():
     try:
         plex = PlexServer(baseurl=PLEX_URL, token=PLEX_TOKEN, timeout=PLEX_TIMEOUT)
@@ -492,9 +506,8 @@ def list_updater():
         list_remover(plex, TRAKT_POPULAR_PLAYLIST_NAME)
         list_remover(plex, TRAKT_WEEKLY_SHOW_PLAYLIST_NAME)
         list_remover(plex, TRAKT_POPULAR_SHOW_PLAYLIST_NAME)
-        list_remover(plex, IMDB_PLAYLIST_NAME)
         list_remover(plex, IMDB_SEARCH_NAME)
-        list_remover(plex, IMDB_CUSTOM_LIST)
+        remove_lists(plex)
     else:
         run_movies_lists(plex)
         run_show_lists(plex)
