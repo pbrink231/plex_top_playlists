@@ -57,5 +57,6 @@ search-url: http://www.imdb.com/search/title?groups=oscar_best_picture_winners&s
 # max is 250
 search-total: 100
 search-list-name: Best Picture Winners
-list-url: http://www.imdb.com/list/ls069751712/
-list-name: Star Wars Machete Order
+custom-lists: [
+  "http://www.imdb.com/list/ls069751712/,Star Wars Machete Order"
+]

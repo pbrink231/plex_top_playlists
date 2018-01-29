@@ -55,8 +55,10 @@ IMDB_CHART_URL = config.get('IMDb', 'chart-url')
 IMDB_SEARCH_URL = ''.join([config.get('IMDb', 'search-url'),'&count=',config.get('IMDb', 'search-total')])
 IMDB_PLAYLIST_NAME = config.get('IMDb', 'playlist-name')
 IMDB_SEARCH_NAME = config.get('IMDb', 'search-list-name')
-IMDB_CUSTOM_URL = config.get('IMDb', 'list-url')
-IMDB_CUSTOM_LIST = config.get('IMDb', 'list-name')
+#IMDB_CUSTOM_URL = config.get('IMDb', 'list-url')
+#IMDB_CUSTOM_LIST = config.get('IMDb', 'list-name')
+#a new one
+IMDB_CUSTOM_LISTS = json.loads(config.get('IMDb', 'custom-lists'))
 START_TIME = time.time()
 
 ####### CODE HERE (Nothing to change) ############
@@ -350,6 +352,18 @@ def imdb_custom_list(custom_url):
 
      return custom_ids
 
+def imdb_custom_lists(plex, movie_id_dict):
+    for list in IMDB_CUSTOM_LISTS:
+        url = list.split(",")[0]
+        name = list.split(",")[1]
+
+        print "Creating IMDB custom playlist '{0}' using URL {1}".format(
+            url,
+            name
+        )
+        movies_ids = imdb_custom_list(url)
+        setup_movie_playlist2(plex, movie_ids, movie_id_dict, name)
+
 def run_movies_lists(plex):
     # Get list of movies from the Plex server
     # split into array
@@ -393,10 +407,11 @@ def run_movies_lists(plex):
 
     imdb_top_movies_ids = imdb_top_imdb_id_list(IMDB_CHART_URL)
     imdb_search_movies_ids = imdb_search_list(IMDB_SEARCH_URL)
-    imdb_custom_movies_ids = imdb_custom_list(IMDB_CUSTOM_URL)
+    # imdb_custom_movies_ids = imdb_custom_list(IMDB_CUSTOM_URL)
     setup_movie_playlist2(plex, imdb_top_movies_ids, movie_id_dict, IMDB_PLAYLIST_NAME)
     setup_movie_playlist2(plex, imdb_search_movies_ids, movie_id_dict, IMDB_SEARCH_NAME)
-    setup_movie_playlist2(plex, imdb_custom_movies_ids, movie_id_dict, IMDB_CUSTOM_LIST)
+    # setup_movie_playlist2(plex, imdb_custom_movies_ids, movie_id_dict, IMDB_CUSTOM_LIST)
+    imdb_custom_lists(plex, movie_id_dict)
 
 def run_show_lists(plex):
     # Get list of shows from the Plex server
