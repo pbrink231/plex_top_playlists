@@ -358,8 +358,8 @@ def imdb_custom_lists(plex, movie_id_dict):
         name = list.split(",")[1]
 
         print "Creating IMDB custom playlist '{0}' using URL {1}".format(
-            url,
-            name
+            name,
+            url
         )
         movie_ids = imdb_custom_list(url)
         setup_movie_playlist2(plex, movie_ids, movie_id_dict, name)
