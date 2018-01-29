@@ -507,6 +507,7 @@ def list_updater():
         list_remover(plex, TRAKT_WEEKLY_SHOW_PLAYLIST_NAME)
         list_remover(plex, TRAKT_POPULAR_SHOW_PLAYLIST_NAME)
         list_remover(plex, IMDB_SEARCH_NAME)
+        list_remover(plex, 'Movies All Time')
         remove_lists(plex)
     else:
         run_movies_lists(plex)
