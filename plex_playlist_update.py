@@ -91,7 +91,7 @@ def create_playlists(plex, runlist, playlist_name):
         print """
         ERROR trying to create playlist '{0}' ..
         The number of movies/shows in the list provided was {1}
-        """.formart(
+        """.format(
             playlist_name,
             len(runlist)
         )
