@@ -51,13 +51,10 @@ TRAKT_POPULAR_PLAYLIST_NAME = config.get('Trakt', 'popular-movie-name')
 TRAKT_NUM_SHOWS = config.get('Trakt', 'tv-total')
 TRAKT_WEEKLY_SHOW_PLAYLIST_NAME = config.get('Trakt', 'weekly-tv-name')
 TRAKT_POPULAR_SHOW_PLAYLIST_NAME = config.get('Trakt', 'popular-tv-name')
-IMDB_CHART_URL = config.get('IMDb', 'chart-url')
 IMDB_SEARCH_URL = ''.join([config.get('IMDb', 'search-url'),'&count=',config.get('IMDb', 'search-total')])
-IMDB_PLAYLIST_NAME = config.get('IMDb', 'playlist-name')
 IMDB_SEARCH_NAME = config.get('IMDb', 'search-list-name')
-#IMDB_CUSTOM_URL = config.get('IMDb', 'list-url')
-#IMDB_CUSTOM_LIST = config.get('IMDb', 'list-name')
-#a new one
+# these are the new lists
+IMDB_CHART_LISTS = son.loads(config.get('IMDb', 'chart-lists'))
 IMDB_CUSTOM_LISTS = json.loads(config.get('IMDb', 'custom-lists'))
 START_TIME = time.time()
 
@@ -328,14 +325,6 @@ def trakt_popular_show_imdb_id_list():
 
     return tvdb_ids
 
-def imdb_top_imdb_id_list(list_url):
-    # Get the IMDB Top 250 list
-    print("Retrieving the IMDB Top 250 list...")
-    tree = parse(list_url)
-    top_250_ids = tree.xpath("//table[contains(@class, 'chart')]//td[@class='ratingColumn']/div//@data-titleid")
-
-    return top_250_ids
-
 def imdb_search_list(search_url):
      # Get the IMDB Search list
      print("Retrieving the IMDB Search list...")
@@ -344,12 +333,29 @@ def imdb_search_list(search_url):
 
      return search_ids
 
-def imdb_custom_list(custom_url):
-     # Get the IMDB Custom list
-     print("Retrieving the IMDB Custom list...")
-     tree = parse(custom_url)
-     custom_ids = tree.xpath("//div[contains(@class, 'lister-item-image ribbonize')]/@data-tconst")
-     return custom_ids
+#def imdb_top_imdb_id_list(list_url):
+def imdb_chart_list(url):
+    tree = parse(url)
+    ids = tree.xpath("//table[contains(@class, 'chart')]//td[@class='ratingColumn']/div//@data-titleid")
+    return ids
+
+def imdb_chart_lists(plex, movie_id_dict):
+    for list in IMDB_CHART_LISTS:
+        url = list.split(",")[0]
+        name = list.split(",")[1]
+
+        print "Creating IMDB chart playlist '{0}' using URL {1}".format(
+            name,
+            url
+        )
+
+        ids = imdb_chart_list(url)
+        setup_movie_playlist2(plex, ids, movie_id_dict, name)
+
+def imdb_custom_list(url):
+    tree = parse(url)
+    ids = tree.xpath("//div[contains(@class, 'lister-item-image ribbonize')]/@data-tconst")
+    return ids
 
 def imdb_custom_lists(plex, movie_id_dict):
     for list in IMDB_CUSTOM_LISTS:
@@ -360,8 +366,9 @@ def imdb_custom_lists(plex, movie_id_dict):
             name,
             url
         )
-        movie_ids = imdb_custom_list(url)
-        setup_movie_playlist2(plex, movie_ids, movie_id_dict, name)
+
+        ids = imdb_custom_list(url)
+        setup_movie_playlist2(plex, ids, movie_id_dict, name)
 
 def run_movies_lists(plex):
     # Get list of movies from the Plex server
@@ -404,12 +411,10 @@ def run_movies_lists(plex):
     else:
         print("No Trakt API key, skipping lists")
 
-    imdb_top_movies_ids = imdb_top_imdb_id_list(IMDB_CHART_URL)
     imdb_search_movies_ids = imdb_search_list(IMDB_SEARCH_URL)
-    # imdb_custom_movies_ids = imdb_custom_list(IMDB_CUSTOM_URL)
-    setup_movie_playlist2(plex, imdb_top_movies_ids, movie_id_dict, IMDB_PLAYLIST_NAME)
     setup_movie_playlist2(plex, imdb_search_movies_ids, movie_id_dict, IMDB_SEARCH_NAME)
-    # setup_movie_playlist2(plex, imdb_custom_movies_ids, movie_id_dict, IMDB_CUSTOM_LIST)
+
+    imdb_chart_lists(plex, movie_id_dict)
     imdb_custom_lists(plex, movie_id_dict)
 
 def run_show_lists(plex):
