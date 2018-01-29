@@ -354,7 +354,7 @@ def imdb_chart_lists(plex, movie_id_dict):
         )
 
         ids = imdb_chart_list(url)
-        setup_movie_playlist2(plex, ids, movie_id_dict, name)
+        setup_movie_playlist2(plex, ids, movie_id_dict, "IMDB Chart - {0}".format(name))
 
 def imdb_custom_list(url):
     tree = parse(url)
@@ -372,7 +372,7 @@ def imdb_custom_lists(plex, movie_id_dict):
         )
 
         ids = imdb_custom_list(url)
-        setup_movie_playlist2(plex, ids, movie_id_dict, name)
+        setup_movie_playlist2(plex, ids, movie_id_dict, "IMDB Custom List - {0}".format(name))
 
 def run_movies_lists(plex):
     # Get list of movies from the Plex server
@@ -489,6 +489,7 @@ def remove_lists(plex):
             name
         )
         list_remover(plex, name)
+        list_remover(plex, "IMDB Custom List - {0}".format(name))
 
     for list in IMDB_CHART_LISTS:
         name = list.split(",")[1]
@@ -496,6 +497,7 @@ def remove_lists(plex):
             name
         )
         list_remover(plex, name)
+        list_remover(plex, "IMDB Chart - {0}".format(name))
 
 def list_updater():
     try:
