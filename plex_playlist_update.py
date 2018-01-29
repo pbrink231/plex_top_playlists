@@ -530,7 +530,6 @@ def list_updater():
         list_remover(plex, TRAKT_POPULAR_PLAYLIST_NAME)
         list_remover(plex, TRAKT_WEEKLY_SHOW_PLAYLIST_NAME)
         list_remover(plex, TRAKT_POPULAR_SHOW_PLAYLIST_NAME)
-        list_remover(plex, IMDB_SEARCH_NAME)
         list_remover(plex, 'Movies All Time')
         list_remover(plex, 'Best Picture Winners')
         remove_lists(plex)
