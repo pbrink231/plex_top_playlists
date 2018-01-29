@@ -51,8 +51,6 @@ TRAKT_POPULAR_PLAYLIST_NAME = config.get('Trakt', 'popular-movie-name')
 TRAKT_NUM_SHOWS = config.get('Trakt', 'tv-total')
 TRAKT_WEEKLY_SHOW_PLAYLIST_NAME = config.get('Trakt', 'weekly-tv-name')
 TRAKT_POPULAR_SHOW_PLAYLIST_NAME = config.get('Trakt', 'popular-tv-name')
-IMDB_SEARCH_URL = ''.join([config.get('IMDb', 'search-url'),'&count=',config.get('IMDb', 'search-total')])
-IMDB_SEARCH_NAME = config.get('IMDb', 'search-list-name')
 # these are the new lists
 IMDB_SEARCH_LISTS = json.loads(config.get('IMDb', 'search-lists'))
 IMDB_CHART_LISTS = json.loads(config.get('IMDb', 'chart-lists'))

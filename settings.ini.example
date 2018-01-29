@@ -50,11 +50,6 @@ weekly-tv-name: Show Top Weekly
 popular-tv-name: Show Popular
 
 [IMDb]
-search-url: http://www.imdb.com/search/title?groups=oscar_best_picture_winners&sort=year,desc&view=simple
-# max is 250
-search-total: 100
-search-list-name: Best Picture Winners
-
 # this is a LIST of all your fav IMDB search lists
 # wrapped in double quotes, you provide the URL and NAME, separated by a double pipes (||), no spaces
 # put new list items on a new line
