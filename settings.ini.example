@@ -62,7 +62,9 @@ search-list-name: Best Picture Winners
 chart-lists: [
     "http://www.imdb.com/chart/top,Top Rated Movies",
     "http://www.imdb.com/chart/moviemeter,Most Popular Movies",
-    "http://www.imdb.com/chart/boxoffice,Top Box Office"
+    "http://www.imdb.com/chart/boxoffice,Top Box Office",
+    "www.imdb.com/chart/top-english-movies,Top Rated English Movies",
+    "http://www.imdb.com/chart/bottom,Lowest Rated Movies"
   ]
 
 # this is a LIST of all your fav IMDB lists
