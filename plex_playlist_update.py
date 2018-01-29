@@ -361,7 +361,7 @@ def imdb_custom_lists(plex, movie_id_dict):
             url,
             name
         )
-        movies_ids = imdb_custom_list(url)
+        movie_ids = imdb_custom_list(url)
         setup_movie_playlist2(plex, movie_ids, movie_id_dict, name)
 
 def run_movies_lists(plex):
