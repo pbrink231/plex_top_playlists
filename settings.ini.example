@@ -55,10 +55,18 @@ search-url: http://www.imdb.com/search/title?groups=oscar_best_picture_winners&s
 search-total: 100
 search-list-name: Best Picture Winners
 
+# this is a LIST of all your fav IMDB search lists
+# wrapped in double quotes, you provide the URL and NAME, separated by a double pipes (||), no spaces
+# put new list items on a new line
+# e.g.: "http://www.imdb.com/search/title?groups=oscar_best_picture_winners&sort=year,desc&view=simple||Yoyo Ma"
+search-lists: [
+    "http://www.imdb.com/search/title?groups=oscar_best_picture_winners&sort=year,desc&view=simple||Latest Best Picture-Winning Titles"
+  ]
+
 # this is a LIST of all the cool IMDB charts
 # wrapped in double quotes, you provide the URL and NAME, separated by a comma, no spaces
 # put new list items on a new line
-# e.g.: "http://www.imdb.com/list/1234567890/,Yoyo Ma"
+# e.g.: "http://www.imdb.com/chart/top,Yoyo Ma"
 chart-lists: [
     "http://www.imdb.com/chart/top,Top Rated Movies",
     "http://www.imdb.com/chart/moviemeter,Most Popular Movies",

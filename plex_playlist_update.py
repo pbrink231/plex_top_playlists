@@ -54,6 +54,7 @@ TRAKT_POPULAR_SHOW_PLAYLIST_NAME = config.get('Trakt', 'popular-tv-name')
 IMDB_SEARCH_URL = ''.join([config.get('IMDb', 'search-url'),'&count=',config.get('IMDb', 'search-total')])
 IMDB_SEARCH_NAME = config.get('IMDb', 'search-list-name')
 # these are the new lists
+IMDB_SEARCH_LISTS = json.loads(config.get('IMDb', 'search-lists'))
 IMDB_CHART_LISTS = json.loads(config.get('IMDb', 'chart-lists'))
 IMDB_CUSTOM_LISTS = json.loads(config.get('IMDb', 'custom-lists'))
 START_TIME = time.time()
@@ -330,13 +331,23 @@ def trakt_popular_show_imdb_id_list():
 
     return tvdb_ids
 
-def imdb_search_list(search_url):
-     # Get the IMDB Search list
-     print("Retrieving the IMDB Search list...")
-     tree = parse(search_url)
-     search_ids = tree.xpath("//img[@class='loadlate']/@data-tconst")
+def imdb_search_list(url):
+    tree = parse(url)
+    ids = tree.xpath("//img[@class='loadlate']/@data-tconst")
+    return ids
 
-     return search_ids
+def imdb_search_lists(plex, movie_id_dict):
+    for list in IMDB_SEARCH_LISTS:
+        url = list.split("||")[0]
+        name = list.split("||")[1]
+
+        print "Creating IMDB search playlist '{0}' using URL {1}".format(
+            name,
+            url
+        )
+
+        ids = imdb_search_list(url)
+        setup_movie_playlist2(plex, ids, movie_id_dict, "IMDB Search List - {0}".format(name))
 
 def imdb_chart_list(url):
     tree = parse(url)
@@ -415,9 +426,7 @@ def run_movies_lists(plex):
     else:
         print("No Trakt API key, skipping lists")
 
-    imdb_search_movies_ids = imdb_search_list(IMDB_SEARCH_URL)
-    setup_movie_playlist2(plex, imdb_search_movies_ids, movie_id_dict, IMDB_SEARCH_NAME)
-
+    imdb_search_lists(plex, movie_id_dict)
     imdb_chart_lists(plex, movie_id_dict)
     imdb_custom_lists(plex, movie_id_dict)
 
@@ -499,6 +508,14 @@ def remove_lists(plex):
         list_remover(plex, name)
         list_remover(plex, "IMDB Chart - {0}".format(name))
 
+    for list in IMDB_SEARCH_LISTS:
+        name = list.split("||")[1]
+        print "Removing IMDB search playlist '{0}'".format(
+            name
+        )
+        list_remover(plex, name)
+        list_remover(plex, "IMDB Search List - {0}".format(name))
+
 def list_updater():
     try:
         plex = PlexServer(baseurl=PLEX_URL, token=PLEX_TOKEN, timeout=PLEX_TIMEOUT)
@@ -515,6 +532,7 @@ def list_updater():
         list_remover(plex, TRAKT_POPULAR_SHOW_PLAYLIST_NAME)
         list_remover(plex, IMDB_SEARCH_NAME)
         list_remover(plex, 'Movies All Time')
+        list_remover(plex, 'Best Picture Winners')
         remove_lists(plex)
     else:
         run_movies_lists(plex)
