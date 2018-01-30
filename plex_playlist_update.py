@@ -41,7 +41,7 @@ SYNC_WITH_SHARED_USERS = config.getboolean('Plex', 'shared')
 ALLOW_SYNCED_USERS = json.loads(config.get('Plex', 'users'))
 NOT_ALLOW_SYNCED_USERS = json.loads(config.get('Plex', 'not_users'))
 try:
-    PLEX_TIMEOUT = config.get('Plex', 'timeout')
+    PLEX_TIMEOUT = int(config.get('Plex', 'timeout'))
 except:
     PLEX_TIMEOUT = 300
 TRAKT_API_KEY = config.get('Trakt', 'api-key')
