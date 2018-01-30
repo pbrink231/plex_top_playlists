@@ -52,22 +52,27 @@ popular-tv-name: Show Popular
 [IMDb]
 # this is a LIST of all your fav IMDB search lists
 # wrapped in double quotes, you provide the URL and NAME, separated by a double pipes (||), no spaces
+# OR .. wrapped in double quotes, you provide the URL and the list NAME will be discovered
 # put new list items on a new line
 # e.g.: "http://www.imdb.com/search/title?groups=oscar_best_picture_winners&sort=year,desc&view=simple||Yoyo Ma"
+# OR .. e.g.: "http://www.imdb.com/search/title?groups=oscar_best_picture_winners&sort=year,desc&view=simple"
 search-lists: [
-    "http://www.imdb.com/search/title?groups=oscar_best_picture_winners&sort=year,desc&view=simple||Latest Best Picture-Winning Titles"
+    "http://www.imdb.com/search/title?groups=oscar_best_picture_winners&sort=year,desc&view=simple||Latest Best Picture-Winning Titles",
+    "http://www.imdb.com/search/title?year=2017,2017&title_type=feature&sort=moviemeter,asc&view=simple"
   ]
 
 # this is a LIST of all the cool IMDB charts
 # wrapped in double quotes, you provide the URL and NAME, separated by a comma, no spaces
+# OR .. wrapped in double quotes, you provide the URL and the list NAME will be discovered
 # put new list items on a new line
 # e.g.: "http://www.imdb.com/chart/top,Yoyo Ma"
+# OR .. e.g.: "http://www.imdb.com/chart/top"
 chart-lists: [
     "http://www.imdb.com/chart/top,Top Rated Movies",
     "http://www.imdb.com/chart/moviemeter,Most Popular Movies",
     "http://www.imdb.com/chart/boxoffice,Top Box Office",
     "http://www.imdb.com/chart/top-english-movies,Top Rated English Movies",
-    "http://www.imdb.com/chart/bottom,Lowest Rated Movies"
+    "http://www.imdb.com/chart/bottom"
   ]
 
 # this is a LIST of all your fav IMDB lists

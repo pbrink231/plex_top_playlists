@@ -334,10 +334,18 @@ def imdb_search_list(url):
     ids = tree.xpath("//img[@class='loadlate']/@data-tconst")
     return ids
 
+def imdb_search_list_name(url):
+    tree = parse(url)
+    name = tree.xpath("//h1[contains(@class, 'header')]")[0].text.strip()
+    return name
+
 def imdb_search_lists(plex, movie_id_dict):
     for list in IMDB_SEARCH_LISTS:
         url = list.split("||")[0]
-        name = list.split("||")[1]
+        try:
+            name = runlist.split("||")[1]
+        except:
+            name = imdb_search_list_name(url)
 
         print "Creating IMDB search playlist '{0}' using URL {1}".format(
             name,
@@ -352,10 +360,18 @@ def imdb_chart_list(url):
     ids = tree.xpath("//table[contains(@class, 'chart')]//td[@class='ratingColumn']/div//@data-titleid")
     return ids
 
+def imdb_chart_list_name(url):
+    tree = parse(url)
+    name = tree.xpath("//h1[contains(@class, 'header')]")[0].text.strip()
+    return name
+
 def imdb_chart_lists(plex, movie_id_dict):
-    for list in IMDB_CHART_LISTS:
-        url = list.split(",")[0]
-        name = list.split(",")[1]
+    for runlist in IMDB_CHART_LISTS:
+        url = runlist.split(",")[0]
+        try:
+            name = runlist.split(",")[1]
+        except:
+            name = imdb_chart_list_name(url)
 
         print "Creating IMDB chart playlist '{0}' using URL {1}".format(
             name,
@@ -497,6 +513,13 @@ def list_remover(plex, playlist_name):
     else:
         print("Skipping removal from shared users")
 
+def imdb_playlist_remover(plex, name):
+    list_remover(plex, name)
+    list_remover(plex, "IMDB Custom List - {0}".format(name))
+    list_remover(plex, "IMDB Chart - {0}".format(name))
+    list_remover(plex, "IMDB Search List - {0}".format(name))
+    list_remover(plex, "IMDB - {0}".format(name))
+
 def remove_lists(plex):
     for showlist in IMDB_CUSTOM_LISTS:
         url = showlist.split(",")[0]
@@ -507,27 +530,29 @@ def remove_lists(plex):
         print "Removing IMDB custom playlist '{0}'".format(
             name
         )
-        list_remover(plex, name)
-        list_remover(plex, "IMDB Custom List - {0}".format(name))
-        list_remover(plex, "IMDB - {0}".format(name))
+        imdb_playlist_remover(plex, name)
 
-    for list in IMDB_CHART_LISTS:
-        name = list.split(",")[1]
+    for showlist in IMDB_CHART_LISTS:
+        url = showlist.split(",")[0]
+        try:
+            name = showlist.split(",")[1]
+        except:
+            name = imdb_chart_list_name(url)
         print "Removing IMDB chart playlist '{0}'".format(
             name
         )
-        list_remover(plex, name)
-        list_remover(plex, "IMDB Chart - {0}".format(name))
-        list_remover(plex, "IMDB - {0}".format(name))
+        imdb_playlist_remover(plex, name)
 
     for list in IMDB_SEARCH_LISTS:
-        name = list.split("||")[1]
+        url = showlist.split("||")[0]
+        try:
+            name = showlist.split("||")[1]
+        except:
+            name = imdb_search_list_name(url)
         print "Removing IMDB search playlist '{0}'".format(
             name
         )
-        list_remover(plex, name)
-        list_remover(plex, "IMDB Search List - {0}".format(name))
-        list_remover(plex, "IMDB - {0}".format(name))
+        imdb_playlist_remover(plex, name)
 
 def list_updater():
     try:
