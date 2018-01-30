@@ -51,6 +51,8 @@ popular-tv-name: Show Popular
 
 [IMDb]
 # this is a LIST of all your fav IMDB search lists
+# view MUST BE simple as a query param
+# e.g.: &view=simple
 # wrapped in double quotes, you provide the URL and NAME, separated by a double pipes (||), no spaces
 # OR .. wrapped in double quotes, you provide the URL and the list NAME will be discovered
 # put new list items on a new line
