@@ -72,9 +72,12 @@ chart-lists: [
 
 # this is a LIST of all your fav IMDB lists
 # wrapped in double quotes, you provide the URL and NAME, separated by a comma, no spaces
+# OR .. wrapped in double quotes, you provide the URL and the list NAME will be discovered
 # put new list items on a new line
 # e.g.: "http://www.imdb.com/list/1234567890/,Yoyo Ma"
+# OR .. e.g.: "http://www.imdb.com/list/1234567890/"
 custom-lists: [
     "http://www.imdb.com/list/ls069751712/,Star Wars Machete Order",
-    "http://www.imdb.com/list/ls021389231/,2018 Oscar Nominees"
+    "http://www.imdb.com/list/ls021389231/,2018 Oscar Nominees",
+    "http://www.imdb.com/list/ls009668531/"
   ]
