@@ -545,6 +545,7 @@ def list_updater():
         list_remover(plex, TRAKT_POPULAR_SHOW_PLAYLIST_NAME)
         list_remover(plex, 'Movies All Time')
         list_remover(plex, 'Best Picture Winners')
+        list_remover(plex, 'IMDB - [<Element h1 at 0x7efc45fa7730>]')
         remove_lists(plex)
     else:
         run_movies_lists(plex)
