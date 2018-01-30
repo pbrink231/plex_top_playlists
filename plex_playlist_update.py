@@ -372,7 +372,7 @@ def imdb_custom_list(url):
 
 def imdb_custom_list_name(url):
     tree = parse(url)
-    name = tree.xpath("//*[@id='main']/div/h1")
+    name = tree.xpath("//h1[contains(@class, 'header list-name')]")[0].text.strip()
     return name
 
 def imdb_custom_lists(plex, movie_id_dict):
