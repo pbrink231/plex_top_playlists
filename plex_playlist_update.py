@@ -498,8 +498,12 @@ def list_remover(plex, playlist_name):
         print("Skipping removal from shared users")
 
 def remove_lists(plex):
-    for list in IMDB_CUSTOM_LISTS:
-        name = list.split(",")[1]
+    for showlist in IMDB_CUSTOM_LISTS:
+        url = showlist.split(",")[0]
+        try:
+            name = showlist.split(",")[1]
+        except:
+            name = imdb_custom_list_name(url)
         print "Removing IMDB custom playlist '{0}'".format(
             name
         )
