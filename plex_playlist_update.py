@@ -370,10 +370,18 @@ def imdb_custom_list(url):
     ids = tree.xpath("//div[contains(@class, 'lister-item-image ribbonize')]/@data-tconst")
     return ids
 
+def imdb_custom_list_name(url):
+    tree = parse(url)
+    name = tree.xpath("//*[@id='main']/div/h1")
+    return name
+
 def imdb_custom_lists(plex, movie_id_dict):
     for list in IMDB_CUSTOM_LISTS:
         url = list.split(",")[0]
-        name = list.split(",")[1]
+        try:
+            name = list.split(",")[1]
+        except:
+            name = imdb_custom_list_name(url)
 
         print "Creating IMDB custom playlist '{0}' using URL {1}".format(
             name,
