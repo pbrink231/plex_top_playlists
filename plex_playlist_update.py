@@ -543,7 +543,7 @@ def remove_lists(plex):
         )
         imdb_playlist_remover(plex, name)
 
-    for list in IMDB_SEARCH_LISTS:
+    for showlist in IMDB_SEARCH_LISTS:
         url = showlist.split("||")[0]
         try:
             name = showlist.split("||")[1]
