@@ -86,7 +86,7 @@ def loop_plex_users(plex, list, playlist_name):
     if SYNC_WITH_SHARED_USERS:
         plex_users = get_user_tokens(plex.machineIdentifier)
         for user in plex_users:
-            if not ALLOW_SYNCED_USERS or user in ALLOW_SYNCED_USERS:
+            if ALLOW_SYNCED_USERS or user in ALLOW_SYNCED_USERS:
                 print("{}: updating playlist for user {}".format(playlist_name, user))
                 user_token = plex_users[user]
                 user_plex = PlexServer(PLEX_URL, user_token)
@@ -336,7 +336,7 @@ def list_remover(plex, playlist_name):
     if SYNC_WITH_SHARED_USERS:
         plex_users = get_user_tokens(plex.machineIdentifier)
         for user in plex_users:
-            if not ALLOW_SYNCED_USERS or user in ALLOW_SYNCED_USERS:
+            if ALLOW_SYNCED_USERS or user in ALLOW_SYNCED_USERS:
                 print("{}: removing playlist for user {}".format(playlist_name, user))
                 user_token = plex_users[user]
                 user_plex = PlexServer(PLEX_URL, user_token)
