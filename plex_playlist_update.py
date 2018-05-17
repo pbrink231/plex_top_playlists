@@ -59,9 +59,10 @@ START_TIME = time.time()
 
 ####### CODE HERE (Nothing to change) ############
 
-def log_timer():
-    print ">>> {0} seconds".format(
-        time.time() - START_TIME
+def log_timer(marker = ""):
+    print ">>> {0} seconds {1}".format(
+        time.time() - START_TIME,
+        marker
     )
 
 def get_user_tokens(server_id):
@@ -163,15 +164,19 @@ def get_imdb_id(movie):
     return imdb_id
 
 def append_movie_id_dict(movie, movie_id_dict):
+    log_timer("start append movie id dict")
     imdb_id = get_imdb_id(movie)
     if imdb_id != None:
         movie_id_dict[imdb_id] = movie
+    log_timer("end append movie id dict")
     return movie_id_dict
 
 def create_movie_id_dict(movies):
     movie_id_dict = {}
+    log_timer("start create movie id dict")
     for movie in movies:
         movie_id_dict = append_movie_id_dict(movie, movie_id_dict)
+    log_timer("end create movie id dict")
     return movie_id_dict
 
 def get_matching_movies(imdb_ids, movie_id_dict):
@@ -437,7 +442,6 @@ def run_movies_lists(plex):
 
     print "Creating movie dictionary based on ID"
     movie_id_dict = create_movie_id_dict(all_movies)
-    log_timer()
 
     print("Retrieving new lists")
     if TRAKT_API_KEY:
