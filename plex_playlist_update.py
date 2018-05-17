@@ -23,6 +23,8 @@ import xmltodict
 import ConfigParser
 from lxml.html import parse
 from plexapi.server import PlexServer
+import lxml
+import urllib2
 #from plexapi.utils import NA
 NA=""
 
@@ -340,8 +342,11 @@ def imdb_search_list(url):
     return ids
 
 def imdb_search_list_name(url):
-    tree = parse(url)
-    name = tree.xpath("//h1[contains(@class, 'header')]")[0].text.strip()
+    response = urllib2.urlopen(url)
+    data = response.read()
+    response.close()
+    doc = lxml.html.document_fromstring(data)
+    name = doc.xpath("//h1[contains(@class, 'header')]")[0].text.strip()
     return name
 
 def imdb_search_lists(plex, movie_id_dict):
