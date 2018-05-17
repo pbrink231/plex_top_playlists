@@ -337,8 +337,11 @@ def trakt_popular_show_imdb_id_list():
     return tvdb_ids
 
 def imdb_search_list(url):
-    tree = parse(url)
-    ids = tree.xpath("//img[@class='loadlate']/@data-tconst")
+    response = urllib2.urlopen(url)
+    data = response.read()
+    response.close()
+    doc = lxml.html.document_fromstring(data)
+    ids = doc.xpath("//img[@class='loadlate']/@data-tconst")
     return ids
 
 def imdb_search_list_name(url):
@@ -366,13 +369,19 @@ def imdb_search_lists(plex, movie_id_dict):
         setup_movie_playlist2(plex, ids, movie_id_dict, "IMDB - {0}".format(name))
 
 def imdb_chart_list(url):
-    tree = parse(url)
-    ids = tree.xpath("//table[contains(@class, 'chart')]//td[@class='ratingColumn']/div//@data-titleid")
+    response = urllib2.urlopen(url)
+    data = response.read()
+    response.close()
+    doc = lxml.html.document_fromstring(data)
+    ids = doc.xpath("//table[contains(@class, 'chart')]//td[@class='ratingColumn']/div//@data-titleid")
     return ids
 
 def imdb_chart_list_name(url):
-    tree = parse(url)
-    name = tree.xpath("//h1[contains(@class, 'header')]")[0].text.strip()
+    response = urllib2.urlopen(url)
+    data = response.read()
+    response.close()
+    doc = lxml.html.document_fromstring(data)
+    name = doc.xpath("//h1[contains(@class, 'header')]")[0].text.strip()
     return name
 
 def imdb_chart_lists(plex, movie_id_dict):
@@ -392,13 +401,19 @@ def imdb_chart_lists(plex, movie_id_dict):
         setup_movie_playlist2(plex, ids, movie_id_dict, "IMDB - {0}".format(name))
 
 def imdb_custom_list(url):
-    tree = parse(url)
-    ids = tree.xpath("//div[contains(@class, 'lister-item-image ribbonize')]/@data-tconst")
+    response = urllib2.urlopen(url)
+    data = response.read()
+    response.close()
+    doc = lxml.html.document_fromstring(data)
+    ids = doc.xpath("//div[contains(@class, 'lister-item-image ribbonize')]/@data-tconst")
     return ids
 
 def imdb_custom_list_name(url):
-    tree = parse(url)
-    name = tree.xpath("//h1[contains(@class, 'header list-name')]")[0].text.strip()
+    response = urllib2.urlopen(url)
+    data = response.read()
+    response.close()
+    doc = lxml.html.document_fromstring(data)
+    name = doc.xpath("//h1[contains(@class, 'header list-name')]")[0].text.strip()
     return name
 
 def imdb_custom_lists(plex, movie_id_dict):
