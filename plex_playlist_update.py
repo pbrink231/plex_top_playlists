@@ -71,7 +71,12 @@ def get_user_tokens(server_id):
     headers = {'Accept': 'application/json', 'X-Plex-Token': PLEX_TOKEN}
     result = requests.get('https://plex.tv/api/servers/{server_id}/shared_servers?X-Plex-Token={token}'.format(server_id=server_id, token=PLEX_TOKEN), headers=headers)
     xmlData = xmltodict.parse(result.content)
-    users = {user['@username']: user['@accessToken'] for user in xmlData['MediaContainer']['SharedServer']}
+    
+    result2 = requests.get('https://plex.tv/api/users', headers=headers)
+    xmlData2 = xmltodict.parse(result2.content)
+    
+    user_ids = {user['@id']: user.get('@username', user.get('@title')) for user in xmlData2['MediaContainer']['User']}
+    users = {user_ids[user['@userID']]: user['@accessToken'] for user in xmlData['MediaContainer']['SharedServer']}
 
     return users
 
