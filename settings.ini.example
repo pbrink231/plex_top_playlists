@@ -38,12 +38,19 @@ popular-tv-name: Show Popular
 
 [IMDb]
 ### New IMDB Top 250 library details ###
-chart-url: http://www.imdb.com/chart/top
+chart-url: https://www.imdb.com/chart/top
 playlist-name: Movies All Time
-search-url: http://www.imdb.com/search/title?groups=oscar_best_picture_winners&sort=year,desc&view=simple
+search-url: https://www.imdb.com/search/title?groups=oscar_best_picture_winners&sort=year,desc&view=simple
 # max is 250
 search-total: 100
 search-list-name: Best Picture Winners
-list-url: http://www.imdb.com/list/ls069751712/
+list-url: https://www.imdb.com/list/ls069751712/
 list-name: Star Wars Machete Order
+show-missing-ids: False
+
+imdb-lists: [
+  { "title":"IMDB Top 250 Example", "url":"https://www.imdb.com/chart/top", "xpath":"//table[contains(@class, 'chart')]//td[@class='ratingColumn']/div//@data-titleid" },
+  { "title":"IMDB Custom Example", "url":"https://www.imdb.com/list/ls069751712/", "xpath":"//div[contains(@class, 'hover-over-image')]/@data-const" },
+  { "title":"IMDB Search Example", "url":"https://www.imdb.com/search/title?groups=oscar_best_picture_winners&sort=year,desc&view=simple&count=250", "xpath":"//img[@class='loadlate']/@data-tconst" }
+  ]
 
