@@ -63,7 +63,7 @@ popular-tv-name: Show Popular
 # put new list items on a new line
 # each line needs a title, url and type
 # if title is empty it will try and get the title from the imdb list
-# make sure to put a comma at the end of each line
+# CHECK YOUR COMMAs.  Need one after every line except last.  Will break
 
 ### SEARCH TYPE
 # type: "search"
