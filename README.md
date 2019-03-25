@@ -1,6 +1,5 @@
 # plex_top_playlists
 **New Update has BREAKING changes.  Please check out settings.ini.example and adjust.**
-
 **NOW UPDATED FOR PYTHON 3.  Python 2 not tested and will probably not be working.  MUST USE PYTHON 3 with new updates.**
 
 A python script to get top weekly or top popular lists and put them in plex as playlists.  It will make a playlist for each user on your server.
@@ -109,7 +108,12 @@ sudo chmod +x plex_playlist_update.py
 Run the script
 
 ```bash
-./plex_playlist_update.py
+./plex_playlist_update.py run
+```
+
+To see available commands run it without any arguments help
+```bash
+./plex_playlist_update.py help
 ```
 
 #### Make script run nightly
@@ -121,7 +125,7 @@ crontab -e
 Add this line to the bottom of the file (will run at 4:05 am every day)
 
 ```bash
-5 4 * * * /usr/scripts/plex_playlist_update.py
+5 4 * * * /usr/scripts/plex_playlist_update.py run
 ```
 
 # Setup - Windows
@@ -154,7 +158,11 @@ update your imdb-list with your wanted lists.
 
 run with:
 ```
-python plex_playlist_update.py
+python plex_playlist_update.py run
+```
+To see available commands just leave argument off or put help
+```
+python plex_playlist_update.py help
 ```
 
 You can automate this in windows with the task scheduler.  Please do not run every couple of minutes.  That is for Trakt.  I usually run it once at some time late at night.  This will be working your server also so finding a time that no one is watching will be best.
