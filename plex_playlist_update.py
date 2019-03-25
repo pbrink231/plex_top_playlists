@@ -21,7 +21,7 @@ import xmltodict
 import configparser
 from lxml.html import parse
 from plexapi.server import PlexServer
-from plexapi.utils import NA
+NA=""
 
 from urllib2 import Request, urlopen
 
