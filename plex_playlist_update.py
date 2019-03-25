@@ -18,7 +18,7 @@ import requests
 import subprocess
 import time
 import xmltodict
-import ConfigParser
+import configparser
 from lxml.html import parse
 from plexapi.server import PlexServer
 from plexapi.utils import NA
@@ -26,7 +26,7 @@ from plexapi.utils import NA
 from urllib2 import Request, urlopen
 
 config_file_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'settings.ini')
-config = ConfigParser.SafeConfigParser()
+config = configparser.SafeConfigParser()
 config.read(config_file_path)
 
 PLEX_URL = config.get('Plex', 'plex-host')
@@ -177,7 +177,7 @@ def trakt_watched_imdb_id_list():
         for movie in trakt_movies:
             imdb_ids.append(movie['movie']['ids']['imdb'])
     except:
-        print "Bad Trakt Code"
+        print("Bad Trakt Code")
         return []
 
     return imdb_ids
@@ -202,7 +202,7 @@ def trakt_popular_imdb_id_list():
         for movie in trakt_movies:
             imdb_ids.append(movie['ids']['imdb'])
     except:
-        print "Bad Trakt Code"
+        print("Bad Trakt Code")
         return []
 
     return imdb_ids
@@ -226,7 +226,7 @@ def trakt_watched_show_imdb_id_list():
         for show in trakt_show:
             tvdb_ids.append(str(show['show']['ids']['tvdb']))
     except:
-        print "Bad Trakt Code"
+        print("Bad Trakt Code")
         return []
 
     return tvdb_ids
@@ -251,7 +251,7 @@ def trakt_popular_show_imdb_id_list():
         for show in trakt_show:
             tvdb_ids.append(str(show['ids']['tvdb']))
     except:
-        print "Bad Trakt Code"
+        print("Bad Trakt Code")
         return []
 
     return tvdb_ids
@@ -350,7 +350,7 @@ def list_updater():
     except:
         print("No Plex server found at: {base_url} or bad plex token code".format(base_url=PLEX_URL))
         print("Exiting script.")
-        raw_input("press enter to exit")
+        input("press enter to exit")
         return [], 0
 
     if REMOVE_ONLY:
@@ -359,8 +359,8 @@ def list_updater():
         list_remover(plex, TRAKT_WEEKLY_SHOW_PLAYLIST_NAME)
         list_remover(plex, TRAKT_POPULAR_SHOW_PLAYLIST_NAME)
         list_remover(plex, IMDB_PLAYLIST_NAME)
-	list_remover(plex, IMDB_SEARCH_NAME)
-	list_remover(plex, IMDB_CUSTOM_LIST)
+        list_remover(plex, IMDB_SEARCH_NAME)
+        list_remover(plex, IMDB_CUSTOM_LIST)
     else:
         run_movies_lists(plex)
         run_show_lists(plex)
