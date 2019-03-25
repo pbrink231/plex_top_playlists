@@ -460,10 +460,10 @@ def list_remover(plex, shared_users, playlist_name):
     # update list for shared users
     if SYNC_WITH_SHARED_USERS:
         for user in shared_users:
-            print("{0}: removing playlist for user {1}").format(
+            print("{0}: removing playlist for user {1}".format(
                 playlist_name,
                 user
-            )
+            ))
             user_token = shared_users[user]
             user_plex = PlexServer(baseurl=PLEX_URL, token=user_token, timeout=PLEX_TIMEOUT)
             remove_playlist(user_plex, playlist_name)
@@ -481,21 +481,21 @@ def remove_lists(plex, shared_users):
         if not title:
             print("SKIPPING LIST because no title found")
             continue
-        print("Removing IMDB custom playlist '{0}'").format(
+        print("Removing IMDB custom playlist '{0}'".format(
             title
-        )
+        ))
         list_remover(plex, shared_users, title)
     for runlist in TRAKT_MOVIE_LISTS:
-        print("Removing IMDB custom playlist '{0}'").format(
+        print("Removing IMDB custom playlist '{0}'".format(
             runlist["title"]
-        )
+        ))
         list_remover(plex, shared_users, runlist["title"])
 
 
-def get_user_tokens(server_id):
+def get_all_users(plex):
     headers = {'Accept': 'application/json', 'X-Plex-Token': PLEX_TOKEN}
     result = requests.get('https://plex.tv/api/servers/{server_id}/shared_servers?X-Plex-Token={token}'.format(
-        server_id=server_id, token=PLEX_TOKEN), headers=headers)
+        server_id=plex.machineIdentifier, token=PLEX_TOKEN), headers=headers)
     xmlData = xmltodict.parse(result.content)
     
     result2 = requests.get('https://plex.tv/api/users', headers=headers)
@@ -504,6 +504,11 @@ def get_user_tokens(server_id):
     user_ids = {user['@id']: user.get('@username', user.get('@title')) for user in xmlData2['MediaContainer']['User']}
     users = {user_ids[user['@userID']]: user['@accessToken'] for user in xmlData['MediaContainer']['SharedServer']}
 
+    return users
+
+
+def get_user_tokens(plex):
+    users = get_all_users(plex)
     allowed_users = {}
     for user in users:
         if (not ALLOW_SYNCED_USERS or user in ALLOW_SYNCED_USERS) and user not in NOT_ALLOW_SYNCED_USERS:
@@ -511,17 +516,8 @@ def get_user_tokens(server_id):
 
     return allowed_users
 
-def list_updater():
-    try:
-        plex = PlexServer(baseurl=PLEX_URL, token=PLEX_TOKEN, timeout=PLEX_TIMEOUT)
-    except:
-        print("No Plex server found at: {base_url} or bad plex token code".format(
-            base_url=PLEX_URL))
-        print("Exiting script.")
-        input("press enter to exit")
-        return [], 0
-
-    users = get_user_tokens(plex.machineIdentifier)
+def list_updater(plex):
+    users = get_user_tokens(plex)
 
     log_output("users list: {}".format(users), 1)
     
@@ -542,8 +538,48 @@ if __name__ == "__main__":
     # remove playlist by name
     # create a playlist specifically
 
+    if (len(sys.argv) == 1 or sys.argv[1] not in ['run', 'show_users', 'remove_playlist', 'remove_all_playlists']):
+        print("""
+Please use one of the following commands:
+    run - Will start the normal process from your settings
+    show_users - will give you a list of users to copy and paste to your settings file
+    remove_playlist - needs a second argument with playlist name to remove
+    remove_all_playlists - will remove all playlists setup in the settings
+    
+    ex:
+    python {0} run
+    python {0} remove_playlist somename
+    """.format(sys.argv[0]))
+        sys.exit()
+
+    # login to plex here.  All commands will need it
+    try:
+        plex = PlexServer(baseurl=PLEX_URL, token=PLEX_TOKEN, timeout=PLEX_TIMEOUT)
+    except:
+        print("No Plex server found at: {base_url} or bad plex token code".format(base_url=PLEX_URL))
+        input("press enter to exit")
+        sys.exit()
+
+
     # run standard
-    list_updater()
+    if sys.argv[1] == 'run':
+        list_updater(plex)
+
+    # display available users
+    if sys.argv[1] == 'show_users':
+        for key, value in get_all_users(plex).items():
+            print('Username: {}'.format(key))
+
+    if sys.argv[1] == 'remove_playlist':
+        if len(sys.argv) >= 3:
+            print('removing playlist {}'.format(sys.argv[2]))
+            list_remover(plex, get_user_tokens(plex), sys.argv[2])
+        else:
+            print("Please supply a playlist name for the second command argument")
+
+    if sys.argv[1] == 'remove_all_playlists':
+        remove_lists(plex, get_user_tokens(plex))
+
 
     print("\n===================================================================")
     print("                               Done!                               ")
