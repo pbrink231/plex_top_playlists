@@ -74,7 +74,7 @@ sudo pip install --upgrade pip
 Install needed pip modules:
 
 ```bash
-sudo pip install plexapi
+pip install -r requirements.txt
 ```
 There are 2 more modules i dont have the install code for.  If you encounter an error saying something like module missing, please let me know and I will add the correct instructions here.
 
@@ -136,9 +136,11 @@ python --version
 pip --version
 ```
 
-Add required librarys
+Add required librarys (try the first one)
 
 ```
+pip install -r requirements.txt
+or
 pip install requests xmltodict parse configparser lxml plexapi urllib2
 ```
 
