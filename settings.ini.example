@@ -40,22 +40,34 @@ remove: False
 # -1 = quiet, 0 = normal, 1 = verbose, 2 = very verbose, 3 = debug
 verbose: 0
 
+### [OPTIONAL] Missing list columns
+# number of columns wide to show list.  default is 5
+missing_columns: 5
+
 [Trakt]
 ### [OPTIONAL] Trakt API Info ###
 # This is REQUIRED for Trakt.  Without it you will not get any Trakt playlists
 api-key:
 
-### Trakt Movie Playlist info ###
-# max is 100 - required trakt-api-key above
-movie-total: 80
-weekly-movie-name: Movies Top Weekly
-popular-movie-name: Movies Popular
+### Trakt Lists
+# has a title, type, limit & url
+# limit max is 100
+# These are two of the examples.
+# the type is for how to parse the response.  Let me know in github if you have trouble with an endpoint.
+# COMMA's matter.
 
-### Trakt Show Playlist info ###
-# max is ? - required trakt-api-key above
-tv-total: 20
-weekly-tv-name: Show Top Weekly
-popular-tv-name: Show Popular
+## Movie list
+trakt-movie-list: [
+  { "title": "Movies Top Weekly", "type":"watched", "limit": 80, "url":"https://api.trakt.tv/movies/watched/weekly"},
+  { "title": "Movies Top Weekly", "type":"popular", "limit": 80, "url":"https://api.trakt.tv/movies/popular"}
+  ]
+
+## Show list
+trakt-tv-list: [
+  { "title": "Show Top Weekly", "type":"watched", "limit": 20, "url":"https://api.trakt.tv/shows/watched/weekly"},
+  { "title": "Show Popular", "type":"popular", "limit": 20, "url":"https://api.trakt.tv/shows/popular"}
+  ]
+
 
 [IMDb]
 # this is a LIST of all your fav IMDB lists
