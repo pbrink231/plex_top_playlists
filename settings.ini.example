@@ -10,10 +10,6 @@ plex-token:
 movie-library: Movies
 tv-library: Shows
 
-### [OPTIONS] Change to have it work how you want ###
-# Set to True to remove playlists only,  This will not grab lists.  It will remove all playlists from variables below.  Easy way to undo
-remove: False
-
 # Share playlist with other user?
 # Choices True, False -- Caps matter, (if True, syncs all or list, if false, only token user)
 shared: False
@@ -28,9 +24,21 @@ users: []
 # $shared must be True.
 not_users: []
 
+### [OPTIONS] Change to have it work how you want ###
+# Set to True to remove playlists only,  This will not grab lists.  It will remove all playlists from variables below.  Easy way to undo
+remove: False
+
 ### [OPTIONAL] Plex server timeout setting .. default 300secs
 # Uncomment and increase if you are experiencing timeout issues
 # timeout: 300
+
+### [OPTIONAL] Show the list of missing movies
+# Uncomment and set to True to see missing IMDB IDs from movie lists
+# show_missing: True
+
+### [OPTIONAL] logging level.  value possibilities: [-1, 0, 1, 2, 3].
+# -1 = quiet, 0 = normal, 1 = verbose, 2 = very verbose, 3 = debug
+verbose: 0
 
 [Trakt]
 ### [OPTIONAL] Trakt API Info ###
@@ -50,49 +58,43 @@ weekly-tv-name: Show Top Weekly
 popular-tv-name: Show Popular
 
 [IMDb]
-# this is a LIST of all your fav IMDB search lists
+# this is a LIST of all your fav IMDB lists
+# types available are: ['chart', 'search', 'custom']
+# put new list items on a new line
+# each line needs a title, url and type
+# if title is empty it will try and get the title from the imdb list
+# make sure to put a comma at the end of each line
+
+### SEARCH TYPE
+# type: "search"
 # view MUST BE simple as a query param
 # e.g.: &view=simple
-# wrapped in double quotes, you provide the URL and NAME, separated by a double pipes (||), no spaces
-# OR .. wrapped in double quotes, you provide the URL and the list NAME will be discovered
-# put new list items on a new line
-# e.g.: "http://www.imdb.com/search/title?groups=oscar_best_picture_winners&sort=year,desc&view=simple||Yoyo Ma"
-# OR .. e.g.: "http://www.imdb.com/search/title?groups=oscar_best_picture_winners&sort=year,desc&view=simple"
-search-lists: [
-    "http://www.imdb.com/search/title?groups=oscar_best_picture_winners&sort=year,desc&view=simple||Latest Best Picture-Winning Titles",
-    "http://www.imdb.com/search/title?year=2017,2017&title_type=feature&sort=moviemeter,asc&view=simple"
-  ]
+# wrapped in double quotes,
 
-# this is a LIST of all the cool IMDB charts
-# wrapped in double quotes, you provide the URL and NAME, separated by a comma, no spaces
-# OR .. wrapped in double quotes, you provide the URL and the list NAME will be discovered
-# put new list items on a new line
-# e.g.: "http://www.imdb.com/chart/top,Yoyo Ma"
-# OR .. e.g.: "http://www.imdb.com/chart/top"
-chart-lists: [
-    "http://www.imdb.com/chart/top,Top Rated Movies",
-    "http://www.imdb.com/chart/moviemeter,Most Popular Movies",
-    "http://www.imdb.com/chart/boxoffice,Top Box Office",
-    "http://www.imdb.com/chart/top-english-movies,Top Rated English Movies",
-    "http://www.imdb.com/chart/bottom"
-  ]
+### CHART TYPE
+# used for links with 'chart' in the url
 
-# this is a LIST of all your fav IMDB lists
-# wrapped in double quotes, you provide the URL and NAME, separated by a comma, no spaces
-# OR .. wrapped in double quotes, you provide the URL and the list NAME will be discovered
-# put new list items on a new line
-# e.g.: "http://www.imdb.com/list/1234567890/,Yoyo Ma"
-# OR .. e.g.: "http://www.imdb.com/list/1234567890/"
-custom-lists: [
-    "http://www.imdb.com/list/ls069751712/,Star Wars Machete Order",
-    "http://www.imdb.com/list/ls021389231/,2018 Oscar Nominees",
-    "http://www.imdb.com/list/ls009668531/"
-  ]
+### CUSTOM TYPE
+# used for links with 'list' in the url
 
 imdb-lists: [
-  { "title":"IMDB Top 250 Example", "url":"https://www.imdb.com/chart/top", "xpath":"//table[contains(@class, 'chart')]//td[@class='ratingColumn']/div//@data-titleid" },
-  { "title":"IMDB Custom Example", "url":"https://www.imdb.com/list/ls069751712/", "xpath":"//div[contains(@class, 'hover-over-image')]/@data-const" },
-  { "title":"IMDB Search Example", "url":"https://www.imdb.com/search/title?groups=oscar_best_picture_winners&sort=year,desc&view=simple&count=250", "xpath":"//img[@class='loadlate']/@data-tconst" }
+  { "title":"IMDB Top 250 Example", "type":"chart", "url":"https://www.imdb.com/chart/top" },
+  { "title":"IMDB Custom Example", "type":"custom", "url":"https://www.imdb.com/list/ls069751712/" },
+  { "title":"IMDB Search Example", "type":"search", "url":"https://www.imdb.com/search/title?groups=oscar_best_picture_winners&sort=year,desc&view=simple&count=250" },
+
+  { "title":"Latest Best Picture-Winning Titles", "type":"search", "url":"http://www.imdb.com/search/title?groups=oscar_best_picture_winners&sort=year,desc&view=simple" },
+  { "title":"", "type":"search", "url":"http://www.imdb.com/search/title?year=2017,2017&title_type=feature&sort=moviemeter,asc&view=simple" },
+
+  { "title":"Star Wars Machete Order", "type":"custom", "url":"http://www.imdb.com/list/ls069751712/" },
+  { "title":"2018 Oscar Nominees", "type":"custom", "url":"http://www.imdb.com/list/ls009668531/" },
+  { "title":"", "type":"custom", "url":"http://www.imdb.com/list/ls009668531/"},
+
+  { "title":"Top Rated Movies", "type":"chart", "url":"http://www.imdb.com/chart/top"},
+  { "title":"Most Popular Movies", "type":"chart", "url":"http://www.imdb.com/chart/moviemeter"},
+  { "title":"Top Box Office", "type":"chart", "url":"http://www.imdb.com/chart/boxoffice"},
+  { "title":"Top Rated English Movies", "type":"chart", "url":"http://www.imdb.com/chart/top-english-movies"},
+  { "title":"", "type":"chart", "url":"http://www.imdb.com/chart/bottom"}
+
   ]
 
 
