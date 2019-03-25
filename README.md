@@ -135,7 +135,7 @@ pip --version
 Add required librarys
 
 ```
-pip install requests xmltodict parse configparser lxml plexapi 
+pip install requests xmltodict parse configparser lxml plexapi urllib2
 ```
 
 # Used references to create the script

@@ -19,13 +19,21 @@ import subprocess
 import time
 import xmltodict
 import configparser
+import sys
 from lxml.html import parse
 from plexapi.server import PlexServer
+from urllib.request import Request, urlopen
 NA=""
 
-from urllib2 import Request, urlopen
-
 config_file_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'settings.ini')
+exists = os.path.isfile(config_file_path)
+if exists:
+    print("Using settings file")
+else:
+    print("Please create a settings.ini file in the same folder as plex_playlist_update.py")
+    sys.exit("No settings.ini file")
+
+print(config_file_path)
 config = configparser.SafeConfigParser()
 config.read(config_file_path)
 
