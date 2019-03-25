@@ -50,7 +50,7 @@ To connect to Trakt you need to get an api key.  You can easily create one.  Her
 * dont need anything else filled out
 5) grab the Client ID to use as your Trakt API Key
 
-## Setup
+# Setup - Linux
 
 These instructions are for Ubuntu.  Should also work with Debian or any debian based os.
 If you run the script python will yell at you what modules are missing and you can google what you need for your installation.
@@ -108,7 +108,7 @@ Run the script
 ./plex_playlist_update.py
 ```
 
-### Make script run nightly
+#### Make script run nightly
 
 ```bash
 crontab -e
@@ -118,6 +118,24 @@ Add this line to the bottom of the file (will run at 4:05 am every day)
 
 ```bash
 5 4 * * * /usr/scripts/plex_playlist_update.py
+```
+
+# Setup - Windows
+
+install python 3.  make sure python 3 and pip are both working
+
+```
+python --version
+```
+
+```
+pip --version
+```
+
+Add required librarys
+
+```
+pip install requests xmltodict parse configparser lxml plexapi urllib2
 ```
 
 # Used references to create the script
