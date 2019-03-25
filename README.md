@@ -140,11 +140,28 @@ Add required librarys
 pip install requests xmltodict parse configparser lxml plexapi urllib2
 ```
 
+Copy `settings.ini.example` to `settings.ini`
+
+Add your plex token to the settings.ini file
+
+If you want trakt then add your client id to the settings.ini file
+
+update your imdb-list with your wanted lists.
+
+run with:
+```
+python plex_playlist_update.py
+```
+
+You can automate this in windows with the task scheduler.  Please do not run every couple of minutes.  That is for Trakt.  I usually run it once at some time late at night.  This will be working your server also so finding a time that no one is watching will be best.
+
 # Used references to create the script
 
 Thank you JonnyWong16 for his amazing scripts which I heavily referenced.
 
 https://gist.github.com/JonnyWong16/2607abf0e3431b6f133861bbe1bb694e
 https://gist.github.com/JonnyWong16/b1aa2c0f604ed92b9b3afaa6db18e5fd
+
+Thank you to [gkspranger](https://github.com/gkspranger/plex_top_playlists) for forking and updating the script while I was MIA.  I heavily used his updates.
 
 
