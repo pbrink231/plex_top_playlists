@@ -180,6 +180,8 @@ def setup_show_playlist(plex, shared_users, tvdb_ids, plex_shows, playlist_name)
 
 
 def get_imdb_id(movie):
+    print('the movie info')
+    print(movie)
     try:
         imdb_id = "tt" + re.search(r'tt(\d+)\?', movie.guid).group(1)
     except:
@@ -404,8 +406,6 @@ def run_movies_lists(plex, shared_users):
             log_timer()
         except:
             print("The '{library}' library does not exist in Plex.".format(library=lib))
-            print("Exiting script.")
-            return [], 0
 
     print("Found {0} movies total in 'all movies' list from Plex...".format(
         len(all_movies)
@@ -492,16 +492,27 @@ def remove_lists(plex, shared_users):
 
 
 def get_all_users(plex):
+    machineID = plex.machineIdentifier
     headers = {'Accept': 'application/json', 'X-Plex-Token': PLEX_TOKEN}
-    result = requests.get('https://plex.tv/api/servers/{server_id}/shared_servers?X-Plex-Token={token}'.format(
-        server_id=plex.machineIdentifier, token=PLEX_TOKEN), headers=headers)
+    result = requests.get('https://plex.tv/api/servers/{server_id}/shared_servers?X-Plex-Token={token}'.format(server_id=machineID, token=PLEX_TOKEN), headers=headers)
     xmlData = xmltodict.parse(result.content)
+    print(xmlData)
     
     result2 = requests.get('https://plex.tv/api/users', headers=headers)
     xmlData2 = xmltodict.parse(result2.content)
 
-    user_ids = {user['@id']: user.get('@username', user.get('@title')) for user in xmlData2['MediaContainer']['User']}
-    users = {user_ids[user['@userID']]: user['@accessToken'] for user in xmlData['MediaContainer']['SharedServer']}
+    user_ids = {plex_user['@id']: plex_user.get('@username', plex_user.get('@title')) for plex_user in xmlData2['MediaContainer']['User']}
+    users = {}
+    if 'SharedServer' in xmlData['MediaContainer']:
+        # has atlease 1 shared or owned user
+        if isinstance(xmlData['MediaContainer']['SharedServer'],list):
+            # more than 1 shared user
+            for server_user in xmlData['MediaContainer']['SharedServer']:
+                users[user_ids[server_user['@userID']]] = server_user['@accessToken']
+        else:
+            # only 1 shared user
+            server_user = xmlData['MediaContainer']['SharedServer']
+            users[user_ids[server_user['@userID']]] = server_user['@accessToken']
 
     return users
 
@@ -563,11 +574,13 @@ Please use one of the following commands:
 
     # display available users
     if sys.argv[1] == 'show_users':
-        for key, value in get_all_users(plex).items():
+        users = get_all_users(plex)
+        for key, value in users.items():
             print('Username: {}'.format(key))
 
     if sys.argv[1] == 'show_allowed':
-        for key, value in get_user_tokens(plex).items():
+        users = get_user_tokens(plex)
+        for key, value in users.items():
             print('Username: {}'.format(key))
 
     if sys.argv[1] == 'remove_playlist':
