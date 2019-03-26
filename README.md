@@ -73,9 +73,9 @@ sudo pip3 install --upgrade pip
 Download the latest release.  Creating seperate folder will make for easier updating in the future.
 
 ```bash
-curl -sL https://github.com/pbrink231/plex_top_playlists/archive/v2.2.tar.gz | tar xz
+curl -sL https://github.com/pbrink231/plex_top_playlists/archive/v2.3.tar.gz | tar xz
 mkdir top_playlist
-cp -R plex_top_playlists-2.2/* top_playlist/
+cp -R plex_top_playlists-2.3/* top_playlist/
 cd top_playlist
 ```
 
@@ -113,8 +113,8 @@ python3 ./plex_playlist_update.py help
 
 This is in the parent folder where your script is.  Assuming you have it all in folder `top_playlist`
 ```bash
-curl -sL https://github.com/pbrink231/plex_top_playlists/archive/v2.2.tar.gz | tar xz
-cp -R plex_top_playlists-2.2/* top_playlist/
+curl -sL https://github.com/pbrink231/plex_top_playlists/archive/v2.3.tar.gz | tar xz
+cp -R plex_top_playlists-2.3/* top_playlist/
 ```
 
 
@@ -141,7 +141,7 @@ python --version
 ```
 pip --version
 ```
-[Download the latest .zip release file](https://github.com/pbrink231/plex_top_playlists/archive/v2.2.zip)
+[Download the latest .zip release file](https://github.com/pbrink231/plex_top_playlists/archive/v2.3.zip)
 
 Extract it to a folder you want.
 
