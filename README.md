@@ -70,12 +70,13 @@ Upgrade pip
 sudo pip3 install --upgrade pip
 ```
 
-Download the latest release
+Download the latest release.  Creating seperate folder will make for easier updating in the future.
 
 ```bash
 curl -sL https://github.com/pbrink231/plex_top_playlists/archive/v2.2.tar.gz | tar xz
-cp -R ./plex_top_playlists-2.2 ./plex_playlists
-cd plex_top_playlists-2.2
+mkdir top_playlist
+cp -R plex_top_playlists-2.2/* top_playlist/
+cd top_playlist
 ```
 
 Install needed pip modules:
@@ -107,6 +108,15 @@ To see available commands run it without any arguments help
 ```bash
 python3 ./plex_playlist_update.py help
 ```
+
+## Updating - Linux
+
+This is in the parent folder where your script is.  Assuming you have it all in folder `top_playlist`
+```bash
+curl -sL https://github.com/pbrink231/plex_top_playlists/archive/v2.2.tar.gz | tar xz
+cp -R plex_top_playlists-2.2/* top_playlist/
+```
+
 
 #### Make script run nightly
 
