@@ -8,7 +8,7 @@ plex-token:
 # e.g.: movie-library: Adult Movies,Kid Movies
 # e.g.: tv-library: Adult TV,Kid TV
 movie-library: Movies
-tv-library: Shows
+tv-library: TV Shows
 
 # Share playlist with other user?
 # Choices True, False -- Caps matter, (if True, syncs all or list, if false, only token user)
@@ -29,8 +29,8 @@ not_users: []
 # timeout: 300
 
 ### [OPTIONAL] Show the list of missing movies
-# Uncomment and set to True to see missing IMDB IDs from movie lists
-# show_missing: True
+# Set to True to see missing IMDB IDs from movie lists.  default is False
+show_missing: False
 
 ### [OPTIONAL] logging level.  value possibilities: [-1, 0, 1, 2, 3].
 # -1 = quiet, 0 = normal, 1 = verbose, 2 = very verbose, 3 = debug
@@ -55,7 +55,7 @@ api-key:
 ## Movie list
 trakt-movie-list: [
   { "title": "Movies Top Weekly", "type":"watched", "limit": 80, "url":"https://api.trakt.tv/movies/watched/weekly"},
-  { "title": "Movies Top Weekly", "type":"popular", "limit": 80, "url":"https://api.trakt.tv/movies/popular"}
+  { "title": "Movies Popular", "type":"popular", "limit": 80, "url":"https://api.trakt.tv/movies/popular"}
   ]
 
 ## Show list
