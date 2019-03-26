@@ -73,8 +73,9 @@ sudo pip3 install --upgrade pip
 Download the latest release
 
 ```bash
-curl -sL https://github.com/pbrink231/plex_top_playlists/archive/v2.1.tar.gz | tar xz
-cd plex_top_playlists-2.1
+curl -sL https://github.com/pbrink231/plex_top_playlists/archive/v2.2.tar.gz | tar xz
+cp -R ./plex_top_playlists-2.2 ./plex_playlists
+cd plex_top_playlists-2.2
 ```
 
 Install needed pip modules:
@@ -130,7 +131,7 @@ python --version
 ```
 pip --version
 ```
-[Download the latest .zip release file](https://github.com/pbrink231/plex_top_playlists/archive/v2.1.zip)
+[Download the latest .zip release file](https://github.com/pbrink231/plex_top_playlists/archive/v2.2.zip)
 
 Extract it to a folder you want.
 
