@@ -61,29 +61,26 @@ If you run the script python will yell at you what modules are missing and you c
 Install pip:
 
 ```bash
-sudo apt-get install python-setuptools python-dev build-essential
+sudo apt-get install python3 python3-pip
 ```
 
 Upgrade pip 
 
 ```bash
-sudo pip install --upgrade pip
+sudo pip3 install --upgrade pip
+```
+
+Download the latest release
+
+```bash
+curl -sL https://github.com/pbrink231/plex_top_playlists/archive/v2.1.tar.gz | tar xz
+cd plex_top_playlists-2.1
 ```
 
 Install needed pip modules:
 
 ```bash
-pip install -r requirements.txt
-```
-There are 2 more modules i dont have the install code for.  If you encounter an error saying something like module missing, please let me know and I will add the correct instructions here.
-
-Create the script file.  Go to the folder location you want to put it
-
-REPLACE user with your user
-```bash
-sudo mkdir /usr/scripts
-sudo chown user:user /usr/scripts
-cd /usr/scripts
+sudo pip3 install -r requirements.txt
 ```
 
 ```bash
@@ -91,13 +88,7 @@ cp settings.ini.example settings.ini
 nano settings.ini
 ```
 
-Copy conetents from the plex_playlist_update.py file into your new file
-
-Required - Fill in Plex Token
-Not Needed - Trakt API key, keep blank for lists
-Options - Change folder names and who to sync with
-
-Save and close (hit Ctrl+x, y, enter)
+Fill out nessery information.  CTRL+X then y to save and exit
 
 Make the Script executable.  
 
@@ -108,12 +99,12 @@ sudo chmod +x plex_playlist_update.py
 Run the script
 
 ```bash
-./plex_playlist_update.py run
+python3 ./plex_playlist_update.py run
 ```
 
 To see available commands run it without any arguments help
 ```bash
-./plex_playlist_update.py help
+python3 ./plex_playlist_update.py help
 ```
 
 #### Make script run nightly
@@ -125,7 +116,7 @@ crontab -e
 Add this line to the bottom of the file (will run at 4:05 am every day)
 
 ```bash
-5 4 * * * /usr/scripts/plex_playlist_update.py run
+5 4 * * * python3 /usr/scripts/plex_playlist_update.py run
 ```
 
 # Setup - Windows
@@ -139,6 +130,11 @@ python --version
 ```
 pip --version
 ```
+[Download the latest .zip release file](https://github.com/pbrink231/plex_top_playlists/archive/v2.1.zip)
+
+Extract it to a folder you want.
+
+In a terminal navigate to that folder where you see plex_playlist_update.py
 
 Add required librarys (try the first one)
 
