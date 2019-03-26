@@ -9,28 +9,38 @@ Use at your own risk.  I have it running nightly
 
 ## Read This
 
-This script is assuming you are using "Plex Movie" as your library check.  If you are using TMDB, I can add the code here but I personally didnt need it.
+This script is assuming you are using "Plex Movie" as your library check.  If you are using TMDB it will not work.
 
 The TV Shows playlists give the last episode in your library for the show.  You can easily click the show name to go to it.
 
 The playlists can be created for any of the following
-* All shared users
+* All shared users (Normal or Managed)
 * Specific users by username
 * Only the script running user
 
-### What lists this script currently retreives
+## What lists this script currently retreives
 
-* Trakt Movie Watched (weekly)
-* Trakt Movie Popular
-* Trakt Show Watched (weekly)
-* Trakt Show Popular
-* IMDB top 250 list (http://www.imdb.com/chart/top)
+* Trakt Playlists Movies
+* Trakt Playlists Shows
+* IMDB Chart Lists
+* IMDB Custom lists
+* IMDB Search Lists
+* Missing Movies or Shows can be shown with relevent IDs to search in Sonarr or Radarr
+* Helper commands to see relevent information or one off playlist actions
+
+## Future wants to add (any help is welcome)
+
+* Create/Update Collections from list (where order does not matter)
+* Add Tautulli Lists
+* Auto Add to Radarr
+* Auto Add to Sonarr
+* Tautulli history algorithim to suggest unwatched to a playlist or collection
 
 # Getting Started
 
-## Get initial information
+## Get plex token
 
-### Get plex token
+**Required for everything in this script**
 
 This page will show you where your token is
 
@@ -40,7 +50,9 @@ This page will show you how to view your xml to see that link you grab your toke
 
 https://support.plex.tv/hc/en-us/articles/201998867
 
-### Get Trakt API key
+### Get Trakt API key (Optional)
+
+Used if you want to grab any Trakt playlists.  Not required.
 
 To connect to Trakt you need to get an api key.  You can easily create one.  Here are the steps for that
 1) go to Trakt.tv
@@ -53,126 +65,18 @@ To connect to Trakt you need to get an api key.  You can easily create one.  Her
 * dont need anything else filled out
 5) grab the Client ID to use as your Trakt API Key
 
-# Setup - Linux
-
-These instructions are for Ubuntu.  Should also work with Debian or any debian based os.
-If you run the script python will yell at you what modules are missing and you can google what you need for your installation.
-
-Install pip:
-
-```bash
-sudo apt-get install python3 python3-pip
-```
-
-Upgrade pip 
-
-```bash
-sudo pip3 install --upgrade pip
-```
-
-Download the latest release.  Creating seperate folder will make for easier updating in the future.
-
-```bash
-curl -sL https://github.com/pbrink231/plex_top_playlists/archive/v2.3.tar.gz | tar xz
-mkdir top_playlist
-cp -R plex_top_playlists-2.3/* top_playlist/
-cd top_playlist
-```
-
-Install needed pip modules:
-
-```bash
-sudo pip3 install -r requirements.txt
-```
-
-```bash
-cp settings.ini.example settings.ini
-nano settings.ini
-```
-
-Fill out nessery information.  CTRL+X then y to save and exit
-
-Make the Script executable.  
-
-```bash
-sudo chmod +x plex_playlist_update.py
-```
-
-Run the script
-
-```bash
-python3 ./plex_playlist_update.py run
-```
-
-To see available commands run it without any arguments help
-```bash
-python3 ./plex_playlist_update.py help
-```
-
-## Updating - Linux
-
-This is in the parent folder where your script is.  Assuming you have it all in folder `top_playlist`
-```bash
-curl -sL https://github.com/pbrink231/plex_top_playlists/archive/v2.3.tar.gz | tar xz
-cp -R plex_top_playlists-2.3/* top_playlist/
-```
+# Setup Instructions in the Wiki
+* [Linux](https://github.com/pbrink231/plex_top_playlists/wiki/Linux-Setup-and-Update)
+* [Windows](https://github.com/pbrink231/plex_top_playlists/wiki/Windows-Setup-and-Update)
 
 
-#### Make script run nightly
+# Examples
 
-```bash
-crontab -e
-```
+This created a playlist for each user in plex for all found in the list.  The output shows what was not added because it was missing.
 
-Add this line to the bottom of the file (will run at 4:05 am every day)
+![movie list output](https://github.com/pbrink231/plex_top_playlists/wiki/images/Movie-Output-example.PNG)
 
-```bash
-5 4 * * * python3 /usr/scripts/plex_playlist_update.py run
-```
 
-# Setup - Windows
-
-install python 3.  make sure python 3 and pip are both working
-
-```
-python --version
-```
-
-```
-pip --version
-```
-[Download the latest .zip release file](https://github.com/pbrink231/plex_top_playlists/archive/v2.3.zip)
-
-Extract it to a folder you want.
-
-In a terminal navigate to that folder where you see plex_playlist_update.py
-
-Add required librarys (try the first one)
-
-```
-pip install -r requirements.txt
-or
-pip install requests xmltodict parse configparser lxml plexapi urllib2
-```
-
-Copy `settings.ini.example` to `settings.ini`
-
-Add your plex token to the settings.ini file
-
-If you want trakt then add your client id to the settings.ini file
-
-update your imdb-list with your wanted lists.
-
-run with:
-```
-python plex_playlist_update.py run
-```
-To see available commands just leave argument off or put help
-```
-python plex_playlist_update.py help
-```
-
-You can automate this in windows with the task scheduler.  Please do not run every couple of minutes.  That is for Trakt.  I usually run it once at some time late at night.  This will be working your server also so finding a time that no one is watching will be best.
 
 # Used references to create the script
 

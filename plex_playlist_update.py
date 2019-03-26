@@ -371,7 +371,7 @@ def imdb_list_name(tree, type):
         return tree.xpath("//h1[contains(@class, 'header')]")[0].text.strip()
     if type == "search":
         return tree.xpath("//h1[contains(@class, 'header')]")[0].text.strip()
-    if type == "custome":
+    if type == "custom":
         return tree.xpath("//h1[contains(@class, 'header list-name')]")[0].text.strip()
 
     return
