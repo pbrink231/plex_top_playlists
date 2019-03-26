@@ -61,7 +61,7 @@ except:
 try:
     MISSING_COLUMNS = int(config.get('Plex', 'missing_columns'))
 except:
-    MISSING_COLUMNS = 5
+    MISSING_COLUMNS = 4
 TRAKT_API_KEY = config.get('Trakt', 'api-key')
 TRAKT_MOVIE_LISTS = json.loads(config.get('Trakt', 'trakt-movie-list'))
 TRAKT_SHOW_LISTS = json.loads(config.get('Trakt', 'trakt-tv-list'))
@@ -71,7 +71,7 @@ START_TIME = time.time()
 ####### CODE HERE (Nothing to change) ############
 
 def log_timer(marker = "", verbose = 0):
-    if verbose >= VERBOSE and marker:
+    if VERBOSE >= verbose and marker:
         print("{:.4f} -- {}".format(
             (time.time() - START_TIME),
             marker
@@ -180,28 +180,39 @@ def setup_show_playlist(plex, shared_users, tvdb_ids, plex_shows, playlist_name)
 
 
 def get_imdb_id(movie):
-    print('the movie info')
-    print(movie)
     try:
+        # com.plexapp.agents.imdb://tt0137523?lang=en
         imdb_id = "tt" + re.search(r'tt(\d+)\?', movie.guid).group(1)
     except:
         imdb_id = None
     return imdb_id
 
 def append_movie_id_dict(movie, movie_id_dict):
-    log_timer("start append movie id dict")
     imdb_id = get_imdb_id(movie)
     if imdb_id != None:
         movie_id_dict[imdb_id] = movie
-    log_timer("end append movie id dict")
     return movie_id_dict
+
+def show_dict_progress(curnum, total, status='adding movies'):
+    bar_length = 50
+    filled_len = int(round(bar_length * curnum / float(total)))
+    percents = round(100.0 * (curnum / float(total)), 1)
+    bar = '=' * filled_len + '-' * (bar_length - filled_len)
+    sys.stdout.write('[%s] %s%s ...%s\r' % (bar, percents, '%', "{0} of {1}".format(curnum, total)))
+    sys.stdout.flush()
 
 def create_movie_id_dict(movies):
     movie_id_dict = {}
-    log_timer("start create movie id dict", 3)
+    count = len(movies)
+    cur = 1
+    log_timer("start creating movie id dict", 3)
     for movie in movies:
+        log_timer("start append movie id dict", 3)
         movie_id_dict = append_movie_id_dict(movie, movie_id_dict)
-    log_timer("end create movie id dict", 3)
+        show_dict_progress(cur, count)
+        cur += 1
+    print("\ncached plex movies")
+    log_timer("finished creating movie id dict", 3)
     return movie_id_dict
 
 def get_matching_movies(imdb_ids, movie_id_dict):

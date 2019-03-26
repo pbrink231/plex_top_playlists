@@ -37,8 +37,8 @@ show_missing: False
 verbose: 0
 
 ### [OPTIONAL] Missing list columns
-# number of columns wide to show list.  default is 5
-missing_columns: 5
+# number of columns wide to show list.  default is 4
+missing_columns: 4
 
 [Trakt]
 ### [OPTIONAL] Trakt API Info ###
@@ -104,6 +104,18 @@ imdb-lists: [
   { "title":"", "type":"chart", "url":"http://www.imdb.com/chart/bottom"}
 
   ]
+
+
+[Radarr]
+### Testing
+# this will be used to auto add missing movies from lists
+radarr_token:
+add_movies: False
+# [REQUIRED] Used to pick the profile when adding the movie
+quality_profile:
+
+
+
 
 
   
