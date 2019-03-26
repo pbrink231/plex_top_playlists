@@ -24,10 +24,6 @@ users: []
 # $shared must be True.
 not_users: []
 
-### [OPTIONS] Change to have it work how you want ###
-# Set to True to remove playlists only,  This will not grab lists.  It will remove all playlists from variables below.  Easy way to undo
-remove: False
-
 ### [OPTIONAL] Plex server timeout setting .. default 300secs
 # Uncomment and increase if you are experiencing timeout issues
 # timeout: 300

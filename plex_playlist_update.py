@@ -43,7 +43,6 @@ PLEX_URL = config.get('Plex', 'plex-host')
 PLEX_TOKEN = config.get('Plex', 'plex-token')
 MOVIE_LIBRARY_NAME = config.get('Plex', 'movie-library')
 SHOW_LIBRARY_NAME = config.get('Plex', 'tv-library')
-REMOVE_ONLY = config.getboolean('Plex', 'remove')
 SYNC_WITH_SHARED_USERS = config.getboolean('Plex', 'shared')
 ALLOW_SYNCED_USERS = json.loads(config.get('Plex', 'users'))
 NOT_ALLOW_SYNCED_USERS = json.loads(config.get('Plex', 'not_users'))
@@ -521,12 +520,8 @@ def list_updater(plex):
 
     log_output("users list: {}".format(users), 1)
     
-
-    if REMOVE_ONLY:
-        remove_lists(plex, users)
-    else:
-        run_movies_lists(plex, users)
-        run_show_lists(plex, users)
+    run_movies_lists(plex, users)
+    run_show_lists(plex, users)
 
 if __name__ == "__main__":
     print("===================================================================")
@@ -538,11 +533,12 @@ if __name__ == "__main__":
     # remove playlist by name
     # create a playlist specifically
 
-    if (len(sys.argv) == 1 or sys.argv[1] not in ['run', 'show_users', 'remove_playlist', 'remove_all_playlists']):
+    if (len(sys.argv) == 1 or sys.argv[1] not in ['run', 'show_users', 'show_allowed', 'remove_playlist', 'remove_all_playlists']):
         print("""
 Please use one of the following commands:
     run - Will start the normal process from your settings
     show_users - will give you a list of users to copy and paste to your settings file
+    show_allowed - will give you a list of users your script will create playlists on
     remove_playlist - needs a second argument with playlist name to remove
     remove_all_playlists - will remove all playlists setup in the settings
     
@@ -568,6 +564,10 @@ Please use one of the following commands:
     # display available users
     if sys.argv[1] == 'show_users':
         for key, value in get_all_users(plex).items():
+            print('Username: {}'.format(key))
+
+    if sys.argv[1] == 'show_allowed':
+        for key, value in get_user_tokens(plex).items():
             print('Username: {}'.format(key))
 
     if sys.argv[1] == 'remove_playlist':
