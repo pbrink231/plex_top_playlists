@@ -507,7 +507,6 @@ def get_all_users(plex):
     headers = {'Accept': 'application/json', 'X-Plex-Token': PLEX_TOKEN}
     result = requests.get('https://plex.tv/api/servers/{server_id}/shared_servers?X-Plex-Token={token}'.format(server_id=machineID, token=PLEX_TOKEN), headers=headers)
     xmlData = xmltodict.parse(result.content)
-    print(xmlData)
     
     result2 = requests.get('https://plex.tv/api/users', headers=headers)
     xmlData2 = xmltodict.parse(result2.content)
@@ -549,11 +548,6 @@ if __name__ == "__main__":
     print("===================================================================")
     print("   Automated Playlist to Plex script   ")
     print("===================================================================\n")
-
-    # allow some commands:
-    # list all users
-    # remove playlist by name
-    # create a playlist specifically
 
     if (len(sys.argv) == 1 or sys.argv[1] not in ['run', 'show_users', 'show_allowed', 'remove_playlist', 'remove_all_playlists']):
         print("""
