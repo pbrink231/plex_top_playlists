@@ -26,6 +26,7 @@ The playlists can be created for any of the following
 * IMDB Custom lists
 * IMDB Search Lists
 * Missing Movies or Shows can be shown with relevent IDs to search in Sonarr or Radarr
+* Send message to discord with summary
 * Helper commands to see relevent information or one off playlist actions
 
 ## Future wants to add (any help is welcome)
@@ -43,9 +44,9 @@ The playlists can be created for any of the following
 * [Windows](https://github.com/pbrink231/plex_top_playlists/wiki/Windows-Setup-and-Update)
 
 ## Obtain Required Plex key and other optional keys
-* [Plex](https://github.com/pbrink231/plex_top_playlists/wiki/Plex-token))
-* [Trakt](https://github.com/pbrink231/plex_top_playlists/wiki/Trakt-token))
-* [Discord](https://github.com/pbrink231/plex_top_playlists/wiki/Discord-token))
+* [Plex](https://github.com/pbrink231/plex_top_playlists/wiki/Plex-token)
+* [Trakt](https://github.com/pbrink231/plex_top_playlists/wiki/Trakt-token)
+* [Discord](https://github.com/pbrink231/plex_top_playlists/wiki/Discord-token)
 
 
 
