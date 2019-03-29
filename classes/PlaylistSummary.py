@@ -55,12 +55,15 @@ class PlaylistSummary(object):
         message = {}
         id_list = ""
         for i in range(len(missing_ids)):
-            id_list+= '`' + self.database_type + missing_ids[i] + '`'
-            print('\t', end='')
-            if i != len(missing_ids):
-                id_list+='  |  '
+            cur_id = missing_ids[i]
+            while len(cur_id) < 6:
+                cur_id += "឵឵឵឵឵ ឵឵"
+            id_list+= "`{}:{}`".format(self.database_type, cur_id)
             if i != 0 and i != len(missing_ids) and (not (i + 1) % 4):
                 id_list+='\n'
+            elif i != len(missing_ids):
+                id_list+='  |  '
+
         
         first_part = {}
         first_part["title"] = self.name
@@ -78,4 +81,6 @@ class PlaylistSummary(object):
         # first_part["color"] = 1127128
         message['embeds'] = [first_part]
         r = requests.post(discord_url, headers={"Content-Type":"application/json"}, json=message)
+        if r.status_code == 204:
+          print("Sent to Discord")
 
