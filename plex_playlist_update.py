@@ -25,6 +25,7 @@ import sys
 from lxml import html
 from plexapi.server import PlexServer
 from urllib.request import Request, urlopen
+from classes.PlaylistSummary import PlaylistSummary
 NA = ""
 
 config_file_path = os.path.join(os.path.dirname(
@@ -39,6 +40,7 @@ else:
 config = configparser.SafeConfigParser()
 config.read(config_file_path)
 
+START_TIME = time.time()
 PLEX_URL = config.get('Plex', 'plex-host')
 PLEX_TOKEN = config.get('Plex', 'plex-token')
 MOVIE_LIBRARY_NAME = config.get('Plex', 'movie-library')
@@ -62,11 +64,26 @@ try:
     MISSING_COLUMNS = int(config.get('Plex', 'missing_columns'))
 except:
     MISSING_COLUMNS = 4
-TRAKT_API_KEY = config.get('Trakt', 'api-key')
-TRAKT_MOVIE_LISTS = json.loads(config.get('Trakt', 'trakt-movie-list'))
-TRAKT_SHOW_LISTS = json.loads(config.get('Trakt', 'trakt-tv-list'))
-IMDB_LISTS = json.loads(config.get('IMDb', 'imdb-lists'))
-START_TIME = time.time()
+try:
+    TRAKT_API_KEY = config.get('Trakt', 'api-key')
+except:
+    TRAKT_API_KEY = None
+try:
+    TRAKT_MOVIE_LISTS = json.loads(config.get('Trakt', 'trakt-movie-list'))
+except:
+    TRAKT_MOVIE_LISTS = []
+try:
+    TRAKT_SHOW_LISTS = json.loads(config.get('Trakt', 'trakt-tv-list'))
+except:
+    TRAKT_SHOW_LISTS = []
+try:
+    IMDB_LISTS = json.loads(config.get('IMDb', 'imdb-lists'))
+except:
+    IMDB_LISTS = []
+try:
+    DISCORD_URL = config.get('Discord', 'webhook_url')
+except:
+    DISCORD_URL = None
 
 ####### CODE HERE (Nothing to change) ############
 
@@ -113,14 +130,16 @@ def loop_plex_users(plex, shared_users, imdb_tt_list, playlist_name):
 
     # update my list
     create_playlists(plex, imdb_tt_list, playlist_name)
+    print("{}: Playlist made for primary user".format(playlist_name))
 
     # update list for shared users
     if SYNC_WITH_SHARED_USERS:
         for user in shared_users:
-            print("{}: updating playlist for user {}".format(playlist_name, user))
             user_token = shared_users[user]
             user_plex = PlexServer(baseurl=PLEX_URL, token=user_token, timeout=PLEX_TIMEOUT)
             create_playlists(user_plex, imdb_tt_list, playlist_name)
+            print("{}: playlist made for user {}".format(playlist_name, user))
+
     else:
         print("Skipping adding to shared users")
 
@@ -132,23 +151,9 @@ def get_tvdb_id(show):
     return tvdb_id
 
 
-def print_show_info(matching_episode_ids, tvdb_ids, playlist_name):
-    missing_episode_ids = list(set(tvdb_ids) - set(matching_episode_ids))
-    print("""
-    {match_ids_len} of {imdb_ids_len} shows found in list:
-      {playlist_name}
-    That means you are MISSING:
-      {miss_ids_len}""".format(
-        playlist_name=playlist_name,
-        match_ids_len=len(matching_episode_ids),
-        imdb_ids_len=len(tvdb_ids),
-        miss_ids_len=len(missing_episode_ids)
-    ))
-    print_missing_show_info(missing_episode_ids)
-
-
 def setup_show_playlist(plex, shared_users, tvdb_ids, plex_shows, playlist_name):
     if tvdb_ids:
+        summary = PlaylistSummary("tvdb", playlist_name, tvdb_ids)
         # Create a list of matching shows using last episode
         print("{}: finding matching episodes for playlist with count {}".format(playlist_name, len(tvdb_ids)))
         matching_episodes = []
@@ -161,8 +166,6 @@ def setup_show_playlist(plex, shared_users, tvdb_ids, plex_shows, playlist_name)
                 matching_episodes.append(show.episodes()[-1])
                 matching_episode_ids.append(tvdb_id)
 
-        print_show_info(matching_episode_ids, tvdb_ids, playlist_name)
-
         for tvdb_id in tvdb_ids:
             for episode in matching_episodes:
                 show_tvdb_id = episode.guid.split(
@@ -171,9 +174,17 @@ def setup_show_playlist(plex, shared_users, tvdb_ids, plex_shows, playlist_name)
                     sorted_shows.append(episode)
                     break
 
-        print("{}: Created shows list".format(playlist_name))
+        summary.matching_ids = matching_episode_ids
+        summary.sorted_shows = sorted_shows
 
-        loop_plex_users(plex, shared_users, sorted_shows, playlist_name)
+        loop_plex_users(plex, shared_users, summary.sorted_shows, playlist_name)
+
+        summary.found_info()
+        if SHOW_MISSING:
+            summary.missing_info(MISSING_COLUMNS)
+
+        if DISCORD_URL:
+            summary.send_to_discord(DISCORD_URL)
     else:
         print('{}: WARNING - Playlist is empty'.format(playlist_name))
 
@@ -227,64 +238,27 @@ def get_matching_movies(imdb_ids, movie_id_dict):
     returnme.append(movie_ids)
     return returnme
 
-def print_imdb_info(matching_movie_ids, imdb_ids, playlist_name):
-    missing_imdb_ids = list(set(imdb_ids) - set(matching_movie_ids))
-    print("""
-    {match_ids_len} of {imdb_ids_len} movies found in list:
-      {playlist_name}
-    That means you are MISSING:
-      {miss_ids_len}""".format(
-        playlist_name=playlist_name,
-        match_ids_len=len(matching_movie_ids),
-        imdb_ids_len=len(imdb_ids),
-        miss_ids_len=len(missing_imdb_ids)
-    ))
-    print_missing_imdb_info(missing_imdb_ids)
-
-def print_missing_imdb_info(missing_imdb_ids):
-    if SHOW_MISSING and len(missing_imdb_ids) > 0:
-        print("""
-    The IMDB IDs are listed below.
-    Radarr can use these in the search.  Just Copy/Paste
-    """)
-        for i in range(len(missing_imdb_ids)):
-            print('imdb:' + missing_imdb_ids[i], end='')
-            print('\t', end='')
-            if i != 0 and i != len(missing_imdb_ids) and (not (i + 1) % MISSING_COLUMNS):
-                print()
-        print("\n\n")
-
-def print_missing_show_info(missing_episode_ids):
-    if SHOW_MISSING and len(missing_episode_ids) > 0:
-        print("""
-    The TVDB IDs are listed below.
-    Sonarr can use these in the search.  Just Copy/Paste
-    """)
-
-        for i in range(len(missing_episode_ids)):
-            print('tvdb:' + missing_episode_ids[i], end='')
-            print('\t', end='')
-            if i != 0 and i != len(missing_episode_ids) and (not (i + 1) % MISSING_COLUMNS):
-                print()
-        print("\n\n")
-
 def setup_movie_playlist(plex, shared_users, imdb_ids, movie_id_dict, playlist_name):
     if imdb_ids:
+        summary = PlaylistSummary("imdb", playlist_name, imdb_ids)
         print("{0}: finding matching movies for playlist with count {1}".format(
             playlist_name,
             len(imdb_ids)
         ))
 
         matches = get_matching_movies(imdb_ids, movie_id_dict)
-        matching_movies = matches[0]
-        matching_movie_ids = matches[1]
+        summary.matching_movies = matches[0]
+        summary.matching_ids = matches[1]
 
-        print_imdb_info(matching_movie_ids, imdb_ids, playlist_name)
+        loop_plex_users(plex, shared_users, summary.matching_movies, summary.name)
 
-        print("{}: Created movie list".format(playlist_name))
-        log_timer()
+        summary.found_info()
+        if SHOW_MISSING:
+            summary.missing_info(MISSING_COLUMNS)
 
-        loop_plex_users(plex, shared_users, matching_movies, playlist_name)
+        if DISCORD_URL:
+            summary.send_to_discord(DISCORD_URL)
+
     else:
         print("{0}: WARNING - Playlist is empty".format(playlist_name))
 
@@ -329,8 +303,8 @@ def trakt_show_list_loop(plex, shared_users, all_shows):
             print("Bad Trakt Code")
             return []
 
-        imdb_ids = trakt_tv_list_ids(trakt_shows, runlist["type"])
-        setup_show_playlist(plex, shared_users, imdb_ids, all_shows, runlist["title"])
+        tvdb_ids = trakt_tv_list_ids(trakt_shows, runlist["type"])
+        setup_show_playlist(plex, shared_users, tvdb_ids, all_shows, runlist["title"])
 
 
 def trakt_movie_list_loop(plex, shared_users, movie_id_dict):
@@ -549,7 +523,7 @@ if __name__ == "__main__":
     print("   Automated Playlist to Plex script   ")
     print("===================================================================\n")
 
-    if (len(sys.argv) == 1 or sys.argv[1] not in ['run', 'show_users', 'show_allowed', 'remove_playlist', 'remove_all_playlists']):
+    if (len(sys.argv) == 1 or sys.argv[1] not in ['run', 'show_users', 'show_allowed', 'remove_playlist', 'remove_all_playlists', 'discord_test']):
         print("""
 Please use one of the following commands:
     run - Will start the normal process from your settings
@@ -557,6 +531,7 @@ Please use one of the following commands:
     show_allowed - will give you a list of users your script will create playlists on
     remove_playlist - needs a second argument with playlist name to remove
     remove_all_playlists - will remove all playlists setup in the settings
+    discord_test - send a test to your discord channel to make sure it works
     
     ex:
     python {0} run
@@ -597,6 +572,21 @@ Please use one of the following commands:
 
     if sys.argv[1] == 'remove_all_playlists':
         remove_lists(plex, get_user_tokens(plex))
+
+    if sys.argv[1] == 'discord_test':
+        print("Testing sending to discord")
+        print("using URL: {}".format(DISCORD_URL))
+
+        message = {}
+        first_part = {}
+        first_part["title"] = "Playlists connected"
+        message['embeds'] = [first_part]
+        json_data = json.dumps(message)
+        r = requests.post(DISCORD_URL, headers={"Content-Type":"application/json"}, json=message)
+        if r.status_code == 204:
+            print("You should see a message in discord.")
+
+
 
 
     print("\n===================================================================")

@@ -38,36 +38,15 @@ The playlists can be created for any of the following
 
 # Getting Started
 
-## Get plex token
-
-**Required for everything in this script**
-
-This page will show you where your token is
-
-https://support.plex.tv/hc/en-us/articles/204059436-Finding-an-authentication-token-X-Plex-Token
-
-This page will show you how to view your xml to see that link you grab your token from
-
-https://support.plex.tv/hc/en-us/articles/201998867
-
-### Get Trakt API key (Optional)
-
-Used if you want to grab any Trakt playlists.  Not required.
-
-To connect to Trakt you need to get an api key.  You can easily create one.  Here are the steps for that
-1) go to Trakt.tv
-2) create a user if you dont have one
-3) Sign in
-4) go here https://trakt.tv/oauth/applications/new
-* Name - call it what you want
-* Description - needed, put whatever you want
-* redirect url - put any websit
-* dont need anything else filled out
-5) grab the Client ID to use as your Trakt API Key
-
-# Setup Instructions in the Wiki
+## Setup Instructions
 * [Linux](https://github.com/pbrink231/plex_top_playlists/wiki/Linux-Setup-and-Update)
 * [Windows](https://github.com/pbrink231/plex_top_playlists/wiki/Windows-Setup-and-Update)
+
+## Obtain Required Plex key and other optional keys
+* [Plex](https://github.com/pbrink231/plex_top_playlists/wiki/Plex-token))
+* [Trakt](https://github.com/pbrink231/plex_top_playlists/wiki/Trakt-token))
+* [Discord](https://github.com/pbrink231/plex_top_playlists/wiki/Discord-token))
+
 
 
 # Examples

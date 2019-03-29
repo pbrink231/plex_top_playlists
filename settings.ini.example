@@ -106,6 +106,12 @@ imdb-lists: [
   ]
 
 
+[Discord]
+### Testing phase
+# this will send a message for each movie/show summary finished to a channel
+# by adding the url you will recieve messages
+webhook_url:
+
 [Radarr]
 ### Testing
 # this will be used to auto add missing movies from lists
