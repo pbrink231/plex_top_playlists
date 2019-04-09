@@ -485,10 +485,15 @@ def get_all_users(plex):
     result2 = requests.get('https://plex.tv/api/users', headers=headers)
     xmlData2 = xmltodict.parse(result2.content)
 
-    user_ids = {plex_user['@id']: plex_user.get('@username', plex_user.get('@title')) for plex_user in xmlData2['MediaContainer']['User']}
     users = {}
+    user_ids = {}
+    if 'User' in xmlData2['MediaContainer'].keys():
+        # has atleast 1 shared user generally
+        user_ids = {plex_user['@id']: plex_user.get('@username', plex_user.get('@title')) for plex_user in xmlData2['MediaContainer']['User']}
+
+
     if 'SharedServer' in xmlData['MediaContainer']:
-        # has atlease 1 shared or owned user
+        # has atlease 1 shared server
         if isinstance(xmlData['MediaContainer']['SharedServer'],list):
             # more than 1 shared user
             for server_user in xmlData['MediaContainer']['SharedServer']:
@@ -513,7 +518,7 @@ def get_user_tokens(plex):
 def list_updater(plex):
     users = get_user_tokens(plex)
 
-    log_output("users list: {}".format(users), 1)
+    log_output("shared users list: {}".format(users), 1)
     
     run_movies_lists(plex, users)
     run_show_lists(plex, users)
@@ -555,11 +560,13 @@ Please use one of the following commands:
     # display available users
     if sys.argv[1] == 'show_users':
         users = get_all_users(plex)
+        print('{} shared users'.format(len(users)))
         for key, value in users.items():
             print('Username: {}'.format(key))
 
     if sys.argv[1] == 'show_allowed':
         users = get_user_tokens(plex)
+        print('{} shared users'.format(len(users)))
         for key, value in users.items():
             print('Username: {}'.format(key))
 
