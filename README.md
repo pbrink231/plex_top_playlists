@@ -56,6 +56,7 @@ This created a playlist for each user in plex for all found in the list.  The ou
 
 ![movie list output](https://github.com/pbrink231/plex_top_playlists/wiki/images/Movie-Output-example.PNG)
 
+![movie list output](https://github.com/pbrink231/plex_top_playlists/wiki/images/discord-output.PNG)
 
 
 # Used references to create the script
