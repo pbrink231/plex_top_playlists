@@ -151,33 +151,38 @@ def get_tvdb_id(show):
     return tvdb_id
 
 
-def setup_show_playlist(plex, shared_users, tvdb_ids, plex_shows, playlist_name):
+def setup_show_playlist(plex, shared_users, tvdb_ids, plex_shows, playlist_name, kind):
     if tvdb_ids:
         summary = PlaylistSummary("tvdb", playlist_name, tvdb_ids)
         # Create a list of matching shows using last episode
         print("{}: finding matching episodes for playlist with count {}".format(playlist_name, len(tvdb_ids)))
         matching_episodes = []
         matching_episode_ids = []
-        sorted_shows = []
+        sorted_episodes = []
+        matching_shows = []
         for show in plex_shows:
             tvdb_id = get_tvdb_id(show)
 
             if tvdb_id and tvdb_id in tvdb_ids:
-                matching_episodes.append(show.episodes()[-1])
-                matching_episode_ids.append(tvdb_id)
+              matching_shows.append(show)
+              matching_episodes.append(show.episodes()[-1])
+              matching_episode_ids.append(tvdb_id)
 
         for tvdb_id in tvdb_ids:
             for episode in matching_episodes:
                 show_tvdb_id = episode.guid.split(
                     'thetvdb://')[1].split('?')[0].split('/')[0]
                 if show_tvdb_id == tvdb_id:
-                    sorted_shows.append(episode)
+                    sorted_episodes.append(episode)
                     break
 
         summary.matching_ids = matching_episode_ids
-        summary.sorted_shows = sorted_shows
+        summary.sorted_episodes = sorted_episodes
 
-        loop_plex_users(plex, shared_users, summary.sorted_shows, playlist_name)
+        if kind == "collection":
+          add_items_to_collection(plex, matching_shows, playlist_name)
+        else:
+          loop_plex_users(plex, shared_users, summary.sorted_episodes, playlist_name)
 
         summary.found_info()
         if SHOW_MISSING:
@@ -238,7 +243,13 @@ def get_matching_movies(imdb_ids, movie_id_dict):
     returnme.append(movie_ids)
     return returnme
 
-def setup_movie_playlist(plex, shared_users, imdb_ids, movie_id_dict, playlist_name):
+def add_items_to_collection(plex, medias, tag):
+    for media in medias:
+      print("Adding tag: {0}, To media: {1}".format(tag, media))
+      media.addCollection(tag)
+
+
+def setup_movie_playlist(plex, shared_users, imdb_ids, movie_id_dict, playlist_name, kind):
     if imdb_ids:
         summary = PlaylistSummary("imdb", playlist_name, imdb_ids)
         print("{0}: finding matching movies for playlist with count {1}".format(
@@ -250,7 +261,10 @@ def setup_movie_playlist(plex, shared_users, imdb_ids, movie_id_dict, playlist_n
         summary.matching_movies = matches[0]
         summary.matching_ids = matches[1]
 
-        loop_plex_users(plex, shared_users, summary.matching_movies, summary.name)
+        if kind == "collection":
+          add_items_to_collection(plex, summary.matching_movies, summary.name)
+        else:
+          loop_plex_users(plex, shared_users, summary.matching_movies, summary.name)
 
         summary.found_info()
         if SHOW_MISSING:
@@ -285,10 +299,12 @@ def trakt_movie_list_ids(trakt_json, json_type):
 
 def trakt_show_list_loop(plex, shared_users, all_shows):
     for runlist in TRAKT_SHOW_LISTS:
-        print("{0}: STARTING PLAYLIST - TYPE: {2} - URL: {1}".format(
+        kind = runlist.get("kind", 'playlist')
+        print("{0}: STARTING PLAYLIST - TYPE: {2} - URL: {1} - KIND: {3}".format(
             runlist["title"],
             runlist["url"],
-            runlist["type"]
+            runlist["type"],
+            kind
         ))
         headers = {
             'Content-Type': 'application/json',
@@ -304,15 +320,17 @@ def trakt_show_list_loop(plex, shared_users, all_shows):
             return []
 
         tvdb_ids = trakt_tv_list_ids(trakt_shows, runlist["type"])
-        setup_show_playlist(plex, shared_users, tvdb_ids, all_shows, runlist["title"])
+        setup_show_playlist(plex, shared_users, tvdb_ids, all_shows, runlist["title"], kind)
 
 
 def trakt_movie_list_loop(plex, shared_users, movie_id_dict):
     for runlist in TRAKT_MOVIE_LISTS:
-        print("{0}: STARTING PLAYLIST - TYPE: {2} - URL: {1}".format(
+        kind = runlist.get("kind", 'playlist')
+        print("{0}: STARTING PLAYLIST - TYPE: {2} - URL: {1} - KIND: {3}".format(
             runlist["title"],
             runlist["url"],
-            runlist["type"]
+            runlist["type"],
+            kind
         ))
         headers = {
             'Content-Type': 'application/json',
@@ -328,7 +346,7 @@ def trakt_movie_list_loop(plex, shared_users, movie_id_dict):
             return []
 
         imdb_ids = trakt_movie_list_ids(trakt_movies, runlist["type"])
-        setup_movie_playlist(plex, shared_users, imdb_ids, movie_id_dict, runlist["title"])
+        setup_movie_playlist(plex, shared_users, imdb_ids, movie_id_dict, runlist["title"], kind)
 
 def imdb_list_ids(tree, type):
     if type =="chart":
@@ -352,6 +370,7 @@ def imdb_list_name(tree, type):
 
 def imdb_list_loop(plex, shared_users, movie_id_dict):
     for runlist in IMDB_LISTS:
+        kind = runlist.get("kind", 'playlist')
         page = requests.get(runlist["url"])
         tree = html.fromstring(page.content)
 
@@ -370,7 +389,7 @@ def imdb_list_loop(plex, shared_users, movie_id_dict):
         ))
 
         ids = imdb_list_ids(tree, runlist["type"])
-        setup_movie_playlist(plex, shared_users, ids, movie_id_dict, title)
+        setup_movie_playlist(plex, shared_users, ids, movie_id_dict, title, kind)
 
 def run_movies_lists(plex, shared_users):
     # Get list of movies from the Plex server

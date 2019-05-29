@@ -52,6 +52,10 @@ api-key:
 # the type is for how to parse the response.  Let me know in github if you have trouble with an endpoint.
 # COMMA's matter.
 
+# Currently 2 different kinds.  "playlist" and "collection"
+# playlist is default if not supplied
+# adding "kind":"collection" will tag all movies with a collection tag.  A collection can go on movies or shows and will show together
+
 ## Movie list
 trakt-movie-list: [
   { "title": "Movies Top Weekly", "type":"watched", "limit": 80, "url":"https://api.trakt.tv/movies/watched/weekly"},
@@ -59,9 +63,10 @@ trakt-movie-list: [
   ]
 
 ## Show list
+# !!!! WARNING !!!! - collection cannot be placed on a show list yet.  Will update when my pull request goes through on plexapi
 trakt-tv-list: [
   { "title": "Show Top Weekly", "type":"watched", "limit": 20, "url":"https://api.trakt.tv/shows/watched/weekly"},
-  { "title": "Show Popular", "type":"popular", "limit": 20, "url":"https://api.trakt.tv/shows/popular"}
+  { "title": "Show Popular", "type":"popular", "limit": 20, "url":"https://api.trakt.tv/shows/popular", "kind":"collection"}
   ]
 
 
@@ -72,6 +77,10 @@ trakt-tv-list: [
 # each line needs a title, url and type
 # if title is empty it will try and get the title from the imdb list
 # CHECK YOUR COMMAs.  Need one after every line except last.  Will break
+
+# Currently 2 different kinds.  "playlist" and "collection"
+# playlist is default if not supplied
+# adding "kind":"collection" will tag all movies with a collection tag.  A collection can go on movies or shows and will show together
 
 ### SEARCH TYPE
 # type: "search"
@@ -86,7 +95,7 @@ trakt-tv-list: [
 # used for links with 'list' in the url
 
 imdb-lists: [
-  { "title":"IMDB Top 250 Example", "type":"chart", "url":"https://www.imdb.com/chart/top" },
+  { "title":"IMDB Top 250 Example", "type":"chart", "url":"https://www.imdb.com/chart/top", "kind":"collection" },
   { "title":"IMDB Custom Example", "type":"custom", "url":"https://www.imdb.com/list/ls069751712/" },
   { "title":"IMDB Search Example", "type":"search", "url":"https://www.imdb.com/search/title?groups=oscar_best_picture_winners&sort=year,desc&view=simple&count=250" },
 
@@ -95,7 +104,7 @@ imdb-lists: [
 
   { "title":"Star Wars Machete Order", "type":"custom", "url":"http://www.imdb.com/list/ls069751712/" },
   { "title":"2018 Oscar Nominees", "type":"custom", "url":"http://www.imdb.com/list/ls009668531/" },
-  { "title":"", "type":"custom", "url":"http://www.imdb.com/list/ls009668531/"},
+  { "title":"", "type":"custom", "url":"http://www.imdb.com/list/ls009668531/", "kind":"collection"},
 
   { "title":"Top Rated Movies", "type":"chart", "url":"http://www.imdb.com/chart/top"},
   { "title":"Most Popular Movies", "type":"chart", "url":"http://www.imdb.com/chart/moviemeter"},
