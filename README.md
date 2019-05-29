@@ -18,6 +18,10 @@ The playlists can be created for any of the following
 * Specific users by username
 * Only the script running user
 
+## NEW - Collections
+* Can use same lists like playlists but add a collection tag to the media instead of putting them in a playlist
+* Best when order does not matter
+
 ## What lists this script currently retreives
 
 * Trakt Playlists Movies
@@ -31,7 +35,6 @@ The playlists can be created for any of the following
 
 ## Future wants to add (any help is welcome)
 
-* Create/Update Collections from list (where order does not matter)
 * Add Tautulli Lists
 * Auto Add to Radarr
 * Auto Add to Sonarr
