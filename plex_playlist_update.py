@@ -245,7 +245,6 @@ def get_matching_movies(imdb_ids, movie_id_dict):
 
 def add_items_to_collection(plex, medias, tag):
     for media in medias:
-      print("Adding tag: {0}, To media: {1}".format(tag, media))
       media.addCollection(tag)
 
 
