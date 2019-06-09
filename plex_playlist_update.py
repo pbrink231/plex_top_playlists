@@ -25,6 +25,7 @@ import sys
 from lxml import html
 from plexapi.server import PlexServer
 from urllib.request import Request, urlopen
+from urllib.parse import urlparse, urlunparse, parse_qs, parse_qsl, urlencode
 from classes.PlaylistSummary import PlaylistSummary
 NA = ""
 
@@ -76,6 +77,10 @@ try:
     TRAKT_SHOW_LISTS = json.loads(config.get('Trakt', 'trakt-tv-list'))
 except:
     TRAKT_SHOW_LISTS = []
+try:
+    TRAKT_USER_LISTS = json.loads(config.get('Trakt', 'trakt-user-list'))
+except:
+    TRAKT_USER_LISTS = []
 try:
     IMDB_LISTS = json.loads(config.get('IMDb', 'imdb-lists'))
 except:
@@ -151,7 +156,7 @@ def get_tvdb_id(show):
     return tvdb_id
 
 
-def setup_show_playlist(plex, shared_users, tvdb_ids, plex_shows, playlist_name, kind):
+def setup_show_playlist(plex, shared_users, tvdb_ids, plex_shows, playlist_name, kind, show_summary):
     if tvdb_ids:
         summary = PlaylistSummary("tvdb", playlist_name, tvdb_ids)
         # Create a list of matching shows using last episode
@@ -185,10 +190,11 @@ def setup_show_playlist(plex, shared_users, tvdb_ids, plex_shows, playlist_name,
           loop_plex_users(plex, shared_users, summary.sorted_episodes, playlist_name)
 
         summary.found_info()
-        if SHOW_MISSING:
+
+        if SHOW_MISSING and show_summary == 'true':
             summary.missing_info(MISSING_COLUMNS)
 
-        if DISCORD_URL:
+        if DISCORD_URL and show_summary == 'true':
             summary.send_to_discord(DISCORD_URL)
     else:
         print('{}: WARNING - Playlist is empty'.format(playlist_name))
@@ -248,7 +254,7 @@ def add_items_to_collection(plex, medias, tag):
       media.addCollection(tag)
 
 
-def setup_movie_playlist(plex, shared_users, imdb_ids, movie_id_dict, playlist_name, kind):
+def setup_movie_playlist(plex, shared_users, imdb_ids, movie_id_dict, playlist_name, kind, show_summary):
     if imdb_ids:
         summary = PlaylistSummary("imdb", playlist_name, imdb_ids)
         print("{0}: finding matching movies for playlist with count {1}".format(
@@ -266,10 +272,11 @@ def setup_movie_playlist(plex, shared_users, imdb_ids, movie_id_dict, playlist_n
           loop_plex_users(plex, shared_users, summary.matching_movies, summary.name)
 
         summary.found_info()
-        if SHOW_MISSING:
+
+        if SHOW_MISSING and show_summary == 'true':
             summary.missing_info(MISSING_COLUMNS)
 
-        if DISCORD_URL:
+        if DISCORD_URL and show_summary == 'true':
             summary.send_to_discord(DISCORD_URL)
 
     else:
@@ -296,9 +303,20 @@ def trakt_movie_list_ids(trakt_json, json_type):
             imdb_ids.append(movie['ids']['imdb'])
     return imdb_ids
 
+def trakt_user_list_ids(trakt_json, json_type):
+    imdb_ids = []
+    tvdb_ids = []
+    for item in trakt_json:
+        if item['type'] == 'movie':
+            imdb_ids.append(item['movie']['ids']['imdb'])
+        if item['type'] == 'season':
+            tvdb_ids.append(str(show['show']['ids']['tvdb']))
+    return imdb_ids, tvdb_ids
+
 def trakt_show_list_loop(plex, shared_users, all_shows):
     for runlist in TRAKT_SHOW_LISTS:
         kind = runlist.get("kind", 'playlist')
+        show_summary = runlist.get("show_summary", "true")
         print("{0}: STARTING PLAYLIST - TYPE: {2} - URL: {1} - KIND: {3}".format(
             runlist["title"],
             runlist["url"],
@@ -319,13 +337,14 @@ def trakt_show_list_loop(plex, shared_users, all_shows):
             return []
 
         tvdb_ids = trakt_tv_list_ids(trakt_shows, runlist["type"])
-        setup_show_playlist(plex, shared_users, tvdb_ids, all_shows, runlist["title"], kind)
+        setup_show_playlist(plex, shared_users, tvdb_ids, all_shows, runlist["title"], kind, show_summary)
 
 
 def trakt_movie_list_loop(plex, shared_users, movie_id_dict):
     for runlist in TRAKT_MOVIE_LISTS:
         kind = runlist.get("kind", 'playlist')
-        print("{0}: STARTING PLAYLIST - TYPE: {2} - URL: {1} - KIND: {3}".format(
+        show_summary = runlist.get("show_summary", "true")
+        print("{0}: STARTING TRAKT LIST - TYPE: {2} - URL: {1} - KIND: {3}".format(
             runlist["title"],
             runlist["url"],
             runlist["type"],
@@ -345,7 +364,7 @@ def trakt_movie_list_loop(plex, shared_users, movie_id_dict):
             return []
 
         imdb_ids = trakt_movie_list_ids(trakt_movies, runlist["type"])
-        setup_movie_playlist(plex, shared_users, imdb_ids, movie_id_dict, runlist["title"], kind)
+        setup_movie_playlist(plex, shared_users, imdb_ids, movie_id_dict, runlist["title"], kind, show_summary)
 
 def imdb_list_ids(tree, type):
     if type =="chart":
@@ -364,31 +383,66 @@ def imdb_list_name(tree, type):
         return tree.xpath("//h1[contains(@class, 'header')]")[0].text.strip()
     if type == "custom":
         return tree.xpath("//h1[contains(@class, 'header list-name')]")[0].text.strip()
-
     return
 
+def get_imdb_info(url, type):
+    using_url = url
+    title = None
+    ids = []
+    while True:
+        print("getting imdb ids from url: {0}".format(using_url))
+        page = requests.get(using_url)
+        tree = html.fromstring(page.content)
+        new_ids = imdb_list_ids(tree, type)
+        ids += new_ids
+
+        if (title is None):
+            title = imdb_list_name(tree, type)
+
+        is_next = tree.xpath("//a[@class='flat-button lister-page-next next-page']")
+        if (is_next):
+            parsed = urlparse(using_url)
+            url_parts = list(parsed)
+            query = dict(parse_qsl(url_parts[4]))
+            cur_page = query.get("page", 1)
+            next_page = int(cur_page) + 1
+            params = {'page': next_page}
+            query.update(params)
+            url_parts[4] = urlencode(query)
+            using_url = urlunparse(url_parts)
+        else:
+            break
+
+
+    return ids, title
+
 def imdb_list_loop(plex, shared_users, movie_id_dict):
+    print('count of imdb lists: {}'.format(len(IMDB_LISTS)))
     for runlist in IMDB_LISTS:
         kind = runlist.get("kind", 'playlist')
-        page = requests.get(runlist["url"])
-        tree = html.fromstring(page.content)
+        print("here here {}".format(runlist["title"]))
+        show_summary = runlist.get("show_summary", "true")
+        print("here here")
+
+        ids, imdb_title = get_imdb_info(runlist["url"], runlist["type"])
 
         if runlist["title"]:
             title = runlist["title"]
         else:
-            title = imdb_list_name(tree, runlist["type"])
+            title = imdb_title # imdb_list_name(tree, runlist["type"])
         if not title:
             print("SKIPPING LIST because no title found")
             continue
 
-        print("{0}: STARTING PLAYLIST - TYPE: {2} - URL: {1}".format(
+
+        print("{0}: STARTING PLAYLIST - TYPE: {2} - URL: {1} - KIND: {3}".format(
             title,
             runlist["url"],
-            runlist["type"]
+            runlist["type"],
+            kind
         ))
 
-        ids = imdb_list_ids(tree, runlist["type"])
-        setup_movie_playlist(plex, shared_users, ids, movie_id_dict, title, kind)
+        setup_movie_playlist(plex, shared_users, ids, movie_id_dict, title, kind, show_summary)
 
 def run_movies_lists(plex, shared_users):
     # Get list of movies from the Plex server
@@ -546,10 +600,11 @@ if __name__ == "__main__":
     print("   Automated Playlist to Plex script   ")
     print("===================================================================\n")
 
-    if (len(sys.argv) == 1 or sys.argv[1] not in ['run', 'show_users', 'show_allowed', 'remove_playlist', 'remove_all_playlists', 'discord_test']):
+    if (len(sys.argv) == 1 or sys.argv[1] not in ['run', 'imdb_ids', 'show_users', 'show_allowed', 'remove_playlist', 'remove_all_playlists', 'discord_test']):
         print("""
 Please use one of the following commands:
     run - Will start the normal process from your settings
+    imdb_ids - needs url (in quotes probably) then type (custom,chart,search) to show list of imdb ids from url
     show_users - will give you a list of users to copy and paste to your settings file
     show_allowed - will give you a list of users your script will create playlists on
     remove_playlist - needs a second argument with playlist name to remove
@@ -574,6 +629,15 @@ Please use one of the following commands:
     # run standard
     if sys.argv[1] == 'run':
         list_updater(plex)
+
+    # check imdb list from url
+    if sys.argv[1] == 'imdb_ids':
+        if len(sys.argv) >= 3:
+            ids, title = get_imdb_info(sys.argv[2], sys.argv[3])
+            print('title: {0}, count: {2} ids: {1}'.format(title, ids, len(ids)))
+        else:
+            print("Please supply url then type")
+        
 
     # display available users
     if sys.argv[1] == 'show_users':
