@@ -13,7 +13,7 @@ class PlaylistSummary(object):
 
     
     def found_info(self):
-        if (self.database_type == "imdb"):
+        #if (self.database_type == "imdb"):
             print("""
         {match_ids_len} of {imdb_ids_len} found in {database_type} list:
             {playlist_name}
