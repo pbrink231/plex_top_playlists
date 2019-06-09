@@ -59,14 +59,14 @@ api-key:
 ## Movie list
 trakt-movie-list: [
   { "title": "Movies Top Weekly", "type":"watched", "limit": 80, "url":"https://api.trakt.tv/movies/watched/weekly"},
-  { "title": "Movies Popular", "type":"popular", "limit": 80, "url":"https://api.trakt.tv/movies/popular"}
+  { "title": "Movies Popular", "type":"popular", "limit": 80, "url":"https://api.trakt.tv/movies/popular", "show_summary": "False"}
   ]
 
 ## Show list
 # !!!! WARNING !!!! - collection cannot be placed on a show list yet.  Will update when my pull request goes through on plexapi
 trakt-tv-list: [
   { "title": "Show Top Weekly", "type":"watched", "limit": 20, "url":"https://api.trakt.tv/shows/watched/weekly"},
-  { "title": "Show Popular", "type":"popular", "limit": 20, "url":"https://api.trakt.tv/shows/popular", "kind":"collection"}
+  { "title": "Show Popular", "type":"popular", "limit": 20, "url":"https://api.trakt.tv/shows/popular", "kind":"collection", "show_summary": "False"}
   ]
 
 
@@ -96,7 +96,7 @@ trakt-tv-list: [
 
 imdb-lists: [
   { "title":"IMDB Top 250 Example", "type":"chart", "url":"https://www.imdb.com/chart/top", "kind":"collection" },
-  { "title":"IMDB Custom Example", "type":"custom", "url":"https://www.imdb.com/list/ls069751712/" },
+  { "title":"IMDB Custom Example", "type":"custom", "url":"https://www.imdb.com/list/ls069751712/", "show_summary": "False" },
   { "title":"IMDB Search Example", "type":"search", "url":"https://www.imdb.com/search/title?groups=oscar_best_picture_winners&sort=year,desc&view=simple&count=250" },
 
   { "title":"Latest Best Picture-Winning Titles", "type":"search", "url":"http://www.imdb.com/search/title?groups=oscar_best_picture_winners&sort=year,desc&view=simple" },
