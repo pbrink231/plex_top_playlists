@@ -420,9 +420,7 @@ def imdb_list_loop(plex, shared_users, movie_id_dict):
     print('count of imdb lists: {}'.format(len(IMDB_LISTS)))
     for runlist in IMDB_LISTS:
         kind = runlist.get("kind", 'playlist')
-        print("here here {}".format(runlist["title"]))
         show_summary = runlist.get("show_summary", "true")
-        print("here here")
 
         ids, imdb_title = get_imdb_info(runlist["url"], runlist["type"])
 
