@@ -69,6 +69,10 @@ trakt-tv-list: [
   { "title": "Show Popular", "type":"popular", "limit": 20, "url":"https://api.trakt.tv/shows/popular", "kind":"collection", "show_summary": "False"}
   ]
 
+[TMDb]
+### [OPTIONAL] TMDb API Info ###
+# This is REQUIRED for TMDb. If you have your libraries set to use TMDb Agent you will not be able to create any playlists.
+api-key: 
 
 [IMDb]
 # this is a LIST of all your fav IMDB lists

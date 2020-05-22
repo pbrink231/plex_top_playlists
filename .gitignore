@@ -1,4 +1,7 @@
 settings.ini
+tmdb_ids.dat
+tmdb_ids.bak
+tmdb_ids.dir
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

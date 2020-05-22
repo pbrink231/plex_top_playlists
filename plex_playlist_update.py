@@ -22,8 +22,10 @@ import time
 import xmltodict
 import configparser
 import sys
+import shelve
 from lxml import html
 from plexapi.server import PlexServer
+from tmdbv3api import TMDb, Movie
 from urllib.request import Request, urlopen
 from urllib.parse import urlparse, urlunparse, parse_qs, parse_qsl, urlencode
 from classes.PlaylistSummary import PlaylistSummary
@@ -89,8 +91,16 @@ try:
     DISCORD_URL = config.get('Discord', 'webhook_url')
 except:
     DISCORD_URL = None
+try:
+    TMDB_API_KEY = config.get('TMDb', 'api-key')
+except:
+    TMDB_API_KEY = None
 
 ####### CODE HERE (Nothing to change) ############
+
+tmdb = TMDb()
+tmdb.api_key = TMDB_API_KEY
+tmdb_movie = Movie()
 
 def log_timer(marker = "", verbose = 0):
     if VERBOSE >= verbose and marker:
@@ -203,9 +213,19 @@ def setup_show_playlist(plex, shared_users, tvdb_ids, plex_shows, playlist_name,
 
 def get_imdb_id(movie):
     try:
-        # com.plexapp.agents.imdb://tt0137523?lang=en
-        imdb_id = "tt" + re.search(r'tt(\d+)\?', movie.guid).group(1)
-    except:
+        agent = re.search(r'com\.plexapp\.agents\.(.+)\:\/\/', movie.guid).group(1)
+        if (agent == 'imdb'):
+            # com.plexapp.agents.imdb://tt0137523?lang=en
+            imdb_id = "tt" + re.search(r'tt(\d+)\?', movie.guid).group(1)
+        if (agent == 'themoviedb'):
+            # com.plexapp.agents.themoviedb://550?lang=en
+            with shelve.open('tmdb_ids', 'c', writeback=True) as s:
+                tmdb_id = re.search(r'\:\/\/(\d+)\?', movie.guid).group(1)
+                if s.get(tmdb_id) == None:
+                    s[tmdb_id] = tmdb_movie.external_ids(tmdb_id)["imdb_id"]
+                imdb_id = s[tmdb_id]
+    except Exception as e:
+        print("{0}".format(e))
         imdb_id = None
     return imdb_id
 
