@@ -1,5 +1,6 @@
 # plex_top_playlists
-**Python 3 ONLY.  Python 2 no longer works.  Please check out settings.ini.example and adjust.**
+**Python 3 ONLY. Python 2 no longer works.  Please check out settings.ini.example and adjust.**
+**Requires Python >= 3.6**
 
 A python script to get top weekly or top popular lists and put them in plex as playlists.  It will make a playlist for each user on your server.
 This is my first time ever creating a python script.  Also the first time really adding something useful to GitHub
