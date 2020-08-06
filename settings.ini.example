@@ -54,7 +54,7 @@ api-key:
 
 # Currently 2 different kinds.  "playlist" and "collection"
 # playlist is default if not supplied
-# adding "kind":"collection" will tag all movies with a collection tag.  A collection can go on movies or shows and will show together
+# adding "kind":"collection" will tag all movies and shows with a collection tag.  A collection can go on movies or shows and will show together
 
 ## Movie list
 trakt-movie-list: [
@@ -63,10 +63,15 @@ trakt-movie-list: [
   ]
 
 ## Show list
-# !!!! WARNING !!!! - collection cannot be placed on a show list yet.  Will update when my pull request goes through on plexapi
 trakt-tv-list: [
   { "title": "Show Top Weekly", "type":"watched", "limit": 20, "url":"https://api.trakt.tv/shows/watched/weekly"},
   { "title": "Show Popular", "type":"popular", "limit": 20, "url":"https://api.trakt.tv/shows/popular", "kind":"collection", "show_summary": "False"}
+  ]
+
+## Users list
+# The URL has an add '/items' at the end.  Please be aware of that when copying the url from the website
+trakt-users-list: [
+  { "title": "Show Top Weekly", "limit": 20, "url":"https://api.trakt.tv/users/donxy/lists/marvel-cinematic-universe/items"},
   ]
 
 

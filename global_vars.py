@@ -88,11 +88,11 @@ try:
 except Exception: # pylint: disable=broad-except
     TRAKT_SHOW_LISTS = []
 
-global TRAKT_USER_LISTS
+global TRAKT_USERS_LISTS
 try:
-    TRAKT_USER_LISTS = json.loads(CONFIG.get('Trakt', 'trakt-user-list'))
+    TRAKT_USERS_LISTS = json.loads(CONFIG.get('Trakt', 'trakt-users-list'))
 except Exception: # pylint: disable=broad-except
-    TRAKT_USER_LISTS = []
+    TRAKT_USERS_LISTS = []
 
 global IMDB_LISTS
 try:
