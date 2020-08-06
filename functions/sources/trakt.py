@@ -1,18 +1,17 @@
 """ Methods to pull trakt data into Film Lists """
 from urllib.request import Request, urlopen
 import json
-from typing import List
-from classes import FilmItem, FilmList, FilmDB, FilmType, ListSource
+from classes import ListSource, FilmItem, FilmList, FilmDB, FilmType
 import global_vars
 
-def trakt_list_loop() -> List[FilmList]:
+def trakt_list_loop():
     """ Returns all trakt film lists """
     all_trakt_film_lists = []
     all_trakt_film_lists += trakt_movie_list_loop()
     all_trakt_film_lists += trakt_show_list_loop()
     return all_trakt_film_lists
 
-def trakt_movie_list_loop() -> List[FilmList]:
+def trakt_movie_list_loop():
     """ returns all film lists from the trakt movies api """
     if global_vars.TRAKT_API_KEY is None:
         print("No Trakt API key, skipping Trakt movie lists")
@@ -20,8 +19,8 @@ def trakt_movie_list_loop() -> List[FilmList]:
 
     film_lists = []
     for runlist in global_vars.TRAKT_MOVIE_LISTS:
-        kind = runlist.get("kind", 'playlist')
-        show_summary = runlist.get("show_summary", "true")
+        kind = runlist.get("kind", 'PLAYLIST')
+        show_summary = runlist.get("show_summary", True)
         title = runlist["title"]
         print("{0}: STARTING TRAKT LIST - TYPE: {2} - URL: {1} - KIND: {3}".format(
             title,
@@ -37,7 +36,7 @@ def trakt_movie_list_loop() -> List[FilmList]:
     return film_lists
 
 
-def trakt_show_list_loop() -> List[FilmList]:
+def trakt_show_list_loop():
     """ returns all film lists from the trakt shows api """
     if global_vars.TRAKT_API_KEY is None:
         print("No Trakt API key, skipping Trakt Show lists")
@@ -45,8 +44,8 @@ def trakt_show_list_loop() -> List[FilmList]:
 
     film_lists = []
     for runlist in global_vars.TRAKT_SHOW_LISTS:
-        kind = runlist.get("kind", 'playlist')
-        show_summary = runlist.get("show_summary", "true")
+        kind = runlist.get("kind", 'PLAYLIST')
+        show_summary = runlist.get("show_summary", True)
         title = runlist["title"]
         print("{0}: STARTING PLAYLIST - TYPE: {2} - URL: {1} - KIND: {3}".format(
             title,
@@ -77,7 +76,7 @@ def request_trakt_list(url, limit):
         print("Bad Trakt Code")
         return None
 
-def trakt_tv_list_items(trakt_json, json_type) -> List[FilmItem]:
+def trakt_tv_list_items(trakt_json, json_type):
     """ converts data to film items from trakt tv api endpoint """
     film_items = []
     if json_type == "watched":

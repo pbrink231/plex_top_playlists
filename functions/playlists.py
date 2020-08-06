@@ -3,7 +3,6 @@ import os
 import sys
 
 from functions.plex_connection import plex_user_connection
-from functions.sources.all import get_all_film_lists
 import global_vars
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -12,11 +11,11 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 def add_playlist_to_plex_users(plex, shared_users_token, title, items):
     """ Adds a playlist to all shared users """
     if not items:
-        print("{}: list EMPTY so will only be REMOVED and not created".format(title))
+        print(f"WARNING {title}: list EMPTY so will only be REMOVED and not created")
 
     # update my list
     create_playlists(plex, title, items)
-    print("{}: Playlist made for primary user".format(title))
+    print(f"{title}: Playlist made for primary user")
 
     # update list for shared users
     if global_vars.SYNC_WITH_SHARED_USERS:
@@ -24,7 +23,7 @@ def add_playlist_to_plex_users(plex, shared_users_token, title, items):
             user_token = shared_users_token[user]
             user_plex = plex_user_connection(user_token)
             create_playlists(user_plex, title, items)
-            print("{}: playlist made for user {}".format(title, user))
+            print(f"{title}: playlist made for user {user}")
 
     else:
         print("Skipping adding to shared users")
@@ -45,27 +44,22 @@ def create_playlists(plex, title, items):
 def remove_shared_playlist(plex, shared_users_token, title: str):
     """ removes playlists for main plex user and all shared users """
     # update my list
-    print("{}: removing playlist for script user".format(title))
+    print(f"{title}: removing playlist for script user")
     remove_playlist(plex, title)
 
     # update list for shared users
     if global_vars.SYNC_WITH_SHARED_USERS:
         for user in shared_users_token:
-            print("{0}: removing playlist for user {1}".format(
-                title,
-                user
-            ))
+            print(f"{title}: removing playlist for user {user}")
             user_token = shared_users_token[user]
             user_plex = plex_user_connection(user_token)
             remove_playlist(user_plex, title)
     else:
         print("Skipping removal from shared users")
 
-def remove_all_playlists_for_user(plex):
+def remove_playlists_for_user(plex, film_lists):
     """ removes all of a users playlists on the Plex Server """
-    all_film_lists = get_all_film_lists()
-
-    for film_list in all_film_lists:
+    for film_list in film_lists:
         print(f"Removing playlists '{film_list.title}'")
         remove_playlist(plex, film_list.title)
 
@@ -78,6 +72,6 @@ def remove_playlist(plex, title):
             try:
                 playlist.delete()
             except Exception: # pylint: disable=broad-except
-                print("ERROR - cannot delete playlist: {}".format(title))
+                print(f"ERROR - cannot delete playlist: {title}")
 
     return None

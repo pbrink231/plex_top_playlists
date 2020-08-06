@@ -4,8 +4,7 @@ from functions.users import get_user_tokens
 from functions.logger import log_output
 from functions.plex_library.movies import get_library_movie_dictionary
 from functions.plex_library.shows import get_library_show_dictionary
-from classes import FilmItem, FilmType
-from enum_types import FilmDB
+from classes import FilmType, FilmDB
 
 class PlexData:
     """ Class to hold cached plex data for testing against lists """
@@ -19,11 +18,11 @@ class PlexData:
         """ Show users being used for all lists """
         log_output("shared users list: {}".format(self.shared_users_token), 1)
 
-    def get_matching_item(self, film_item: FilmItem):
+    def get_matching_item(self, film_item):
         """ Grabs the matched library item with the film item """
         found_item = None
         if film_item.film_db == FilmDB.IMDB:
-            return self.all_movie_id_dict[film_item.film_id]
+            return self.all_movie_id_dict.get(film_item.film_id)
         if film_item.film_db == FilmDB.TVDB:
             return self.get_show_episode(film_item)
 
@@ -31,7 +30,7 @@ class PlexData:
 
     def get_show_episode(self, film_item):
         """ Returns the corresponding episode """
-        found_show = self.all_show_id_dict[film_item.film_id]
+        found_show = self.all_show_id_dict.get(film_item.film_id)
 
         if not found_show:
             return found_show

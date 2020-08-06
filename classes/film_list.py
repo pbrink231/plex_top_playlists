@@ -2,21 +2,27 @@
 from typing import List
 import global_vars
 from classes import ListSource, FilmListKind
-from classes import FilmItem
 from functions.playlists import add_playlist_to_plex_users
 from functions.collection import add_library_items_to_collection
 from functions.discord import send_simple_message
 
 class FilmList(object):
     """__init__() functions as the class constructor"""
-    def __init__(self, source: ListSource, title: str, list_items: List[FilmItem], kind: FilmListKind = FilmListKind.PLAYLIST, show_summary: bool = True):
-        self.list_source = source # imdb, trakt
+    def __init__(self, source, title: str, list_items, kind: FilmListKind = "playlist", show_summary: bool = True):
+        self.list_source = source # ListSource
         self.title = title
-        self.kind = kind # playlist or collection
         self.show_summary = show_summary
         self.list_items = list_items
         self.matched_library_items = []
         self.unmatched_film_items = []
+
+        # Setup Kind correclty
+        if kind == "collection":
+            self.kind = FilmListKind.COLLECTION
+        elif kind == "playlist":
+            self.kind = FilmListKind.PLAYLIST
+        else:
+            raise Exception(f"Film List Kind Unknown {kind}")
 
 
     def setup_playlist(self, plex_data):
@@ -64,6 +70,7 @@ class FilmList(object):
         if self.kind == FilmListKind.PLAYLIST:
             # Update plex with playlist
             add_library_items_to_collection(self.title, self.matched_library_items)
+            return
 
         if self.kind == FilmListKind.COLLECTION:
             # Update plex adding items to the collection
@@ -73,6 +80,7 @@ class FilmList(object):
                 self.title,
                 self.matched_library_items
             )
+            return
 
 
         raise Exception(f"Film List Kind Unknown {self.kind}")
@@ -102,7 +110,7 @@ class FilmList(object):
         list_length = len(self.unmatched_film_items)
         for i in range(list_length):
             film_item = self.unmatched_film_items[i]
-            id_list += "`{}:{}`".format(film_item.film_db, film_item.film_id)
+            id_list += film_item.display()
             if i != 0 and i != list_length and (not (i + 1) % 4):
                 id_list += '\n'
             elif i != list_length:

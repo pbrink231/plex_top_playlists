@@ -23,7 +23,7 @@ from functions.users import get_all_users, get_user_tokens
 from functions.logger import log_timer
 from functions.sources.imdb import imdb_list_loop, get_imdb_info
 from functions.sources.trakt import trakt_list_loop
-from functions.playlists import remove_shared_playlist, remove_all_playlists_for_user
+from functions.playlists import remove_shared_playlist, remove_playlists_for_user
 
 from functions.plex_connection import plex_user_connection
 
@@ -44,7 +44,7 @@ def list_updater(plex):
 
     # Process Lists
     for filmlist in film_lists:
-        filmlist.setup_playlist(plex_data, filmlist)
+        filmlist.setup_playlist(plex_data)
 
 if __name__ == "__main__":
     print("===================================================================")
@@ -124,7 +124,11 @@ Please use one of the following commands:
             print("Please supply a playlist name for the second command argument")
 
     if sys.argv[1] == 'remove_all_playlists':
-        remove_all_playlists_for_user(PLEX)
+        removing_film_lists = []
+        removing_film_lists += trakt_list_loop()
+        removing_film_lists += imdb_list_loop()
+
+        remove_playlists_for_user(PLEX, removing_film_lists)
 
     if sys.argv[1] == 'discord_test':
         print("Testing sending to discord")

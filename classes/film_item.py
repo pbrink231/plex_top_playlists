@@ -14,3 +14,7 @@ class FilmItem:
             self.film_year = film_options.year # For displaying when cannot find in Plex
             self.film_season = film_options.film_season # Used if a specific season is selected
             self.film_episode = film_options.film_episode # Used if a specific episode is selected
+
+    def display(self) -> str:
+        """ display text for film item """
+        return f"{self.film_db.name}: {self.film_id}"
