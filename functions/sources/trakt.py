@@ -131,7 +131,6 @@ def trakt_user_list_items(trakt_json):
     """ converts data to film items from trakt user api endpoint """
     film_items = []
     for item in trakt_json:
-        print(item)
         if item['type'] == 'movie':
             film_items.append(FilmItem(
                 item['movie']['ids']['imdb'],
