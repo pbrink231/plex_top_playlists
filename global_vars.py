@@ -102,7 +102,8 @@ except Exception: # pylint: disable=broad-except
 global IMDB_LISTS
 try:
     IMDB_LISTS = json.loads(CONFIG.get('IMDb', 'imdb-lists'))
-except Exception: # pylint: disable=broad-except
+except Exception as ex: # pylint: disable=broad-except
+    print(f"ERROR: Failed to load IMDB LISTS, {ex}")
     IMDB_LISTS = []
 
 global DISCORD_URL

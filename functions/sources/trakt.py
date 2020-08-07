@@ -18,6 +18,8 @@ def trakt_movie_list_loop():
         print("No Trakt API key, skipping Trakt movie lists")
         return None
 
+    print(f'count of trakt movies lists: {len(global_vars.TRAKT_MOVIE_LISTS)}')
+
     film_lists = []
     for runlist in global_vars.TRAKT_MOVIE_LISTS:
         kind = runlist.get("kind", 'playlist')
@@ -42,6 +44,8 @@ def trakt_show_list_loop():
     if global_vars.TRAKT_API_KEY is None:
         print("No Trakt API key, skipping Trakt Show lists")
         return None
+    
+    print(f'count of trakt shows lists: {len(global_vars.TRAKT_SHOW_LISTS)}')
 
     film_lists = []
     for runlist in global_vars.TRAKT_SHOW_LISTS:
@@ -66,6 +70,8 @@ def trakt_user_list_loop():
     if global_vars.TRAKT_API_KEY is None:
         print("No Trakt API key, skipping Trakt Show lists")
         return None
+
+    print(f'count of trakt users lists: {len(global_vars.TRAKT_USERS_LISTS)}')
 
     film_lists = []
     for runlist in global_vars.TRAKT_USERS_LISTS:
