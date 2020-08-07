@@ -7,7 +7,7 @@ import shelve
 from tmdbv3api import TMDb, Movie
 
 tmdb = TMDb()
-tmdb.api_key = TMDB_API_KEY
+tmdb.api_key = global_vars.TMDB_API_KEY
 tmdb_movie = Movie()
 
 def get_library_movie_dictionary(plex):
@@ -56,41 +56,45 @@ def create_movie_id_dict(movies):
     cur = 1
     for movie in movies:
         movie_id_dict = append_movie_id_dict(movie, movie_id_dict)
-        show_dict_progress(cur, count)
+        #show_dict_progress(cur, count)
         cur += 1
     print("\ncached plex movies")
     return movie_id_dict
 
 def append_movie_id_dict(movie, movie_id_dict):
     """ Adds movie to dictionary with imdb ID as key and movie as value """
-    imdb_id = get_used_id(movie)
+    imdb_id = get_imdb_id(movie)
     if imdb_id is not None:
         movie_id_dict[imdb_id] = movie
     return movie_id_dict
 
 def get_imdb_id(movie):
-    """ grabs the imdb ID from the movie """
+    """ Gets the IMDB based on the agent used """
     try:
-        # com.plexapp.agents.imdb://tt0137523?lang=en
-        imdb_id = "tt" + re.search(r'tt(\d+)\?', movie.guid).group(1)
-    except Exception: # pylint: disable=broad-except
-        imdb_id = None
-    return imdb_id
-
-def get_used_id(movie):
-    try:
-        agent = re.search(r'com\.plexapp\.agents\.(.+)\:\/\/', movie.guid).group(1)
-        if (agent == 'imdb'):
+        movie_reg = re.search(r'(?:plex://|com\.plexapp\.agents\.)(.+?)(?:\:\/\/|\/)(.+?)(?:\?|$)', movie.guid)
+        agent = movie_reg.group(1)
+        movie_id = movie_reg.group(2)
+        if agent == 'imdb':
             # com.plexapp.agents.imdb://tt0137523?lang=en
-            imdb_id = "tt" + re.search(r'tt(\d+)\?', movie.guid).group(1)
-        if (agent == 'themoviedb'):
+            return movie_id  # "tt" + re.search(r'tt(\d+)\?', movie.guid).group(1)
+        if agent == 'themoviedb':
             # com.plexapp.agents.themoviedb://550?lang=en
-            with shelve.open('tmdb_ids', 'c', writeback=True) as s:
-                tmdb_id = re.search(r'\:\/\/(\d+)\?', movie.guid).group(1)
-                if s.get(tmdb_id) == None:
-                    s[tmdb_id] = tmdb_movie.external_ids(tmdb_id)["imdb_id"]
-                imdb_id = s[tmdb_id]
-    except Exception as e:
-        print("{0}".format(e))
-        imdb_id = None
-    return imdb_id
+            if not global_vars.TMDB_API_KEY:
+                print(f"WARNING: Skipping, No TMDB API key: {movie.title}")
+                return None
+
+            with shelve.open('tmdb_ids', 'c', writeback=True) as s_db:
+                tmdb_id = movie_id
+                if s_db.get(tmdb_id) is None:
+                    s_db[tmdb_id] = tmdb_movie.external_ids(tmdb_id)["imdb_id"]
+                imdb_id = s_db[tmdb_id]
+                return imdb_id
+        if agent == 'movie':
+            # plex://movie/5d776a8b9ab544002150043a
+            # NEW AGENT, No external IDs available yet
+            print(f"WARNING: Skipping movie, using new agent: {movie.title}")
+            return None
+        
+    except Exception as ex: # pylint: disable=broad-except
+        print("IMDB ERROR: {0}".format(ex))
+        return None
