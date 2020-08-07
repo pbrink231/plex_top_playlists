@@ -70,6 +70,11 @@ try:
 except Exception: # pylint: disable=broad-except
     MISSING_COLUMNS = 4
 
+try:
+    TMDB_API_KEY = config.get('TMDb', 'api-key')
+except:
+    TMDB_API_KEY = None
+
 global TRAKT_API_KEY
 try:
     TRAKT_API_KEY = CONFIG.get('Trakt', 'api-key')
