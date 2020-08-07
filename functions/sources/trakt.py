@@ -25,7 +25,7 @@ def trakt_movie_list_loop():
         kind = runlist.get("kind", 'playlist')
         show_summary = runlist.get("show_summary", True)
         title = runlist["title"]
-        print("{0}: STARTING TRAKT LIST - TYPE: {2} - URL: {1} - KIND: {3}".format(
+        print("PULLING LIST - {0}: URL: {1} - TYPE: {2} - KIND: {3}".format(
             title,
             runlist["url"],
             runlist["type"],
@@ -52,7 +52,7 @@ def trakt_show_list_loop():
         kind = runlist.get("kind", 'playlist')
         show_summary = runlist.get("show_summary", True)
         title = runlist["title"]
-        print("{0}: STARTING PLAYLIST - TYPE: {2} - URL: {1} - KIND: {3}".format(
+        print("PULLING LIST - {0}: URL: {1} - TYPE: {2} - KIND: {3}".format(
             title,
             runlist["url"],
             runlist["type"],
@@ -78,7 +78,7 @@ def trakt_user_list_loop():
         kind = runlist.get("kind", 'playlist')
         show_summary = runlist.get("show_summary", True)
         title = runlist["title"]
-        print("{0}: STARTING PLAYLIST - TYPE: {2} - URL: {1} - KIND: {3}".format(
+        print("PULLING LIST - {0}: URL: {1} - TYPE: {2} - KIND: {3}".format(
             title,
             runlist.get("url"),
             runlist.get("type"),
