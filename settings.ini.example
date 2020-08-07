@@ -40,6 +40,11 @@ verbose: 0
 # number of columns wide to show list.  default is 4
 missing_columns: 4
 
+[TMDb]
+### [OPTIONAL] TMDb API Info ###
+# This is REQUIRED for TMDb. If you have your libraries set to use TMDb Agent you will not be able to create any playlists.
+api-key: 
+
 [Trakt]
 ### [OPTIONAL] Trakt API Info ###
 # This is REQUIRED for Trakt.  Without it you will not get any Trakt playlists

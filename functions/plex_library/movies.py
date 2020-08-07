@@ -3,6 +3,12 @@ import re
 import global_vars
 from functions.logger import log_timer
 from functions.plex_library.library_utils import show_dict_progress
+import shelve
+from tmdbv3api import TMDb, Movie
+
+tmdb = TMDb()
+tmdb.api_key = TMDB_API_KEY
+tmdb_movie = Movie()
 
 def get_library_movie_dictionary(plex):
     """ Returns a dictionary to easily reference movies by thier IMDB ID"""
@@ -57,7 +63,7 @@ def create_movie_id_dict(movies):
 
 def append_movie_id_dict(movie, movie_id_dict):
     """ Adds movie to dictionary with imdb ID as key and movie as value """
-    imdb_id = get_imdb_id(movie)
+    imdb_id = get_used_id(movie)
     if imdb_id is not None:
         movie_id_dict[imdb_id] = movie
     return movie_id_dict
@@ -68,5 +74,23 @@ def get_imdb_id(movie):
         # com.plexapp.agents.imdb://tt0137523?lang=en
         imdb_id = "tt" + re.search(r'tt(\d+)\?', movie.guid).group(1)
     except Exception: # pylint: disable=broad-except
+        imdb_id = None
+    return imdb_id
+
+def get_used_id(movie):
+    try:
+        agent = re.search(r'com\.plexapp\.agents\.(.+)\:\/\/', movie.guid).group(1)
+        if (agent == 'imdb'):
+            # com.plexapp.agents.imdb://tt0137523?lang=en
+            imdb_id = "tt" + re.search(r'tt(\d+)\?', movie.guid).group(1)
+        if (agent == 'themoviedb'):
+            # com.plexapp.agents.themoviedb://550?lang=en
+            with shelve.open('tmdb_ids', 'c', writeback=True) as s:
+                tmdb_id = re.search(r'\:\/\/(\d+)\?', movie.guid).group(1)
+                if s.get(tmdb_id) == None:
+                    s[tmdb_id] = tmdb_movie.external_ids(tmdb_id)["imdb_id"]
+                imdb_id = s[tmdb_id]
+    except Exception as e:
+        print("{0}".format(e))
         imdb_id = None
     return imdb_id
