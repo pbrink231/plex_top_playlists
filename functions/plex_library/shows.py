@@ -1,7 +1,10 @@
 """ Methods to get show data from plex """
 import global_vars
-from functions.logger import log_timer
+
 from functions.plex_library.library_utils import show_dict_progress
+
+from utils.logger import log_timer
+
 
 def get_library_show_dictionary(plex):
     """ Returns a dictionary for all shows by ID for easier searching """

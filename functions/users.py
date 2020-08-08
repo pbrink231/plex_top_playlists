@@ -2,6 +2,7 @@
 import requests
 import xmltodict
 import global_vars
+from utils.logger import log_output
 
 def get_all_users(plex):
     """ Get all Plex Server users respecting settings.ini """
@@ -23,6 +24,7 @@ def get_all_users(plex):
     user_ids = {}
     if 'User' in xml_data_2['MediaContainer'].keys():
         # has atleast 1 shared user generally
+        log_output(xml_data_2['MediaContainer']['User'], 3)
         user_ids = {plex_user['@id']: plex_user.get('@username', plex_user.get('@title')) for plex_user in xml_data_2['MediaContainer']['User']}
 
 

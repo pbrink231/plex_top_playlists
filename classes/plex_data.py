@@ -1,9 +1,11 @@
 """ Overall plex data cacher to easily search movies and shows
 by IMDB ID and TVDB ID """
 from functions.users import get_user_tokens
-from functions.logger import log_output
 from functions.plex_library.movies import get_library_movie_dictionary
 from functions.plex_library.shows import get_library_show_dictionary
+
+from utils.logger import log_output
+
 from classes import FilmType, FilmDB
 
 class PlexData:

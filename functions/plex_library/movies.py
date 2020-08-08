@@ -1,10 +1,15 @@
 """ Getting needed information plex libraries """
 import re
-import global_vars
-from functions.logger import log_timer
-from functions.plex_library.library_utils import show_dict_progress
 import shelve
 from tmdbv3api import TMDb, Movie
+
+import global_vars
+
+from functions.plex_library.library_utils import show_dict_progress
+
+from utils.logger import log_timer
+
+
 
 tmdb = TMDb()
 tmdb.api_key = global_vars.TMDB_API_KEY

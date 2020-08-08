@@ -20,12 +20,12 @@ import global_vars
 
 # from classes.ListItem import ListItem
 from functions.users import get_all_users, get_user_tokens
-from functions.logger import log_timer
 from functions.sources.imdb import imdb_list_loop, get_imdb_info
 from functions.sources.trakt import trakt_list_loop
 from functions.playlists import remove_shared_playlist, remove_playlists_for_user
-
 from functions.plex_connection import plex_user_connection
+
+from utils.logger import log_timer
 
 from classes import PlexData
 
