@@ -7,6 +7,7 @@ from utils.logger import log_output
 def get_all_users(plex):
     """ Get all Plex Server users respecting settings.ini """
     machine_id = plex.machineIdentifier
+    log_output(f"Plex Machine Identifier: {machine_id}", 3)
     headers = {'Accept': 'application/json', 'X-Plex-Token': global_vars.PLEX_TOKEN}
     result = requests.get(
         'https://plex.tv/api/servers/{server_id}/shared_servers?X-Plex-Token={token}'.format(
@@ -18,15 +19,24 @@ def get_all_users(plex):
     xml_data = xmltodict.parse(result.content)
 
     result2 = requests.get('https://plex.tv/api/users', headers=headers)
+    log_output(result2, 3)
     xml_data_2 = xmltodict.parse(result2.content)
+    log_output(xml_data_2, 3)
 
     users = {}
     user_ids = {}
     if 'User' in xml_data_2['MediaContainer'].keys():
         # has atleast 1 shared user generally
+        # if only 1 user then User will not be an array
         log_output(xml_data_2['MediaContainer']['User'], 3)
-        user_ids = {plex_user['@id']: plex_user.get('@username', plex_user.get('@title')) for plex_user in xml_data_2['MediaContainer']['User']}
 
+        if isinstance(xml_data_2['MediaContainer']['User'], list):
+            user_ids = {plex_user['@id']: plex_user.get('@username', plex_user.get('@title')) for plex_user in xml_data_2['MediaContainer']['User']}
+        else:
+            plex_user = xml_data_2['MediaContainer']['User']
+            user_ids[plex_user['@id']] = plex_user.get('@username', plex_user.get('@title'))
+
+        log_output(user_ids, 3)
 
     if 'SharedServer' in xml_data['MediaContainer']:
         # has atlease 1 shared server
@@ -38,6 +48,8 @@ def get_all_users(plex):
             # only 1 shared user
             server_user = xml_data['MediaContainer']['SharedServer']
             users[user_ids[server_user['@userID']]] = server_user['@accessToken']
+
+    log_output(users, 3)
 
     return users
 
