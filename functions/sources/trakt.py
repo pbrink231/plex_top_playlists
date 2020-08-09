@@ -1,7 +1,9 @@
 """ Methods to pull trakt data into Film Lists """
 from urllib.request import Request, urlopen
 import json
+
 from classes import ListSource, FilmItem, FilmList, FilmDB, FilmType
+from utils.logger import log_output
 import global_vars
 
 def trakt_list_loop():
@@ -20,24 +22,7 @@ def trakt_movie_list_loop():
 
     print(f'count of trakt movies lists: {len(global_vars.TRAKT_MOVIE_LISTS)}')
 
-    film_lists = []
-    for runlist in global_vars.TRAKT_MOVIE_LISTS:
-        kind = runlist.get("kind", 'playlist')
-        show_summary = runlist.get("show_summary", True)
-        title = runlist["title"]
-        print("PULLING LIST - {0}: URL: {1} - TYPE: {2} - KIND: {3}".format(
-            title,
-            runlist["url"],
-            runlist["type"],
-            kind
-        ))
-        trakt_movie_data = request_trakt_list(runlist["url"], runlist["limit"])
-        trakt_list_items = trakt_movie_list_items(trakt_movie_data, runlist["type"])
-
-        film_lists.append(FilmList(ListSource.TRAKT, title, trakt_list_items, kind, show_summary))
-
-    return film_lists
-
+    return get_film_lists(global_vars.TRAKT_MOVIE_LISTS)
 
 def trakt_show_list_loop():
     """ returns all film lists from the trakt shows api """
@@ -47,23 +32,7 @@ def trakt_show_list_loop():
     
     print(f'count of trakt shows lists: {len(global_vars.TRAKT_SHOW_LISTS)}')
 
-    film_lists = []
-    for runlist in global_vars.TRAKT_SHOW_LISTS:
-        kind = runlist.get("kind", 'playlist')
-        show_summary = runlist.get("show_summary", True)
-        title = runlist["title"]
-        print("PULLING LIST - {0}: URL: {1} - TYPE: {2} - KIND: {3}".format(
-            title,
-            runlist["url"],
-            runlist["type"],
-            kind
-        ))
-        trakt_shows_data = request_trakt_list(runlist["url"], runlist["limit"])
-        trakt_list_items = trakt_tv_list_items(trakt_shows_data, runlist["type"])
-
-        film_lists.append(FilmList(ListSource.TRAKT, title, trakt_list_items, kind, show_summary))
-
-    return film_lists
+    return get_film_lists(global_vars.TRAKT_SHOW_LISTS)
 
 def trakt_user_list_loop():
     """ returns all film lists from the trakt shows api """
@@ -73,8 +42,12 @@ def trakt_user_list_loop():
 
     print(f'count of trakt users lists: {len(global_vars.TRAKT_USERS_LISTS)}')
 
+    return get_film_lists(global_vars.TRAKT_USERS_LISTS)
+
+def get_film_lists(trakt_lists, response_base_type=None):
+    """ Loops trakt settings lists and returns setup film lists """
     film_lists = []
-    for runlist in global_vars.TRAKT_USERS_LISTS:
+    for runlist in trakt_lists:
         kind = runlist.get("kind", 'playlist')
         show_summary = runlist.get("show_summary", True)
         title = runlist["title"]
@@ -84,12 +57,82 @@ def trakt_user_list_loop():
             runlist.get("type"),
             kind
         ))
-        trakt_shows_data = request_trakt_list(runlist["url"], runlist["limit"])
-        trakt_list_items = trakt_user_list_items(trakt_shows_data)
+        item_base = None
+        # Popular lists are based on type and returned JSON is different
+        # Watched returns normal json
+        if runlist.get("type") == "popular":
+            if response_base_type:
+                item_base = response_base_type
+            else:
+                raise Exception("Missing required base for popular list")
 
-        film_lists.append(FilmList(ListSource.TRAKT, title, trakt_list_items, kind, show_summary))
+        trakt_data = request_trakt_list(runlist["url"], runlist["limit"])
+        if trakt_data is None:
+            print(f"WARNING: SKIPPING LIST, No trakt data for list {title}")
+            return []
+
+        trakt_film_items = get_film_items(trakt_data, item_base)
+
+        film_lists.append(FilmList(ListSource.TRAKT, title, trakt_film_items, kind, show_summary))
 
     return film_lists
+
+def get_film_items(trakt_json, item_base):
+    """ converts data to film items from trakt user api endpoint """
+    log_output(f"trakt json {trakt_json}", 3)
+    film_items = []
+    for item in trakt_json:
+        film_items.append(get_film_item(item, item_base))
+
+    return film_items
+
+def get_film_item(item, item_base):
+    log_output(f"trakt user item: {item}", 3)
+    if item_base == 'movie':
+        return FilmItem(
+            film_id=item['ids']['imdb'],
+            film_db=FilmDB.IMDB,
+            film_type=FilmType.MOVIE,
+            title=item['title']
+        )
+    if item_base == 'show':
+        return FilmItem(
+            film_id=item['ids']['tvdb'],
+            film_db=FilmDB.TVDB,
+            film_type=FilmType.SHOW,
+            title=item['title']
+        )
+    if item['type'] == 'movie':
+        return FilmItem(
+            film_id=item['movie']['ids']['imdb'],
+            film_db=FilmDB.IMDB,
+            film_type=FilmType.MOVIE,
+            title=item['movie']['title']
+        )
+    if item['type'] == 'show':
+        return FilmItem(
+            film_id=str(item['show']['ids']['tvdb']),
+            film_db=FilmDB.TVDB,
+            film_type=FilmType.SHOW,
+            title=item['show']['title']
+        )
+    if item['type'] == 'season':
+        return FilmItem(
+            film_id=str(item['show']['ids']['tvdb']),
+            film_db=FilmDB.TVDB,
+            film_type=FilmType.SHOW,
+            title=item['show']['title'],
+            season_num=item['season']['number']
+        )
+    if item['type'] == 'episode':
+        return FilmItem(
+            film_id=str(item['show']['ids']['tvdb']),
+            film_db=FilmDB.TVDB,
+            film_type=FilmType.SHOW,
+            title=item['show']['title'],
+            season_num=item['episode']['season'],
+            episode_num=item['episode']['number']
+        )
 
 def request_trakt_list(url, limit):
     """ retrieves data from trakt using the api """
@@ -103,67 +146,6 @@ def request_trakt_list(url, limit):
         response = urlopen(request)
         trakt_data = json.load(response)
         return trakt_data
-    except Exception: # pylint: disable=broad-except
-        print("Bad Trakt Code")
+    except Exception as ex: # pylint: disable=broad-except
+        print(f"ERROR: Bad Trakt Request: {ex}")
         return None
-
-def trakt_tv_list_items(trakt_json, json_type):
-    """ converts data to film items from trakt tv api endpoint """
-    film_items = []
-    if json_type == "watched":
-        for show in trakt_json:
-            film_items.append(FilmItem(
-                str(show['show']['ids']['tvdb']),
-                FilmDB.TVDB,
-                FilmType.SHOW,
-                show['show']['title']
-            ))
-    if json_type == "popular":
-        for show in trakt_json:
-            film_items.append(FilmItem(str(show['ids']['tvdb']), FilmDB.TVDB, FilmType.SHOW, show['title']))
-    return film_items
-
-def trakt_movie_list_items(trakt_json, json_type):
-    """ converts data to film items from trakt movie api endpoint """
-    film_items = []
-    if json_type == "watched":
-        for movie in trakt_json:
-            film_items.append(FilmItem(movie['movie']['ids']['imdb'], FilmDB.IMDB, FilmType.MOVIE, movie['movie']['title']))
-    if json_type == "popular":
-        for movie in trakt_json:
-            film_items.append(FilmItem(movie['ids']['imdb'], FilmDB.IMDB, FilmType.MOVIE, movie['title']))
-    return film_items
-
-def trakt_user_list_items(trakt_json):
-    """ converts data to film items from trakt user api endpoint """
-    film_items = []
-    for item in trakt_json:
-        if item['type'] == 'movie':
-            film_items.append(FilmItem(
-                item['movie']['ids']['imdb'],
-                FilmDB.IMDB,
-                FilmType.MOVIE,
-                movie['movie']['title']
-            ))
-        if item['type'] == 'show':
-            film_items.append(FilmItem(
-                str(item['show']['ids']['tvdb']),
-                FilmDB.TVDB,
-                FilmType.SHOW,
-                item['show']['title']
-            ))
-        if item['type'] == 'season':
-            film_items.append(FilmItem(
-                str(item['season']['ids']['tvdb']),
-                FilmDB.TVDB,
-                FilmType.SHOW,
-                item['show']['title']
-            ))
-        if item['type'] == 'episode':
-            film_items.append(FilmItem(
-                str(item['episode']['ids']['tvdb']),
-                FilmDB.TVDB,
-                FilmType.SHOW,
-                item['show']['title']
-            ))
-    return film_items

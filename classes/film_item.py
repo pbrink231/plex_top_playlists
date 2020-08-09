@@ -2,18 +2,13 @@
 
 class FilmItem:
     """ An Item for Film List """
-    def __init__(self, film_id, film_db, film_type, title=None, film_options=None):
+    def __init__(self, film_id, film_db, film_type, title=None, season_num=None, episode_num=None):
         self.film_id = film_id
         self.film_db = film_db # imdb, tvdb
         self.film_type = film_type # movie, show, episode
         self.film_title = title # For displaying when cannot find in Plex
-
-        # Additional options
-        # TO DO
-        if film_options:
-            self.film_year = film_options.year # For displaying when cannot find in Plex
-            self.film_season = film_options.film_season # Used if a specific season is selected
-            self.film_episode = film_options.film_episode # Used if a specific episode is selected
+        self.season_num = season_num
+        self.episode_num = episode_num
 
     def display(self) -> str:
         """ display text for film item """

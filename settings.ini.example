@@ -75,6 +75,8 @@ trakt-tv-list: [
 
 ## Users list
 # The URL has an add '/items' at the end.  Please be aware of that when copying the url from the website
+# Also when copying a url from web add the 'api' before trakt.tv
+
 trakt-users-list: [
   { "title": "Show Top Weekly", "limit": 20, "url":"https://api.trakt.tv/users/donxy/lists/marvel-cinematic-universe/items"},
   ]
