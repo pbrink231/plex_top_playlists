@@ -115,11 +115,12 @@ def trakt_tv_list_items(trakt_json, json_type):
             film_items.append(FilmItem(
                 str(show['show']['ids']['tvdb']),
                 FilmDB.TVDB,
-                FilmType.SHOW
+                FilmType.SHOW,
+                show['show']['title']
             ))
     if json_type == "popular":
         for show in trakt_json:
-            film_items.append(FilmItem(str(show['ids']['tvdb']), FilmDB.TVDB, FilmType.SHOW))
+            film_items.append(FilmItem(str(show['ids']['tvdb']), FilmDB.TVDB, FilmType.SHOW, show['title']))
     return film_items
 
 def trakt_movie_list_items(trakt_json, json_type):
@@ -127,10 +128,10 @@ def trakt_movie_list_items(trakt_json, json_type):
     film_items = []
     if json_type == "watched":
         for movie in trakt_json:
-            film_items.append(FilmItem(movie['movie']['ids']['imdb'], FilmDB.IMDB, FilmType.MOVIE))
+            film_items.append(FilmItem(movie['movie']['ids']['imdb'], FilmDB.IMDB, FilmType.MOVIE, movie['movie']['title']))
     if json_type == "popular":
         for movie in trakt_json:
-            film_items.append(FilmItem(movie['ids']['imdb'], FilmDB.IMDB, FilmType.MOVIE))
+            film_items.append(FilmItem(movie['ids']['imdb'], FilmDB.IMDB, FilmType.MOVIE, movie['title']))
     return film_items
 
 def trakt_user_list_items(trakt_json):
@@ -141,24 +142,28 @@ def trakt_user_list_items(trakt_json):
             film_items.append(FilmItem(
                 item['movie']['ids']['imdb'],
                 FilmDB.IMDB,
-                FilmType.MOVIE
+                FilmType.MOVIE,
+                movie['movie']['title']
             ))
         if item['type'] == 'show':
             film_items.append(FilmItem(
                 str(item['show']['ids']['tvdb']),
                 FilmDB.TVDB,
-                FilmType.SHOW
+                FilmType.SHOW,
+                item['show']['title']
             ))
         if item['type'] == 'season':
             film_items.append(FilmItem(
                 str(item['season']['ids']['tvdb']),
                 FilmDB.TVDB,
-                FilmType.SHOW
+                FilmType.SHOW,
+                item['show']['title']
             ))
         if item['type'] == 'episode':
             film_items.append(FilmItem(
                 str(item['episode']['ids']['tvdb']),
                 FilmDB.TVDB,
-                FilmType.SHOW
+                FilmType.SHOW,
+                item['show']['title']
             ))
     return film_items
