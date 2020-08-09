@@ -84,7 +84,7 @@ def get_imdb_id(movie):
         if agent == 'themoviedb':
             # com.plexapp.agents.themoviedb://550?lang=en
             if not global_vars.TMDB_API_KEY:
-                print(f"WARNING: Skipping, No TMDB API key: {movie.title}")
+                print(f"WARNING: Skipping, No TMDB API key: {movie.title}, {movie.guid}")
                 return None
 
             with shelve.open('tmdb_ids', 'c', writeback=True) as s_db:
