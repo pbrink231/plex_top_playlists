@@ -15,6 +15,7 @@ class PlexData:
         self.shared_users_token = get_user_tokens(plex)
         self.all_movie_id_dict = get_library_movie_dictionary(plex)
         self.all_show_id_dict = get_library_show_dictionary(plex)
+        print(self.all_movie_id_dict)
 
     def display_shared_users(self):
         """ Show users being used for all lists """
@@ -23,9 +24,9 @@ class PlexData:
     def get_matching_item(self, film_item):
         """ Grabs the matched library item with the film item """
         found_item = None
-        if film_item.film_db == FilmDB.IMDB:
+        if film_item.film_type == FilmType.MOVIE:
             return self.all_movie_id_dict.get(film_item.film_id)
-        if film_item.film_db == FilmDB.TVDB:
+        else:
             return self.get_show_episode(film_item)
 
         raise Exception(f"Film DB Unknown {film_item.film_db}")

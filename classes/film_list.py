@@ -8,7 +8,7 @@ from functions.discord import send_simple_message
 
 class FilmList(object):
     """__init__() functions as the class constructor"""
-    def __init__(self, source, title: str, list_items, kind: FilmListKind = "playlist", show_summary: bool = True):
+    def __init__(self, source, title: str, list_items, kind: str = "playlist", show_summary: bool = True):
         self.list_source = source # ListSource
         self.title = title
         self.show_summary = show_summary
@@ -17,13 +17,11 @@ class FilmList(object):
         self.unmatched_film_items = []
 
         # Setup Kind correclty
-        if kind == "collection":
-            self.kind = FilmListKind.COLLECTION
-        elif kind == "playlist":
-            self.kind = FilmListKind.PLAYLIST
-        else:
+        film_kind = FilmListKind[kind.upper()]
+        if not film_kind:
             raise Exception(f"Film List Kind Unknown {kind}")
 
+        self.kind = film_kind
 
     def setup_playlist(self, plex_data):
         """ Match lists with plex data """
@@ -67,12 +65,12 @@ class FilmList(object):
 
     def update_plex(self, plex_data):
         """ Updates plex collection or playlist based on this list """
-        if self.kind == FilmListKind.PLAYLIST:
+        if self.kind == FilmListKind.COLLECTION:
             # Update plex with playlist
             add_library_items_to_collection(self.title, self.matched_library_items)
             return
 
-        if self.kind == FilmListKind.COLLECTION:
+        if self.kind == FilmListKind.PLAYLIST:
             # Update plex adding items to the collection
             add_playlist_to_plex_users(
                 plex_data.plex,
