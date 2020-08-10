@@ -52,9 +52,8 @@ api-key:
 
 ### Trakt Lists
 # has a title, type, limit & url
+# type is only required for popular lists
 # limit max is 100
-# These are two of the examples.
-# the type is for how to parse the response.  Let me know in github if you have trouble with an endpoint.
 # COMMA's matter.
 
 # Currently 2 different kinds.  "playlist" and "collection"
@@ -62,12 +61,35 @@ api-key:
 # adding "kind":"collection" will tag all movies and shows with a collection tag.  A collection can go on movies or shows and will show together
 
 ## Movie list
+# the "type" must say 'popular' when using a popular trakt list.  Otherwise can be omiited or set to any value
+# available lists
+# 'period' in below urls must be replaced with any of these values (weekly , monthly , yearly , all)
+# https://api.trakt.tv/movies/trending
+# https://api.trakt.tv/movies/popular   MUST SET type TO popular
+# https://api.trakt.tv/movies/recommended/period
+# https://api.trakt.tv/movies/played/period
+# https://api.trakt.tv/movies/watched/period
+# https://api.trakt.tv/movies/collected/period
+# https://api.trakt.tv/movies/anticipated
+# https://api.trakt.tv/movies/boxoffice
+
 trakt-movie-list: [
   { "title": "Movies Top Weekly", "type":"watched", "limit": 80, "url":"https://api.trakt.tv/movies/watched/weekly"},
   { "title": "Movies Popular", "type":"popular", "limit": 80, "url":"https://api.trakt.tv/movies/popular", "show_summary": "False"}
   ]
 
 ## Show list
+# the "type" must say 'popular' when using a popular trakt list.  Otherwise can be omiited or set to any value
+# available lists
+# 'period' in below urls must be replaced with any of these values (weekly , monthly , yearly , all)
+# https://api.trakt.tv/shows/trending
+# https://api.trakt.tv/shows/popular   MUST SET type TO popular
+# https://api.trakt.tv/shows/recommended/period
+# https://api.trakt.tv/shows/played/period
+# https://api.trakt.tv/shows/watched/period
+# https://api.trakt.tv/shows/collected/period
+# https://api.trakt.tv/shows/anticipated
+
 trakt-tv-list: [
   { "title": "Show Top Weekly", "type":"watched", "limit": 20, "url":"https://api.trakt.tv/shows/watched/weekly"},
   { "title": "Show Popular", "type":"popular", "limit": 20, "url":"https://api.trakt.tv/shows/popular", "kind":"collection", "show_summary": "False"}
