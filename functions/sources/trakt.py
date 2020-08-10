@@ -22,7 +22,7 @@ def trakt_movie_list_loop():
 
     print(f'count of trakt movies lists: {len(global_vars.TRAKT_MOVIE_LISTS)}')
 
-    return get_film_lists(global_vars.TRAKT_MOVIE_LISTS)
+    return get_film_lists(global_vars.TRAKT_MOVIE_LISTS, 'movie')
 
 def trakt_show_list_loop():
     """ returns all film lists from the trakt shows api """
@@ -32,7 +32,7 @@ def trakt_show_list_loop():
     
     print(f'count of trakt shows lists: {len(global_vars.TRAKT_SHOW_LISTS)}')
 
-    return get_film_lists(global_vars.TRAKT_SHOW_LISTS)
+    return get_film_lists(global_vars.TRAKT_SHOW_LISTS, 'show')
 
 def trakt_user_list_loop():
     """ returns all film lists from the trakt shows api """
@@ -87,6 +87,7 @@ def get_film_items(trakt_json, item_base):
     return film_items
 
 def get_film_item(item, item_base):
+    """ Grabs the correct information and returns a Film Item """
     log_output(f"trakt user item: {item}", 3)
     if item_base == 'movie':
         return FilmItem(
@@ -102,37 +103,32 @@ def get_film_item(item, item_base):
             film_type=FilmType.SHOW,
             title=item['title']
         )
-    if item['type'] == 'movie':
+    if item.get('type') == 'movie' or item.get('movie'):
         return FilmItem(
             film_id=item['movie']['ids']['imdb'],
             film_db=FilmDB.IMDB,
             film_type=FilmType.MOVIE,
             title=item['movie']['title']
         )
-    if item['type'] == 'show':
-        return FilmItem(
-            film_id=str(item['show']['ids']['tvdb']),
-            film_db=FilmDB.TVDB,
-            film_type=FilmType.SHOW,
-            title=item['show']['title']
-        )
-    if item['type'] == 'season':
-        return FilmItem(
-            film_id=str(item['show']['ids']['tvdb']),
-            film_db=FilmDB.TVDB,
-            film_type=FilmType.SHOW,
-            title=item['show']['title'],
-            season_num=item['season']['number']
-        )
-    if item['type'] == 'episode':
+    if item.get('type') == 'show' or item.get('show'):
+        season_num = None
+        episode_num = None
+        if item.get('episode'):
+            season_num = item['episode']['season']
+            episode_num = item['episode']['number']
+
+        if item.get('season'):
+            season_num = item['season']['number']
+
         return FilmItem(
             film_id=str(item['show']['ids']['tvdb']),
             film_db=FilmDB.TVDB,
             film_type=FilmType.SHOW,
             title=item['show']['title'],
-            season_num=item['episode']['season'],
-            episode_num=item['episode']['number']
+            season_num=season_num,
+            episode_num=episode_num
         )
+
 
 def request_trakt_list(url, limit):
     """ retrieves data from trakt using the api """
