@@ -118,7 +118,7 @@ Please use one of the following commands:
     if sys.argv[1] == 'remove_playlist':
         if len(sys.argv) >= 3:
             print('removing playlist {}'.format(sys.argv[2]))
-            remove_shared_playlist(PLEX, USERS = get_all_users(PLEX), sys.argv[2])
+            remove_shared_playlist(PLEX, get_all_users(PLEX), sys.argv[2])
         else:
             print("Please supply a playlist name for the second command argument")
 
