@@ -5,14 +5,14 @@ import sys
 import json
 import time
 
+from utils.logger import log_output
+
 CONFIG_PATH = os.path.join(
     os.path.dirname(os.path.realpath(__file__)),
     'settings.ini'
 )
 
-if os.path.isfile(CONFIG_PATH):
-    print("Using settings file")
-else:
+if not os.path.isfile(CONFIG_PATH):
     print("Please create a settings.ini file in the same folder as plex_playlist_update.py")
     sys.exit("No settings.ini file")
 
@@ -84,26 +84,33 @@ except Exception: # pylint: disable=broad-except
 global TRAKT_MOVIE_LISTS
 try:
     TRAKT_MOVIE_LISTS = json.loads(CONFIG.get('Trakt', 'trakt-movie-list'))
-except Exception: # pylint: disable=broad-except
+except Exception as ex: # pylint: disable=broad-except
+    print(f"SKIPPING SETTINGS LIST: Problem with trakt-movie-list, {ex}")
+    log_output(sys.exc_info(), 3)
     TRAKT_MOVIE_LISTS = []
 
 global TRAKT_SHOW_LISTS
 try:
     TRAKT_SHOW_LISTS = json.loads(CONFIG.get('Trakt', 'trakt-tv-list'))
-except Exception: # pylint: disable=broad-except
+except Exception as ex: # pylint: disable=broad-except
+    print(f"SKIPPING SETTINGS LIST: Problem with trakt-show-list, {ex}")
+    log_output(sys.exc_info(), 3)
     TRAKT_SHOW_LISTS = []
 
 global TRAKT_USERS_LISTS
 try:
     TRAKT_USERS_LISTS = json.loads(CONFIG.get('Trakt', 'trakt-users-list'))
-except Exception: # pylint: disable=broad-except
+except Exception as ex: # pylint: disable=broad-except
+    print(f"SKIPPING SETTINGS LIST: Problem with trakt-user-list, {ex}")
+    log_output(sys.exc_info(), 3)
     TRAKT_USERS_LISTS = []
 
 global IMDB_LISTS
 try:
     IMDB_LISTS = json.loads(CONFIG.get('IMDb', 'imdb-lists'))
 except Exception as ex: # pylint: disable=broad-except
-    print(f"ERROR: Failed to load IMDB LISTS, {ex}")
+    print(f"SKIPPING SETTINGS LIST: Problem with imdb-lists, {ex}")
+    log_output(sys.exc_info(), 3)
     IMDB_LISTS = []
 
 global DISCORD_URL
