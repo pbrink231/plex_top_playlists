@@ -40,6 +40,11 @@ verbose: 0
 # number of columns wide to show list.  default is 4
 missing_columns: 4
 
+[TMDb]
+### [OPTIONAL] TMDb API Info ###
+# This is REQUIRED for TMDb. If you have your libraries set to use TMDb Agent you will not be able to create any playlists.
+api-key: 
+
 [Trakt]
 ### [OPTIONAL] Trakt API Info ###
 # This is REQUIRED for Trakt.  Without it you will not get any Trakt playlists
@@ -47,26 +52,55 @@ api-key:
 
 ### Trakt Lists
 # has a title, type, limit & url
+# type is only required for popular lists
 # limit max is 100
-# These are two of the examples.
-# the type is for how to parse the response.  Let me know in github if you have trouble with an endpoint.
 # COMMA's matter.
 
 # Currently 2 different kinds.  "playlist" and "collection"
 # playlist is default if not supplied
-# adding "kind":"collection" will tag all movies with a collection tag.  A collection can go on movies or shows and will show together
+# adding "kind":"collection" will tag all movies and shows with a collection tag.  A collection can go on movies or shows and will show together
 
 ## Movie list
+# the "type" must say 'popular' when using a popular trakt list.  Otherwise can be omiited or set to any value
+# available lists
+# 'period' in below urls must be replaced with any of these values (weekly , monthly , yearly , all)
+# https://api.trakt.tv/movies/trending
+# https://api.trakt.tv/movies/popular   MUST SET type TO popular
+# https://api.trakt.tv/movies/recommended/period
+# https://api.trakt.tv/movies/played/period
+# https://api.trakt.tv/movies/watched/period
+# https://api.trakt.tv/movies/collected/period
+# https://api.trakt.tv/movies/anticipated
+# https://api.trakt.tv/movies/boxoffice
+
 trakt-movie-list: [
   { "title": "Movies Top Weekly", "type":"watched", "limit": 80, "url":"https://api.trakt.tv/movies/watched/weekly"},
   { "title": "Movies Popular", "type":"popular", "limit": 80, "url":"https://api.trakt.tv/movies/popular", "show_summary": "False"}
   ]
 
 ## Show list
-# !!!! WARNING !!!! - collection cannot be placed on a show list yet.  Will update when my pull request goes through on plexapi
+# the "type" must say 'popular' when using a popular trakt list.  Otherwise can be omiited or set to any value
+# available lists
+# 'period' in below urls must be replaced with any of these values (weekly , monthly , yearly , all)
+# https://api.trakt.tv/shows/trending
+# https://api.trakt.tv/shows/popular   MUST SET type TO popular
+# https://api.trakt.tv/shows/recommended/period
+# https://api.trakt.tv/shows/played/period
+# https://api.trakt.tv/shows/watched/period
+# https://api.trakt.tv/shows/collected/period
+# https://api.trakt.tv/shows/anticipated
+
 trakt-tv-list: [
   { "title": "Show Top Weekly", "type":"watched", "limit": 20, "url":"https://api.trakt.tv/shows/watched/weekly"},
   { "title": "Show Popular", "type":"popular", "limit": 20, "url":"https://api.trakt.tv/shows/popular", "kind":"collection", "show_summary": "False"}
+  ]
+
+## Users list
+# The URL has an add '/items' at the end.  Please be aware of that when copying the url from the website
+# Also when copying a url from web add the 'api' before trakt.tv
+
+trakt-users-list: [
+  { "title": "Show Top Weekly", "limit": 20, "url":"https://api.trakt.tv/users/donxy/lists/marvel-cinematic-universe/items"},
   ]
 
 
