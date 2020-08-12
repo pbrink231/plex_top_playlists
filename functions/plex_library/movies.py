@@ -73,9 +73,16 @@ def append_movie_id_dict(movie, movie_id_dict):
     return movie_id_dict
 
 def get_imdb_id(movie):
-    """ Gets the IMDB based on the agent used """
+    """Gets the IMDB based on the agent used 
+    
+    Some Guid examples
+    local://36071
+    com.plexapp.agents.imdb://tt0137523?lang=en
+    com.plexapp.agents.themoviedb://550?lang=en
+    plex://movie/5d776a8b9ab544002150043a
+    """
     try:
-        movie_reg = re.search(r'(?:plex://|com\.plexapp\.agents\.)(.+?)(?:\:\/\/|\/)(.+?)(?:\?|$)', movie.guid)
+        movie_reg = re.search(r'(?:plex://|com\.plexapp\.agents\.|)(.+?)(?:\:\/\/|\/)(.+?)(?:\?|$)', movie.guid)
         agent = movie_reg.group(1)
         movie_id = movie_reg.group(2)
         if agent == 'imdb':
@@ -97,6 +104,10 @@ def get_imdb_id(movie):
             # plex://movie/5d776a8b9ab544002150043a
             # NEW AGENT, No external IDs available yet
             print(f"WARNING: Skipping movie, using new agent: {movie.title}")
+            return None
+
+        if agent == 'local':
+            print(f"WARNING: Skipping movie, using local agent: {movie.title}")
             return None
         
     except Exception as ex: # pylint: disable=broad-except
