@@ -100,5 +100,5 @@ def get_imdb_id(movie):
             return None
         
     except Exception as ex: # pylint: disable=broad-except
-        print(f"IMDB ID ERROR: {movie.title}, {movie.guid}, {0}".format(ex))
+        print(f"IMDB ID ERROR: {movie.title}, {movie.guid}, {ex}")
         return None

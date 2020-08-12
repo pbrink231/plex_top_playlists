@@ -51,7 +51,6 @@ def create_show_id_dict(shows):
         show_id_dict = append_show_id_dict(show, show_id_dict)
         show_dict_progress(cur, count)
         cur += 1
-    print("\ncached plex shows")
     return show_id_dict
 
 def append_show_id_dict(show, show_id_dict):
