@@ -51,6 +51,7 @@ def create_show_id_dict(shows):
         show_id_dict = append_show_id_dict(show, show_id_dict)
         show_dict_progress(cur, count)
         cur += 1
+    print(f"\nFinished Creating Show Dictionary")
     return show_id_dict
 
 def append_show_id_dict(show, show_id_dict):

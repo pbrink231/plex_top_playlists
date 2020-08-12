@@ -63,6 +63,7 @@ def create_movie_id_dict(movies):
         movie_id_dict = append_movie_id_dict(movie, movie_id_dict)
         show_dict_progress(cur, count)
         cur += 1
+    print(f"\nFinished Creating Movie Dictionary")
     return movie_id_dict
 
 def append_movie_id_dict(movie, movie_id_dict):
