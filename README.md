@@ -18,6 +18,15 @@ The playlists can be created for any of the following
 * Specific users by username
 * Only the script running user
 
+## NEW - Lists can now show title
+* show_missing_titles must be set to True
+* Summary will show as a single list
+
+## NEW - Sonarr
+* Can add a series to sonar via INDB ID on command line
+* Can auto add any missing shows to sonarr when running the scripts
+* Currently in develop branch
+
 ## NEW - Collections
 * Can use same lists like playlists but add a collection tag to the media instead of putting them in a playlist
 * Best when order does not matter
@@ -26,18 +35,21 @@ The playlists can be created for any of the following
 
 * Trakt Playlists Movies
 * Trakt Playlists Shows
+* Trakt User Lists
 * IMDB Chart Lists
 * IMDB Custom lists
 * IMDB Search Lists
-* Missing Movies or Shows can be shown with relevent IDs to search in Sonarr or Radarr
+* Missing Movies or Shows can be shown with relevent IDs and titles to search in Sonarr or Radarr
+* Add List as a playlist to Plex (only matching)
+* Add List as a collection to Plex (only matching)
 * Send message to discord with summary
+* Add missing shows to Sonarr
 * Helper commands to see relevent information or one off playlist actions
 
 ## Future wants to add (any help is welcome)
 
 * Add Tautulli Lists
 * Auto Add to Radarr
-* Auto Add to Sonarr
 * Tautulli history algorithim to suggest unwatched to a playlist or collection
 
 # Getting Started
