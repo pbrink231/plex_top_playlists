@@ -1,4 +1,8 @@
 """ Class declaration for Film Item """
+import global_vars
+from classes import FilmDB
+
+import apps.sonarr as sonarr
 
 class FilmItem:
     """ An Item for Film List """
@@ -12,4 +16,14 @@ class FilmItem:
 
     def display(self) -> str:
         """ display text for film item """
-        return f"{self.film_db.name}: {self.film_id}"
+        title_info = ""
+        if global_vars.SHOW_MISSING_TITLES:
+            title_info = f": {self.film_title}" if self.film_title else ""
+
+        return f"{self.film_db.name}: {self.film_id}" + title_info
+
+    def send_to_app(self):
+        if self.film_db == FilmDB.TVDB and global_vars.SONARR_USE:
+            sonarr.add_series(self.film_id)
+
+

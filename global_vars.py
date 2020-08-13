@@ -25,26 +25,33 @@ START_TIME = time.time()
 global TEST
 TEST = 'hello'
 
+# Plex information
 global PLEX_URL
-PLEX_URL = CONFIG.get('Plex', 'plex-host')
-
+PLEX_URL = CONFIG.get('Plex', 'plex-host', fallback=None)
 global PLEX_TOKEN
-PLEX_TOKEN = CONFIG.get('Plex', 'plex-token')
-
+PLEX_TOKEN = CONFIG.get('Plex', 'plex-token', fallback=None)
 global MOVIE_LIBRARY_NAME
-MOVIE_LIBRARY_NAME = CONFIG.get('Plex', 'movie-library')
-
+MOVIE_LIBRARY_NAME = CONFIG.get('Plex', 'movie-library', fallback=None)
 global SHOW_LIBRARY_NAME
-SHOW_LIBRARY_NAME = CONFIG.get('Plex', 'tv-library')
-
+SHOW_LIBRARY_NAME = CONFIG.get('Plex', 'tv-library', fallback=None)
 global SYNC_WITH_SHARED_USERS
-SYNC_WITH_SHARED_USERS = CONFIG.getboolean('Plex', 'shared')
-
+SYNC_WITH_SHARED_USERS = CONFIG.getboolean('Plex', 'shared', fallback=False)
 global ALLOW_SYNCED_USERS
-ALLOW_SYNCED_USERS = json.loads(CONFIG.get('Plex', 'users'))
-
+ALLOW_SYNCED_USERS = json.loads(CONFIG.get('Plex', 'users', fallback=[]))
 global NOT_ALLOW_SYNCED_USERS
-NOT_ALLOW_SYNCED_USERS = json.loads(CONFIG.get('Plex', 'not_users'))
+NOT_ALLOW_SYNCED_USERS = json.loads(CONFIG.get('Plex', 'not_users', fallback=[]))
+
+# Sonarr globals
+global SONARR_USE
+SONARR_USE = CONFIG.getboolean('Sonarr', 'sonarr-add-missing', fallback=False)
+global SONARR_URL
+SONARR_URL = CONFIG.get('Sonarr', 'sonarr-url', fallback=None)
+global SONARR_TOKEN
+SONARR_TOKEN = CONFIG.get('Sonarr', 'sonarr-token', fallback=None)
+global SONARR_PROFILE_ID
+SONARR_PROFILE_ID = CONFIG.get('Sonarr', 'sonarr-profile-id', fallback=None)
+global SONARR_PATH
+SONARR_PATH = CONFIG.get('Sonarr', 'sonarr-path', fallback=None)
 
 global VERBOSE
 try:
@@ -69,6 +76,12 @@ try:
     MISSING_COLUMNS = int(CONFIG.get('Plex', 'missing_columns'))
 except Exception: # pylint: disable=broad-except
     MISSING_COLUMNS = 4
+
+global SHOW_MISSING_TITLES
+try:
+    SHOW_MISSING_TITLES = CONFIG.getboolean('Plex', 'show_missing_titles')
+except Exception: # pylint: disable=broad-except
+    SHOW_MISSING_TITLES = False
 
 try:
     TMDB_API_KEY = config.get('TMDb', 'api-key')

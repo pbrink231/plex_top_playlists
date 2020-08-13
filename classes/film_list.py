@@ -1,10 +1,11 @@
 """ A list of different movies, shows, seasons or episodes. """
-from typing import List
 import global_vars
-from classes import ListSource, FilmListKind
+from classes import FilmListKind
 from functions.playlists import add_playlist_to_plex_users
 from functions.collection import add_library_items_to_collection
 from functions.discord import send_simple_message
+
+import apps.sonarr as sonarr
 
 class FilmList(object):
     """__init__() functions as the class constructor"""
@@ -40,6 +41,7 @@ class FilmList(object):
         self.found_info()
         self.missing_info_print()
         self.missing_info_discord()
+        self.add_unmatched_items_to_apps()
 
     def start_text(self):
         """ Text showing information before process start """
@@ -104,12 +106,18 @@ class FilmList(object):
 
     def missing_info(self) -> str:
         """ Text display of list stats with missing info """
-        id_list = ""
+        # Loop list to get max text size to determine columns and widths
         list_length = len(self.unmatched_film_items)
+
+        columns = 4
+        if global_vars.SHOW_MISSING_TITLES:
+            columns = 1
+
+        id_list = ""
         for i in range(list_length):
             film_item = self.unmatched_film_items[i]
             id_list += film_item.display()
-            if i != 0 and i != list_length and (not (i + 1) % 4):
+            if i != list_length and (not (i + 1) % columns):
                 id_list += '\n'
             elif i != list_length:
                 id_list += '  |  '
@@ -133,3 +141,11 @@ class FilmList(object):
             return None
 
         send_simple_message(self.title, self.missing_info())
+
+    def add_unmatched_items_to_apps(self):
+        list_length = len(self.unmatched_film_items)
+        for i in range(list_length):
+            film_item = self.unmatched_film_items[i]
+            film_item.send_to_app()
+
+

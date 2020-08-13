@@ -25,6 +25,8 @@ from functions.sources.trakt import trakt_list_loop
 from functions.playlists import remove_shared_playlist, remove_playlists_for_user
 from functions.plex_connection import plex_user_connection
 
+import apps.sonarr as sonarr
+
 from utils.logger import log_timer
 
 from classes import PlexData
@@ -59,7 +61,11 @@ if __name__ == "__main__":
             'show_allowed',
             'remove_playlist',
             'remove_all_playlists',
-            'discord_test'
+            'discord_test',
+            'sonarr_profiles',
+            'sonarr_paths',
+            'sonarr_add_series',
+            'sonarr_series_folder_test',
         ]):
         print("""
 Please use one of the following commands:
@@ -70,6 +76,9 @@ Please use one of the following commands:
     remove_playlist - needs a second argument with playlist name to remove
     remove_all_playlists - will remove all playlists setup in the settings
     discord_test - send a test to your discord channel to make sure it works
+    sonarr_profiles - List sonarr profiles to get profile ID
+    sonarr_paths - List sonarr paths to use
+    sonarr_add_series - Adds a series to sonarr based on tvdb ID
     
     ex:
     python {0} run
@@ -145,6 +154,33 @@ Please use one of the following commands:
         )
         if RES.status_code == 204:
             print("You should see a message in discord.")
+
+    if sys.argv[1] == 'sonarr_profiles':
+        # get sonarr profiles
+        sonarr.print_profiles();
+        print('Set sonarr profile ID in the settings to use it')
+
+    if sys.argv[1] == 'sonarr_paths':
+        # get sonarr profiles
+        sonarr.print_paths();
+        print("Copy the path you would like to use into the settings folder")
+
+    if sys.argv[1] == 'sonarr_add_series':
+        if len(sys.argv) >= 3:
+            # Add series
+            print(f'Adding series to sonarr with TVDB ID: {sys.argv[2]}')
+            sonarr.add_series(sys.argv[2])
+        else:
+            print("Please supply a TVDB ID as the second argument")
+
+    if sys.argv[1] == 'sonarr_series_folder_test':
+        if len(sys.argv) >= 3:
+            # Add series
+            print(f'Adding series to sonarr with TVDB ID: {sys.argv[2]}')
+            sonarr.get_series_folder(sys.argv[2])
+        else:
+            print("Please supply a title as the second argument")
+            
 
     if sys.argv[1] == 'test':
         print("Testing")

@@ -31,6 +31,8 @@ not_users: []
 ### [OPTIONAL] Show the list of missing movies
 # Set to True to see missing IMDB IDs from movie lists.  default is False
 show_missing: False
+# Set to True to see the items title on the missing list along with source id
+show_missing_titles: False
 
 ### [OPTIONAL] logging level.  value possibilities: [-1, 0, 1, 2, 3].
 # -1 = quiet, 0 = normal, 1 = verbose, 2 = very verbose, 3 = debug
@@ -164,7 +166,21 @@ add_movies: False
 quality_profile:
 
 
-
+[Sonarr]
+# Be sure to have http:// or https:// in the url
+# token can be found in Settings -> General
+# sonarr-add-missing is for adding missing shows to sonarr from lists automatically
+sonarr-add-missing: False
+# all information below is required to make sonarr work
+# ex http://localhost:8989
+sonarr-url: 
+sonarr-token:
+# Use `python plex_playlist_update.py sonarr_profiles` to find ID
+# ex 3
+sonarr-profile-id:
+# use `python plex_playlist_update.py sonarr_paths` to find path
+# ex D:\shows\
+sonarr-path:
 
 
   
