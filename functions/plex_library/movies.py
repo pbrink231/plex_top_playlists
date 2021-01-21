@@ -28,7 +28,7 @@ def get_library_movies(plex):
     # split into array
     movie_libs = global_vars.MOVIE_LIBRARY_NAME.split(",")
     all_movies = []
-
+    
     # loop movie lib array
     for lib in movie_libs:
         lib = lib.strip()
@@ -74,7 +74,7 @@ def append_movie_id_dict(movie, movie_id_dict):
 
 def get_imdb_id(movie):
     """Gets the IMDB based on the agent used
-
+    
     Some Guid examples
     local://36071
     com.plexapp.agents.imdb://tt0137523?lang=en
@@ -110,7 +110,7 @@ def get_imdb_id(movie):
             #print(f"NOTICE: Using new agent, let's hope this works: {movie.title}")
 
             return x_imdb_id
-
+        
         if agent == 'local':
             print(f"WARNING: Skipping movie, using local agent: {movie.title}")
             return None
