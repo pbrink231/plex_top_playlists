@@ -2,7 +2,6 @@
 import re
 import shelve
 from tmdbv3api import TMDb, Movie
-
 import global_vars
 
 from functions.plex_library.library_utils import show_dict_progress
@@ -74,8 +73,8 @@ def append_movie_id_dict(movie, movie_id_dict):
     return movie_id_dict
 
 def get_imdb_id(movie):
-    """Gets the IMDB based on the agent used 
-    
+    """Gets the IMDB based on the agent used
+
     Some Guid examples
     local://36071
     com.plexapp.agents.imdb://tt0137523?lang=en
@@ -104,13 +103,18 @@ def get_imdb_id(movie):
         if agent == 'movie':
             # plex://movie/5d776a8b9ab544002150043a
             # NEW AGENT, No external IDs available yet
-            print(f"WARNING: Skipping movie, using new agent: {movie.title}")
-            return None
+            x_imdb_id = None
+            for guid in movie.guids:
+                if "imdb" in guid.id:
+                    x_imdb_id = guid.id.replace('imdb://','')
+            #print(f"NOTICE: Using new agent, let's hope this works: {movie.title}")
+
+            return x_imdb_id
 
         if agent == 'local':
             print(f"WARNING: Skipping movie, using local agent: {movie.title}")
             return None
-        
+
     except Exception as ex: # pylint: disable=broad-except
         print(f"IMDB ID ERROR: {movie.title}, {movie.guid}, {ex}")
         return None
