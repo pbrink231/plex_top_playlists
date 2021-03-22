@@ -103,9 +103,10 @@ def get_imdb_id(movie):
                 return imdb_id
         if agent == 'movie':
             # plex://movie/5d776a8b9ab544002150043a
-            # NEW AGENT, No external IDs available yet
-            print(f"WARNING: Skipping movie, using new agent: {movie.title}")
-            return None
+            for guid in movie.guids:
+                if "imdb" in guid.id:
+                    x_imdb_id = guid.id.replace('imdb://','')
+            return x_imdb_id
 
         if agent == 'local':
             print(f"WARNING: Skipping movie, using local agent: {movie.title}")
