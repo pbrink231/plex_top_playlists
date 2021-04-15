@@ -107,7 +107,6 @@ def get_imdb_id(movie):
             for guid in movie.guids:
                 if "imdb" in guid.id:
                     x_imdb_id = guid.id.replace('imdb://','')
-            #print(f"NOTICE: Using new agent, let's hope this works: {movie.title}")
 
             return x_imdb_id
         
