@@ -37,18 +37,28 @@ class PlexData:
         if not found_show:
             return found_show
 
+        ### 
+        # TODO: Best scenario would be to return the next unwatched episode 
+        # however every user would be able to see each collection being made
+        # specific to each user.
+        # 
+        # I at least prefer to see the whole show rather than the last episode
+        # clicking on the show will direct you to the next unwatched episode
+        # which is more ideal for my scenario.
+        ###
         if film_item.film_type == FilmType.SHOW:
-            # Return last episode
-            return found_show.episodes()[-1]
+            # Return whole show
+            return found_show
 
         if film_item.film_type == FilmType.SEASON:
             # Return first episode in season
-            # TO DO FIX
-            return found_show.episodes()[-1]
+            found_show_season = found_show.seasons()[film_item.season_num-1]
+            return found_show_season.episodes()[0]
 
         if film_item.film_type == FilmType.EPISODE:
             # Return specific episode
-            # TO DO FIX
-            return found_show.episodes()[-1]
+            found_show_season = found_show.seasons()[film_item.season_num-1]
+            return found_show_season.episodes()[film_item.episode_num-1]
+
 
         raise Exception(f"Film List Type Unknown {film_item.film_type}")
