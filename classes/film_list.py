@@ -67,7 +67,7 @@ class FilmList(object):
         """ Updates plex collection or playlist based on this list """
         if self.kind == FilmListKind.COLLECTION:
             # Update plex with playlist
-            add_library_items_to_collection(self.title, self.matched_library_items)
+            add_library_items_to_collection(self.title, self.matched_library_items, plex_data.plex)
             return
 
         if self.kind == FilmListKind.PLAYLIST:
