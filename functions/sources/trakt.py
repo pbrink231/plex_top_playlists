@@ -49,13 +49,15 @@ def get_film_lists(trakt_lists, response_base_type=None):
     film_lists = []
     for runlist in trakt_lists:
         kind = runlist.get("kind", 'playlist')
+        sort = runlist.get("sort", 'custom')
         show_summary = runlist.get("show_summary", True)
         title = runlist["title"]
-        print("PULLING LIST - {0}: URL: {1} - TYPE: {2} - KIND: {3}".format(
+        print("PULLING LIST - {0}: URL: {1} - TYPE: {2} - KIND: {3} - SORT: {4}".format(
             title,
             runlist.get("url"),
             runlist.get("type"),
-            kind
+            kind,
+            sort
         ))
         item_base = None
         # Popular lists are based on type and returned JSON is different
@@ -73,7 +75,7 @@ def get_film_lists(trakt_lists, response_base_type=None):
 
         trakt_film_items = get_film_items(trakt_data, item_base)
 
-        film_lists.append(FilmList(ListSource.TRAKT, title, trakt_film_items, kind, show_summary))
+        film_lists.append(FilmList(ListSource.TRAKT, title, trakt_film_items, kind, show_summary, sort))
 
     return film_lists
 

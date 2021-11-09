@@ -8,13 +8,14 @@ from functions.discord import send_simple_message
 
 class FilmList(object):
     """__init__() functions as the class constructor"""
-    def __init__(self, source, title: str, list_items, kind: str = "playlist", show_summary: bool = True):
+    def __init__(self, source, title: str, list_items, kind: str = "playlist", show_summary: bool = True, sort: str = "custom"):
         self.list_source = source # ListSource
         self.title = title
         self.show_summary = show_summary
         self.list_items = list_items
         self.matched_library_items = []
         self.unmatched_film_items = []
+        self.sort = sort
 
         # Setup Kind correclty
         film_kind = FilmListKind[kind.upper()]
@@ -67,7 +68,7 @@ class FilmList(object):
         """ Updates plex collection or playlist based on this list """
         if self.kind == FilmListKind.COLLECTION:
             # Update plex with playlist
-            add_library_items_to_collection(self.title, self.matched_library_items, plex_data.plex)
+            add_library_items_to_collection(self.title, self.matched_library_items, self.sort, plex_data.plex)
             return
 
         if self.kind == FilmListKind.PLAYLIST:
