@@ -9,32 +9,39 @@ plexURLs = {
 }
 
 
-@dataclass
-class CollectionRecommendation:
+class Visibility:
 
-    # metadataItemId: int
-    promotedToRecommended: int
-    promotedToOwnHome: int
-    promotedToSharedHome: int
-
-    def __init__(self, promotedToRecommended=1, promotedToOwnHome=1, promotedToSharedHome=1):
-
-        # self.metadataItemId = metadataItemId
-
-        if type(promotedToRecommended) == int:
+    def __init__(self, promotedToRecommended=-1, promotedToOwnHome=-1, promotedToSharedHome=-1):
+        
+        if promotedToRecommended == -1:
             self.promotedToRecommended = promotedToRecommended
         else:
             self.promotedToRecommended = 1 if promotedToRecommended else 0
 
-        if type(promotedToOwnHome) == int:
+        if promotedToOwnHome == -1:
             self.promotedToOwnHome = promotedToOwnHome
         else:
             self.promotedToOwnHome = 1 if promotedToOwnHome else 0
 
-        if type(promotedToSharedHome) == int:
+        if promotedToSharedHome == -1:
             self.promotedToSharedHome = promotedToSharedHome
         else:
             self.promotedToSharedHome = 1 if promotedToSharedHome else 0
+
+    def to_dict(self):
+
+        ret_val = {}
+
+        if self.promotedToRecommended != -1:
+            ret_val['promotedToRecommended'] = self.promotedToRecommended
+
+        if self.promotedToOwnHome != -1:
+            ret_val['promotedToOwnHome'] = self.promotedToOwnHome
+
+        if self.promotedToSharedHome != -1:
+            ret_val['promotedToSharedHome'] = self.promotedToSharedHome
+
+        return ret_val
 
 
 def update_visibility(plex, section, title, promotedToRecommended=-1, promotedToOwnHome=-1, promotedToSharedHome=-1):
@@ -62,13 +69,10 @@ def update_visibility(plex, section, title, promotedToRecommended=-1, promotedTo
 
     if 'MediaContainer' in data.keys() and 'Hub' in data['MediaContainer'].keys():
 
-        recomm_keys = asdict(CollectionRecommendation(0))
-        current_keys = data['MediaContainer']['Hub'][0]
+        collection_data = data['MediaContainer']['Hub'][0]
 
-        current_keys = {x: current_keys[x]
-                        for x in current_keys.keys() if x in recomm_keys}
-        collection_params = CollectionRecommendation(**current_keys)
-        params = {**asdict(collection_params)}
+        current_keys = {x: collection_data[x] for x in collection_data.keys() if x in Visibility.keys()}
+        params = {current_keys}
 
     params = {**params, **custom_setting}
 
