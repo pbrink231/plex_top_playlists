@@ -1,4 +1,5 @@
 """ Methods dealing with plex collections """
+from functions.plex_request import update_visibility
 import global_vars
 from classes import FilmType
 
@@ -25,13 +26,14 @@ def add_library_items_to_collection(title, items, sort, plex):
     else:
         library.createCollection(title, items=items, smart=False) ## Create stupid collection
         library.reload()
-        collection = library.collection(title)
+        myCollection = library.collection(title)
 
     myCollection.sortUpdate(sort) ## Set sort order
     myCollection.reload()
 
     ## Stop here if no custom order is wanted
     if sort != 'custom':
+        update_visibility(plex, section, title, 1, 1, 1)
         return
 
     ## Order collection based on imported list order
@@ -47,3 +49,5 @@ def add_library_items_to_collection(title, items, sort, plex):
 
     myCollection.sortUpdate(sort) ## Set sort order
     myCollection.reload()
+
+    update_visibility(plex, section, title, 1, 1, 1)
