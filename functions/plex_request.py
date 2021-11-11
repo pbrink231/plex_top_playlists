@@ -19,7 +19,7 @@ def identifier(collection):
         
         return data['MediaContainer']['Hub'][0]['identifier']
 
-    return None ## Returning None means the collection is currently no visible outside of the collection tab
+    return None ## Returning None means the collection is currently has no visibility options set
 
 def moveCollection(collection, after = None):
     """Move a collection to a new position in the library

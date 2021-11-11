@@ -13,11 +13,12 @@ def add_library_items_to_collection(plex, title, items, sort, visibility):
     ## Sort Collection
     sortCollection(collection, items, sort)
 
-    ## Update Visibility
-    updateVisibility(collection, visibility)
-
     ## Update Mode (Default = Hide Collection and keep items visible in library)
     collection.modeUpdate('hide')
+    collection.reload()
+
+    ## Update Visibility
+    updateVisibility(collection, visibility)
 
     ## Reload Library & Collection
     collection.reload()
