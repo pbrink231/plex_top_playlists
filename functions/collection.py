@@ -1,97 +1,75 @@
 """ Methods dealing with plex collections """
-from functions.plex_request import update_visibility
+from classes.visibility import Visibility
+from functions.plex_request import updateVisibility
 import global_vars
 from classes import FilmType
 
-def add_library_items_to_collection(title, items, sort, plex):
+def add_library_items_to_collection(plex, title, items, sort, visibility):
     """ Adds plex items to a collection """
 
-    ## Create/recreate the collection
-    # print([x for x in items])
-    
+    ## Create collection
+    library, collection = createCollection(plex, title, items)
+
+    ## Sort Collection
+    sortCollection(collection, items, sort)
+
+    ## Update Visibility
+    updateVisibility(collection, visibility)
+
+    ## Update Mode (Default = Hide Collection and keep items visible in library)
+    collection.modeUpdate('hide')
+
+    ## Reload Library & Collection
+    collection.reload()
+    library.reload()
+
+def createCollection(plex, title, items):
+
+    ## TODO: Specific when reading lists what library its going to
     section = global_vars.MOVIE_LIBRARY_NAME
     if items[0].type != 'movie':
         section = global_vars.SHOW_LIBRARY_NAME
 
-    library = plex.library.section(section) ## library short form
-    libraryCollections = [x.title for x in library.collections()] ## All movie collections
-    myCollection = None
+    library = plex.library.section(section)
+    collection_list = [x.title for x in library.collections()] ## All collections in library
+    collection = None
 
-    if title in libraryCollections: ## Check if myCollection exists
-        myCollection = library.collection(title)
-        myCollection.removeItems(myCollection.items()) ## Remove all items in collection
-        myCollection.reload()
-        myCollection.addItems(items) ## Add new items
-        myCollection.reload()
+    ## Reuse collection and add new items
+    if title in collection_list: ## Check if collection exists
+        collection = library.collection(title)
+        collection.removeItems(collection.items()) ## Remove all items in collection
+        collection.reload()
+        collection.addItems(items) ## Add new items
+        collection.reload()
+
+    ## Create new non-smart collection and new items
     else:
         library.createCollection(title, items=items, smart=False) ## Create stupid collection
         library.reload()
-        myCollection = library.collection(title)
+        collection = library.collection(title)
 
-    myCollection.sortUpdate(sort) ## Set sort order
-    myCollection.reload()
+    return library, collection
 
-    ## Stop here if no custom order is wanted
-    if sort != 'custom':
-        update_visibility(plex, section, title, 1, 1, 1)
-        return
+def sortCollection(collection, items, sort):
+
+    if sort == 'custom':
+        ## Order collection by order of list
+        orderByList(collection, items)
+    else: ## 'alpha' or 'release'
+        ## Update collection sort order
+        collection.sortUpdate(sort)
+        collection.reload()  
+
+def orderByList(collection, items):
 
     ## Order collection based on imported list order
+    collection.reload()
 
     # Move first item to correct place
-    myCollection.moveItem(items[0])
-    myCollection.reload()
+    collection.moveItem(items[0])
+    collection.reload()
 
     # Move remaining items to correct place
     for i in range(len(items)-1):
-        myCollection.moveItem(items[i+1], items[i])
-        myCollection.reload()
-
-    myCollection.sortUpdate(sort) ## Set sort order
-    myCollection.reload()
-
-    update_visibility(plex, section, title, 1, 1, 1)
-
-template = {
-    'promotedToRecommended':1,
-    'promotedToOwnHome':1,
-    'promotedToSharedHome':1
-    }
-
-class Visibility:
-
-    def __init__(self, promotedToRecommended=-1, promotedToOwnHome=-1, promotedToSharedHome=-1):
-        
-        if promotedToRecommended == -1:
-            self.promotedToRecommended = promotedToRecommended
-        else:
-            self.promotedToRecommended = 1 if promotedToRecommended else 0
-
-        if promotedToOwnHome == -1:
-            self.promotedToOwnHome = promotedToOwnHome
-        else:
-            self.promotedToOwnHome = 1 if promotedToOwnHome else 0
-
-        if promotedToSharedHome == -1:
-            self.promotedToSharedHome = promotedToSharedHome
-        else:
-            self.promotedToSharedHome = 1 if promotedToSharedHome else 0
-
-    def to_dict(self):
-
-        ret_val = {}
-
-        if self.promotedToRecommended != -1:
-            ret_val['promotedToRecommended'] = self.promotedToRecommended
-
-        if self.promotedToOwnHome != -1:
-            ret_val['promotedToOwnHome'] = self.promotedToOwnHome
-
-        if self.promotedToSharedHome != -1:
-            ret_val['promotedToSharedHome'] = self.promotedToSharedHome
-
-        return ret_val
-
-    @staticmethod
-    def keys():
-        return ['promotedToRecommended', 'promotedToOwnHome', 'promotedToSharedHome']
+        collection.moveItem(items[i+1], items[i])
+        collection.reload()
