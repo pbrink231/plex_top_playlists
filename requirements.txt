@@ -1,5 +1,5 @@
 ﻿configparser==3.7.4
-lxml==4.3.2
+lxml==4.6.5
 parse==1.11.1
 requests==2.21.0
 xmltodict==0.12.0
