@@ -1,3 +1,8 @@
+# DEPRICATED
+
+Suggest plex-meta-manager as a replacement for this project.  It can do everything this does and more.
+I am also working on adding a module into Overseerr to allow list management with a nice UI that was missing from this project.
+
 # plex_top_playlists
 **Python 3 ONLY. Python 2 no longer works.  Please check out settings.ini.example and adjust.**
 **Requires Python >= 3.6**
