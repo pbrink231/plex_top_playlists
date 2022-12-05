@@ -52,6 +52,7 @@ def create_show_id_dict(shows):
         show_dict_progress(cur, count)
         cur += 1
     print(f"\nFinished Creating Show Dictionary")
+    
     return show_id_dict
 
 def append_show_id_dict(show, show_id_dict):
@@ -65,6 +66,9 @@ def get_tvdb_id(show):
     """ Gets the tvdb ID from the show """
     tvdb_id = None
     last_episode = show.episodes()[-1]
-    if last_episode.guid != "" and 'thetvdb://' in last_episode.guid:
-        tvdb_id = last_episode.guid.split('thetvdb://')[1].split('?')[0].split('/')[0]
+
+    for show_guid in show.guids:
+         if show_guid.id != "" and 'tvdb://' in show_guid.id:
+            tvdb_id = show_guid.id.split('tvdb://')[1].split('?')[0].split('/')[0]
+
     return tvdb_id

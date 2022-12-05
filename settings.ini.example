@@ -59,6 +59,12 @@ api-key:
 # Currently 2 different kinds.  "playlist" and "collection"
 # playlist is default if not supplied
 # adding "kind":"collection" will tag all movies and shows with a collection tag.  A collection can go on movies or shows and will show together
+# add "sort" to set collection order (only when kind is set to collection), it accepts the following values: 
+# “release” (Order Collection by release dates), “alpha” (Order Collection alphabetically), and “custom” (Imported List Order)
+# Default collection order is by imported list order ("Custom")
+# add "visibility" to edit a collections visibility, options are:
+# {'promotedToRecommended':True, 'promotedToOwnHome':True, 'promotedToSharedHome':True} which is the same as "visibility":"all"
+# {'promotedToRecommended':False, 'promotedToOwnHome':True, 'promotedToSharedHome':False}
 
 ## Movie list
 # the "type" must say 'popular' when using a popular trakt list.  Otherwise can be omiited or set to any value
@@ -74,8 +80,8 @@ api-key:
 # https://api.trakt.tv/movies/boxoffice
 
 trakt-movie-list: [
-  { "title": "Movies Top Weekly", "type":"watched", "limit": 80, "url":"https://api.trakt.tv/movies/watched/weekly"},
-  { "title": "Movies Popular", "type":"popular", "limit": 80, "url":"https://api.trakt.tv/movies/popular", "show_summary": "False"}
+  { "title": "Movies Top Weekly", "type":"watched", "limit": 80, "url":"https://api.trakt.tv/movies/watched/weekly", "visibility":{"promotedToRecommended":true, "promotedToOwnHome":false, "promotedToSharedHome":false}},
+  { "title": "Movies Popular", "type":"popular", "limit": 80, "url":"https://api.trakt.tv/movies/popular", "show_summary": "False", "sort":"release", "visibility":"all"}
   ]
 
 ## Show list
@@ -114,7 +120,13 @@ trakt-users-list: [
 
 # Currently 2 different kinds.  "playlist" and "collection"
 # playlist is default if not supplied
-# adding "kind":"collection" will tag all movies with a collection tag.  A collection can go on movies or shows and will show together
+# adding "kind":"collection" will tag all movies and shows with a collection tag.  A collection can go on movies or shows and will show together
+# add "sort" to set collection order (only when kind is set to collection), it accepts the following values: 
+# “release” (Order Collection by release dates), “alpha” (Order Collection alphabetically), and “custom” (Imported List Order)
+# Default collection order is by imported list order ("Custom")
+# add "visibility" to edit a collections visibility, options are:
+# {'promotedToRecommended':True, 'promotedToOwnHome':True, 'promotedToSharedHome':True} which is the same as "visibility":"all"
+# {'promotedToRecommended':False, 'promotedToOwnHome':True, 'promotedToSharedHome':False}
 
 ### SEARCH TYPE
 # type: "search"

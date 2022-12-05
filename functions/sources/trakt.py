@@ -2,7 +2,8 @@
 from urllib.request import Request, urlopen
 import json
 
-from classes import ListSource, FilmItem, FilmList, FilmDB, FilmType
+from classes import ListSource, FilmItem, FilmList, FilmDB, FilmType, visibility
+from classes.visibility import Visibility
 from utils.logger import log_output
 import global_vars
 
@@ -49,13 +50,21 @@ def get_film_lists(trakt_lists, response_base_type=None):
     film_lists = []
     for runlist in trakt_lists:
         kind = runlist.get("kind", 'playlist')
+        sort = runlist.get("sort", 'custom')
         show_summary = runlist.get("show_summary", True)
         title = runlist["title"]
-        print("PULLING LIST - {0}: URL: {1} - TYPE: {2} - KIND: {3}".format(
+        visibility = runlist.get('visibility',{})
+        if type(visibility) == str and visibility == "all":
+            visibility = Visibility(1, 1, 1)
+        else:
+            visibility = Visibility(**visibility)
+        print("PULLING LIST - {0}: URL: {1} - TYPE: {2} - KIND: {3} - SORT: {4} - VISIBILITY: {5}".format(
             title,
             runlist.get("url"),
             runlist.get("type"),
-            kind
+            kind,
+            sort,
+            visibility.to_string()
         ))
         item_base = None
         # Popular lists are based on type and returned JSON is different
@@ -73,7 +82,7 @@ def get_film_lists(trakt_lists, response_base_type=None):
 
         trakt_film_items = get_film_items(trakt_data, item_base)
 
-        film_lists.append(FilmList(ListSource.TRAKT, title, trakt_film_items, kind, show_summary))
+        film_lists.append(FilmList(ListSource.TRAKT, title, trakt_film_items, visibility, kind, show_summary, sort))
 
     return film_lists
 
